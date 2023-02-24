@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <PackageId>NID.LocationService.Message</PackageId>
+    <Authors>Nicolas Zapata</Authors>
+    <Company>NZR</Company>
+    <Product>NID</Product>
+    <Description>Contract library usually used to send messages to the NID Location Service Microservice</Description>
+    <Copyright>NID</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>NID, Location Service, Location, Contract, Message</PackageTags>
+    <PackageReleaseNotes>Release Candidate</PackageReleaseNotes>
+    <RepositoryType>Microservice Contract</RepositoryType>
+    <PackageIcon>Deloitte.png</PackageIcon>
+    <Version>1.0.3</Version>
+    <LangVersion>11</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+</Project>

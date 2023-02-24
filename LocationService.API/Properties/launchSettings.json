@@ -1,0 +1,45 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:58509",
+      "sslPort": 44347
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "SERVICE_NAME": "LocationService",
+        "ENDPOINT_NAME": "LocationService.API",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "LocationService.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "SERVICE_NAME": "LocationService",
+        "ENDPOINT_NAME": "LocationService.API",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {
+        "SERVICE_NAME": "LocationService",
+        "ENDPOINT_NAME": "LocationService.API"
+      },
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  }
+}
