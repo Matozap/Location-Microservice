@@ -56,7 +56,7 @@ public class GetStateByIdHandler : IRequestHandler<GetStateById, object>
 
     public static string GetCacheKey(int id, string code)
     {
-        var key = string.IsNullOrEmpty(code) ? id.ToString() : code;
+        var key = id > 0 ? id.ToString() : code;
         return $"State:id:{key}";
     }
 }

@@ -23,12 +23,12 @@ public class CityController : ControllerBase
     ///  - Gets all the cities in the system.
     /// </summary>
     /// <returns>All Citys</returns>
-    [HttpGet("all/{cityId:int}")]
-    public async Task<IActionResult> GetAll(int cityId)
+    [HttpGet("all/{stateId:int}")]
+    public async Task<IActionResult> GetAll(int stateId)
     {
         var query = new GetAllCities
         {
-            StateId = cityId
+            StateId = stateId
         };
         var result = await _mediator.Send(query);
         return Ok(result);

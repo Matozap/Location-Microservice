@@ -47,7 +47,7 @@ public class LocationRepository : ILocationRepository
         var result = _applicationContext.Set<City>()
             .Where(s => s.StateId == stateId)
             .Where(e => !e.Disabled)
-            .OrderBy(e => e.Id);
+            .OrderBy(e => e.Name);
         
         return await LoadAllNavigationalProperties(result).ToListAsync();
     }
