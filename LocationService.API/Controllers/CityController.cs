@@ -23,7 +23,7 @@ public class CityController : ControllerBase
     ///  - Gets all the cities in the system.
     /// </summary>
     /// <returns>All Citys</returns>
-    [HttpGet("all/{cityId}")]
+    [HttpGet("all/{cityId:int}")]
     public async Task<IActionResult> GetAll(int cityId)
     {
         var query = new GetAllCities
@@ -39,7 +39,7 @@ public class CityController : ControllerBase
     /// </summary>
     /// <param name="id">City Id or code</param>
     /// <returns>Country</returns>        
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var query = new GetCityById
@@ -87,7 +87,7 @@ public class CityController : ControllerBase
     /// Does a soft delete on the City with the given id and returns "Success" if no exception was raised.
     /// </summary>
     /// <param name="id">Country Id</param>
-    [HttpDelete("Disable/{id}")]
+    [HttpDelete("Disable/{id:int}")]
     public async Task<IActionResult> SoftDelete(int id)
     {
         var query = new SoftDeleteCity
@@ -102,7 +102,7 @@ public class CityController : ControllerBase
     /// Does a physical delete on the location with the given id
     /// </summary>
     /// <param name="id">Country Id</param>
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var query = new DeleteCity
