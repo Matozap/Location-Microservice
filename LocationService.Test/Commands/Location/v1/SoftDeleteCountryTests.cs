@@ -1,9 +1,6 @@
 using LocationService.Test.Mocking;
 using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
@@ -20,20 +17,12 @@ public class SoftDeleteCountryTests
     public async Task SoftDeleteCountryTest()
     {
         // Arrange
-        var location = CountryMockBuilder.GenerateMockCountry();
-        var locationDto = CountryMockBuilder.GenerateMockCountryDto();
         var classToHandle = new SoftDeleteCountry
         {
-            CountryId = location.Id
+            CountryId = CountryMockBuilder.GenerateMockCountry().Id
         };
-
-        var mediator = Substitute.For<IMediator>();
-        mediator.Send(Arg.Any<GetCountryById>()).Returns(locationDto);
-
-        var handler = new SoftDeleteCountryHandler(NullLogger<SoftDeleteCountryHandler>.Instance,
-            CountryMockBuilder.GenerateMockRepository(location),
-            mediator,
-            CountryMockBuilder.GenerateMockEventBus());
+        
+        var handler = (SoftDeleteCountryHandler)CountryMockBuilder.CreateHandler<SoftDeleteCountryHandler>();
 
         //Act
         var result = await handler.Handle(classToHandle, new CancellationToken());
@@ -46,21 +35,12 @@ public class SoftDeleteCountryTests
     public void SoftDeleteCountryInvalidCountryIdTest()
     {
         // Arrange
-        var location = CountryMockBuilder.GenerateMockCountry();
-        var locationDto = CountryMockBuilder.GenerateMockCountryDto();
-        location.Id = null;
-        var classToHandle = new DeleteCountry
+        var classToHandle = new SoftDeleteCountry
         {
-            CountryId = location.Id
+            CountryId = null
         };
-
-        var mediator = Substitute.For<IMediator>();
-        mediator.Send(Arg.Any<GetCountryById>()).Returns(locationDto);
-
-        var handler = new DeleteCountryHandler(NullLogger<DeleteCountryHandler>.Instance,
-            CountryMockBuilder.GenerateMockRepository(location),
-            mediator,
-            CountryMockBuilder.GenerateMockEventBus());
+        
+        var handler = (SoftDeleteCountryHandler)CountryMockBuilder.CreateHandler<SoftDeleteCountryHandler>();
 
         //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());

@@ -1,6 +1,5 @@
 using LocationService.Test.Mocking;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
@@ -18,17 +17,13 @@ public class GetCountryByIdTestsTests
     public async Task GetCountryByIdTestsTest()
     {
         // Arrange
-        var location = CountryMockBuilder.GenerateMockCountry();
-        var locationDto = CountryMockBuilder.GenerateMockCountryDto();
         var classToHandle = new GetCountryById
         {
-            CountryId = locationDto.Id
+            CountryId = CountryMockBuilder.GenerateMockCountryFlatDto().Id
         };
 
-        var handler = new GetCountryByIdHandler(CountryMockBuilder.GenerateMockRepository(location),
-            CountryMockBuilder.GenerateMockObjectCache(),
-            NullLogger<GetCountryByIdHandler>.Instance);
-
+        var handler = (GetCountryByIdHandler)CountryMockBuilder.CreateHandler<GetCountryByIdHandler>();
+        
         //Act
         var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
 
@@ -40,12 +35,9 @@ public class GetCountryByIdTestsTests
     public void GetCountryByClientIdInvalidRangeTest()
     {
         // Arrange
-        var location = CountryMockBuilder.GenerateMockCountry();
         var classToHandle = new GetCountryById();
-
-        var handler = new GetCountryByIdHandler(CountryMockBuilder.GenerateMockRepository(location),
-            CountryMockBuilder.GenerateMockObjectCache(),
-            NullLogger<GetCountryByIdHandler>.Instance);
+        
+        var handler = (GetCountryByIdHandler)CountryMockBuilder.CreateHandler<GetCountryByIdHandler>();
 
         //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());

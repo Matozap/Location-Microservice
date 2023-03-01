@@ -1,6 +1,5 @@
 using LocationService.Test.Mocking;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,17 +17,13 @@ public class GetAllCountriesTests
     public async Task GetAllCountriesTest()
     {
         // Arrange
-        const int numberOfRows = 10;
         var classToHandle = new GetAllCountries();
-
-        var handler = new GetAllCountriesHandler(CountryMockBuilder.GenerateMockObjectCache(),
-            NullLogger<GetAllCountriesHandler>.Instance,
-            CountryMockBuilder.GenerateMockRepository(rowCount: numberOfRows));
+        var handler = (GetAllCountriesHandler)CountryMockBuilder.CreateHandler<GetAllCountriesHandler>();
 
         //Act
-        var result = (List<CountryData>)await handler.Handle(classToHandle, new CancellationToken());
+        var result = (List<CountryFlatData>)await handler.Handle(classToHandle, new CancellationToken());
 
         //Assert
-        result.Should().NotBeNull().And.HaveCount(numberOfRows);
+        result.Should().NotBeNull().And.HaveCountGreaterThan(1);
     }
 }

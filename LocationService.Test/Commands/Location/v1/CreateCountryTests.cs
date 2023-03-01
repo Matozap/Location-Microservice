@@ -1,6 +1,5 @@
 using LocationService.Test.Mocking;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -19,16 +18,12 @@ public class CreateCountryTests
     public async Task CreateCountryTest()
     {
         // Arrange
-        var location = CountryMockBuilder.GenerateMockCountry();
-        var locationDto = CountryMockBuilder.GenerateMockCountryDto();
         var classToHandle = new CreateCountry
         {
-            LocationDetails = locationDto
+            LocationDetails = CountryMockBuilder.GenerateMockCountryFlatDto()
         };
 
-        var handler = new CreateCountryHandler(NullLogger<CreateCountryHandler>.Instance,
-            CountryMockBuilder.GenerateMockRepository(location),
-            CountryMockBuilder.GenerateMockEventBus());
+        var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();
 
         //Act
         var result = (CountryFlatData)await handler.Handle(classToHandle, new CancellationToken());
@@ -37,22 +32,19 @@ public class CreateCountryTests
         result.Should().NotBeNull().And.BeOfType<CountryFlatData>();
     }
 
-    
     [TestMethod]
     public void CreateCountryInvalidNameTest()
     {
         // Arrange
-        var location = CountryMockBuilder.GenerateMockCountry();
-        var locationDto = CountryMockBuilder.GenerateMockCountryDto();
+        var locationDto = CountryMockBuilder.GenerateMockCountryFlatDto();
         locationDto.Name = null;
+        
         var classToHandle = new CreateCountry
         {
             LocationDetails = locationDto
         };
-
-        var handler = new CreateCountryHandler(NullLogger<CreateCountryHandler>.Instance,
-            CountryMockBuilder.GenerateMockRepository(location),
-            CountryMockBuilder.GenerateMockEventBus());
+        
+        var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();
 
         //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
