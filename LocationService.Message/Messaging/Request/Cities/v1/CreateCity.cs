@@ -5,5 +5,5 @@ namespace LocationService.Message.Messaging.Request.v1;
 
 public class CreateCity : BaseMessage, IRequest<object>
 {
-    public CityFlatData LocationDetails { get; init; }
+    public CityData LocationDetails { get; init; }
 }

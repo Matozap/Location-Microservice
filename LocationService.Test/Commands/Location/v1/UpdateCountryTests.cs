@@ -2,6 +2,7 @@ using LocationService.Test.Mocking;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Commands.Countries.v1;
@@ -19,13 +20,13 @@ public class UpdateCountryTests
         // Arrange
         var classToHandle = new UpdateCountry
         {
-            LocationDetails = CountryMockBuilder.GenerateMockCountryFlatDto()
+            LocationDetails = CountryMockBuilder.GenerateMockCountryDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();
         
         //Act
-        var result = (CountryFlatData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
 
         //Assert
         result.Should().NotBeNull();
@@ -37,7 +38,7 @@ public class UpdateCountryTests
         // Arrange
         var classToHandle = new UpdateCountry
         {
-            LocationDetails = new CountryFlatData()
+            LocationDetails = new CountryData()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();

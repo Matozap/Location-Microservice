@@ -31,16 +31,16 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
         
         var resultEntity = await CreateState(request.LocationDetails);
         _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id);
-        var locationDto = resultEntity.Adapt<Domain.State, StateFlatData>();
+        var locationDto = resultEntity.Adapt<Domain.State, StateData>();
             
         _ = _eventBus.Publish(new StateEvent { LocationDetails = request.LocationDetails, Action = EventAction.StateCreate});
 
         return locationDto;
     }
 
-    private async Task<Domain.State> CreateState(StateFlatData state)
+    private async Task<Domain.State> CreateState(StateData state)
     {
-        var entity = state.Adapt<StateFlatData, Domain.State>();
+        var entity = state.Adapt<StateData, Domain.State>();
         entity.LastUpdateUserId = "system";
         entity.LastUpdateDate= DateTime.Now;
         return await _repository.AddAsync(entity);

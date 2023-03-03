@@ -33,7 +33,7 @@ public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, objec
 
         await UpdateCountry(request.CountryId);
 
-        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryFlatData { Id = request.CountryId }, Action = EventAction.CountryDelete});
+        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryData { Id = request.CountryId }, Action = EventAction.CountryDelete});
 
         return request.CountryId;
     }

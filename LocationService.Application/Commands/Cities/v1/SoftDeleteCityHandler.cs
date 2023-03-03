@@ -30,7 +30,7 @@ public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
     {
         await UpdateCity(request.CityId);
 
-        _ = _eventBus.Publish(new CityEvent { LocationDetails = new CityFlatData { Id = request.CityId }, Action = EventAction.CityDelete});
+        _ = _eventBus.Publish(new CityEvent { LocationDetails = new CityData { Id = request.CityId }, Action = EventAction.CityDelete});
 
         return request.CityId.ToString();
     }

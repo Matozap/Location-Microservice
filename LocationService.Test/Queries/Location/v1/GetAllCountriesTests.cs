@@ -21,7 +21,7 @@ public class GetAllCountriesTests
         var handler = (GetAllCountriesHandler)CountryMockBuilder.CreateHandler<GetAllCountriesHandler>();
 
         //Act
-        var result = (List<CountryFlatData>)await handler.Handle(classToHandle, new CancellationToken());
+        var result = (List<CountryData>)await handler.Handle(classToHandle, new CancellationToken());
 
         //Assert
         result.Should().NotBeNull().And.HaveCountGreaterThan(1);

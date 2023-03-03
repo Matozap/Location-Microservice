@@ -36,7 +36,7 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
         return request.LocationDetails;
     }
 
-    private async Task UpdateCity(CityFlatData cityData)
+    private async Task UpdateCity(CityData cityData)
     {
         var query = new GetCityById
         {
@@ -48,7 +48,7 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
             
         if(existingLocationDto != null)
         {                
-            await _repository.UpdateAsync(cityData.Adapt<CityFlatData, Domain.City>());
+            await _repository.UpdateAsync(cityData.Adapt<CityData, Domain.City>());
         }
     }
 }

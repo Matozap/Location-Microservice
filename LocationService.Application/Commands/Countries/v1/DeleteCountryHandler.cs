@@ -34,7 +34,7 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
 
         await DeleteCountryAsync(request.CountryId);
 
-        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryFlatData {Id = request.CountryId}, Action = EventAction.CountryDelete});
+        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryData {Id = request.CountryId}, Action = EventAction.CountryDelete});
 
         return request.CountryId;
     }

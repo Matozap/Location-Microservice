@@ -31,16 +31,16 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
         
         var resultEntity = await CreateState(request.LocationDetails);
         _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id);
-        var locationDto = resultEntity.Adapt<Domain.City, CityFlatData>();
+        var locationDto = resultEntity.Adapt<Domain.City, CityData>();
             
         _ = _eventBus.Publish(new CityEvent { LocationDetails = request.LocationDetails, Action = EventAction.CityCreate});
 
         return locationDto;
     }
 
-    private async Task<Domain.City> CreateState(CityFlatData city)
+    private async Task<Domain.City> CreateState(CityData city)
     {
-        var entity = city.Adapt<CityFlatData, Domain.City>();
+        var entity = city.Adapt<CityData, Domain.City>();
         entity.LastUpdateUserId = "system";
         entity.LastUpdateDate= DateTime.Now;
         return await _repository.AddAsync(entity);

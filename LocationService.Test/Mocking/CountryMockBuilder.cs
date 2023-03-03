@@ -57,13 +57,6 @@ public static class CountryMockBuilder
             .CreateMany(count)
             .ToList();
     }
-    
-    private static List<CountryFlatData> GenerateMockCountryFlatDtoList(int count)
-    {
-        return Fixture.Build<CountryFlatData>()
-            .CreateMany(count)
-            .ToList();
-    }
 
     public static List<CountryData> GenerateMockCountryDtoList(int count)
     {
@@ -79,16 +72,11 @@ public static class CountryMockBuilder
             .Create();
     }
 
-    public static CountryFlatData GenerateMockCountryFlatDto()
-    {
-        return Fixture.Build<CountryFlatData>().Create();
-    }
 
     public static object CreateHandler<T>()
     {
         var response = GenerateMockCountryDtoList(1).FirstOrDefault();
         var location = GenerateMockCountry();
-        var locationDto = GenerateMockCountryFlatDto();
         
         var mediator = Substitute.For<IMediator>();
         mediator.Send(Arg.Any<GetCountryById>()).Returns(response);

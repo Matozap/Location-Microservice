@@ -50,7 +50,7 @@ public class CountryController : ControllerBase
     /// <param name="country">CountryDto</param>
     /// <returns>Country</returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CountryFlatData country)
+    public async Task<IActionResult> Create([FromBody] CountryData country)
     {
         var query = new CreateCountry
         {
@@ -67,7 +67,7 @@ public class CountryController : ControllerBase
     /// <param name="country">CountryDto</param>
     /// <returns>Country</returns>
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] CountryFlatData country)
+    public async Task<IActionResult> Update([FromBody] CountryData country)
     {
         var query = new UpdateCountry
         {

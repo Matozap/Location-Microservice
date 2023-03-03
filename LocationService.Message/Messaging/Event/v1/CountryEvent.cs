@@ -4,7 +4,7 @@ namespace LocationService.Message.Messaging.Event.v1;
 
 public class CountryEvent : BaseEvent
 {
-    public CountryFlatData LocationDetails { get; init; }
+    public CountryData LocationDetails { get; init; }
     protected override string GetVersion() => "V1";
 }
 

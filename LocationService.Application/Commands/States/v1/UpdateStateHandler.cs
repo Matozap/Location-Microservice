@@ -36,7 +36,7 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
         return request.LocationDetails;
     }
 
-    private async Task UpdateState(StateFlatData stateData)
+    private async Task UpdateState(StateData stateData)
     {
         var query = new GetStateById
         {
@@ -49,7 +49,7 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
             
         if(existingLocationDto != null)
         {                
-            await _repository.UpdateAsync(stateData.Adapt<StateFlatData, Domain.State>());
+            await _repository.UpdateAsync(stateData.Adapt<StateData, Domain.State>());
         }
     }
 }

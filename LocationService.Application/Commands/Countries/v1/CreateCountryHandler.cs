@@ -32,16 +32,16 @@ public class CreateCountryHandler : IRequestHandler<CreateCountry, object>
         
         var resultEntity = await CreateCountry(request.LocationDetails);
         _logger.LogInformation("Country with id {CountryID} created successfully", resultEntity.Id);
-        var locationDto = resultEntity.Adapt<Domain.Country, CountryFlatData>();
+        var locationDto = resultEntity.Adapt<Domain.Country, CountryData>();
             
         _ = _eventBus.Publish(new CountryEvent { LocationDetails = request.LocationDetails, Action = EventAction.CountryCreate});
 
         return locationDto;
     }
 
-    private async Task<Domain.Country> CreateCountry(CountryFlatData country)
+    private async Task<Domain.Country> CreateCountry(CountryData country)
     {
-        var entity = country.Adapt<CountryFlatData, Domain.Country>();
+        var entity = country.Adapt<CountryData, Domain.Country>();
         entity.LastUpdateUserId = "system";
         entity.LastUpdateDate= DateTime.Now;
         return await _repository.AddAsync(entity);

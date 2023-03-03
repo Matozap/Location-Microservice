@@ -30,7 +30,7 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
     {
         await UpdateState(request.StateId);
 
-        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateFlatData { Id = request.StateId }, Action = EventAction.StateDelete});
+        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateData { Id = request.StateId }, Action = EventAction.StateDelete});
 
         return request.StateId.ToString();
     }

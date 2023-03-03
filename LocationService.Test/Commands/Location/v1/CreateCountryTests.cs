@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Commands.Countries.v1;
@@ -20,23 +21,23 @@ public class CreateCountryTests
         // Arrange
         var classToHandle = new CreateCountry
         {
-            LocationDetails = CountryMockBuilder.GenerateMockCountryFlatDto()
+            LocationDetails = CountryMockBuilder.GenerateMockCountryDtoList(1).First()
         };
 
         var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();
 
         //Act
-        var result = (CountryFlatData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
 
         //Assert
-        result.Should().NotBeNull().And.BeOfType<CountryFlatData>();
+        result.Should().NotBeNull().And.BeOfType<CountryData>();
     }
 
     [TestMethod]
     public void CreateCountryInvalidNameTest()
     {
         // Arrange
-        var locationDto = CountryMockBuilder.GenerateMockCountryFlatDto();
+        var locationDto = CountryMockBuilder.GenerateMockCountryDtoList(1).First();
         locationDto.Name = null;
         
         var classToHandle = new CreateCountry

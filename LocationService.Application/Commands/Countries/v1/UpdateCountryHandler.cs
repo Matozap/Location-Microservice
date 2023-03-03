@@ -39,7 +39,7 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
         return request.LocationDetails;
     }
 
-    private async Task UpdateCountry(CountryFlatData countryData)
+    private async Task UpdateCountry(CountryData countryData)
     {
         var query = new GetCountryById
         {
@@ -51,7 +51,7 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
             
         if(existingLocationDto != null)
         {                
-            await _repository.UpdateAsync(countryData.Adapt<CountryFlatData, Domain.Country>());
+            await _repository.UpdateAsync(countryData.Adapt<CountryData, Domain.Country>());
         }
     }
 }

@@ -57,7 +57,7 @@ public class StateController : ControllerBase
     /// <param name="location">CountryDto</param>
     /// <returns>State</returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] StateFlatData location)
+    public async Task<IActionResult> Create([FromBody] StateData location)
     {
         var query = new CreateState
         {
@@ -74,7 +74,7 @@ public class StateController : ControllerBase
     /// <param name="location">CountryDto</param>
     /// <returns>Country</returns>
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] StateFlatData location)
+    public async Task<IActionResult> Update([FromBody] StateData location)
     {
         var query = new UpdateState
         {

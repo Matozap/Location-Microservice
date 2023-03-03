@@ -31,7 +31,7 @@ public class DeleteStateHandler : IRequestHandler<DeleteState, object>
     {
         await DeleteStateAsync(request.Id);
 
-        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateFlatData {Id = request.Id}, Action = EventAction.StateDelete});
+        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateData {Id = request.Id}, Action = EventAction.StateDelete});
 
         return request.Id.ToString();
     }

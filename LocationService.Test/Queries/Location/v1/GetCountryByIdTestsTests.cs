@@ -19,7 +19,7 @@ public class GetCountryByIdTestsTests
         // Arrange
         var classToHandle = new GetCountryById
         {
-            CountryId = CountryMockBuilder.GenerateMockCountryFlatDto().Id
+            CountryId = CountryMockBuilder.GenerateMockCountry().Id
         };
 
         var handler = (GetCountryByIdHandler)CountryMockBuilder.CreateHandler<GetCountryByIdHandler>();

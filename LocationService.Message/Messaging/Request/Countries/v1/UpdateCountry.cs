@@ -5,5 +5,5 @@ namespace LocationService.Message.Messaging.Request.Countries.v1;
 
 public class UpdateCountry : BaseMessage, IRequest<object>
 {
-    public CountryFlatData LocationDetails { get; init; }
+    public CountryData LocationDetails { get; init; }
 }

@@ -56,7 +56,7 @@ public class CityController : ControllerBase
     /// <param name="location">CountryDto</param>
     /// <returns>City</returns>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CityFlatData location)
+    public async Task<IActionResult> Create([FromBody] CityData location)
     {
         var query = new CreateCity
         {
@@ -73,7 +73,7 @@ public class CityController : ControllerBase
     /// <param name="location">CountryDto</param>
     /// <returns>Country</returns>
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] CityFlatData location)
+    public async Task<IActionResult> Update([FromBody] CityData location)
     {
         var query = new UpdateCity
         {

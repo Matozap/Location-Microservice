@@ -27,7 +27,7 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, object>
     {
         var cacheKey = GetCacheKey();
 
-        var cachedValue = await _cache.GetCacheValueAsync<List<CountryFlatData>>(cacheKey, cancellationToken);
+        var cachedValue = await _cache.GetCacheValueAsync<List<CountryData>>(cacheKey, cancellationToken);
         if (cachedValue != null)
         {
             _logger.LogInformation("Cache value found for {CacheKey}", cacheKey);
@@ -41,10 +41,10 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, object>
         return dataValue;
     }
 
-    private async Task<List<CountryFlatData>> GetAllCountries()
+    private async Task<List<CountryData>> GetAllCountries()
     {
         var allLocations = await _repository.GetAllCountriesAsync();
-        return allLocations.Adapt<List<CountryFlatData>>();
+        return allLocations.Adapt<List<CountryData>>();
     }
     
     public static string GetCacheKey() => "Countries:All";
