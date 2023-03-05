@@ -40,7 +40,7 @@ public class DeleteCityHandler : IRequestHandler<DeleteCity, object>
     {
         var query = new GetCityById
         {
-            CityId = cityId,
+            Id = cityId,
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);

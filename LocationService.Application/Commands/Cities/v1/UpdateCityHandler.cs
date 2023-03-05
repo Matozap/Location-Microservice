@@ -40,7 +40,7 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
     {
         var query = new GetCityById
         {
-            CityId = cityData.Id,
+            Id = cityData.Id,
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);

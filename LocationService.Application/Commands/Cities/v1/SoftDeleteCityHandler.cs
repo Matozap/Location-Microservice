@@ -39,7 +39,7 @@ public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
     {
         var query = new GetCityById
         {
-            CityId = cityId
+            Id = cityId
         };
         var readResult = await _mediator.Send(query);
         var existingLocationDto = (CityData)readResult;

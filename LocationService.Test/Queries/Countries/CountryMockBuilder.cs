@@ -1,10 +1,9 @@
 using System;
-using AutoFixture;
-using NSubstitute;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AutoFixture;
 using LocationService.Application.Commands.Countries.v1;
 using LocationService.Application.Interfaces;
 using LocationService.Application.Queries.Countries.v1;
@@ -14,14 +13,15 @@ using LocationService.Message.Messaging.Request.Countries.v1;
 using LocationService.Message.Messaging.Response.Countries.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 
-namespace LocationService.Test.Mocking;
+namespace LocationService.Test.Queries.Countries;
 
 public static class CountryMockBuilder
 {
     private static readonly Fixture Fixture = new();
 
-    public static ILocationRepository GenerateMockRepository(Country location = null, int rowCount = 100)
+    private static ILocationRepository GenerateMockRepository(Country location = null, int rowCount = 100)
     {
         var mockCountry = location ?? GenerateMockCountry();
         var mockCounties = GenerateMockDomainCountryList(rowCount);
@@ -37,14 +37,14 @@ public static class CountryMockBuilder
         return repository;
     }
 
-    public static IEventBus GenerateMockEventBus()
+    private static IEventBus GenerateMockEventBus()
     {
         var eventBus = Substitute.For<IEventBus>();
         eventBus.Publish(Arg.Any<CountryCreated>()).Returns(Task.CompletedTask);
         return eventBus;
     }
 
-    public static IObjectCache GenerateMockObjectCache()
+    private static IObjectCache GenerateMockObjectCache()
     {
         var cache = Substitute.For<IObjectCache>();
         return cache;

@@ -1,14 +1,13 @@
-using LocationService.Test.Mocking;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using LocationService.Application.Queries.Countries.v1;
 using LocationService.Message.DTO.Countries.v1;
 using LocationService.Message.Messaging.Request.Countries.v1;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LocationService.Test.Queries.Location.v1;
+namespace LocationService.Test.Queries.Countries.v1;
 
 [TestClass]
 public class GetAllCountriesTests

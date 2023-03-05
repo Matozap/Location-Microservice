@@ -30,4 +30,8 @@
     <ProjectReference Include="..\LocationService.Message\LocationService.Message.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Mocking" />
+  </ItemGroup>
+
 </Project>

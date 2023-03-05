@@ -44,7 +44,7 @@ public class CityController : ControllerBase
     {
         var query = new GetCityById
         {
-            CityId = id
+            Id = id
         };
         var result = await _mediator.Send(query);
         return Ok(result);

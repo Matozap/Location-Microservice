@@ -1,14 +1,14 @@
-using LocationService.Test.Mocking;
-using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using LocationService.Application.Commands.Countries.v1;
 using LocationService.Message.Messaging.Request.Countries.v1;
+using LocationService.Test.Queries.Countries;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LocationService.Test.Commands.Location.v1;
+namespace LocationService.Test.Commands.Countries.v1;
 
 [TestClass]
 public class SoftDeleteCountryTests
