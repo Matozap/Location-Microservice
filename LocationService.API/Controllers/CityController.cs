@@ -92,7 +92,7 @@ public class CityController : ControllerBase
     {
         var query = new SoftDeleteCity
         {
-            CityId = id
+            Id = id
         };
         await _mediator.Send(query);
         return Ok("Success");
@@ -107,7 +107,7 @@ public class CityController : ControllerBase
     {
         var query = new DeleteCity
         {
-            CityId = id
+            Id = id
         };
         await _mediator.Send(query);
         return Ok("Success");

@@ -38,7 +38,7 @@ public class CountryController : ControllerBase
     {
         var query = new GetCountryById
         {
-            CountryId = id
+            Id = id
         };
         var result = await _mediator.Send(query);
         return Ok(result);
@@ -86,7 +86,7 @@ public class CountryController : ControllerBase
     {
         var query = new SoftDeleteCountry
         {
-            CountryId = id
+            Id = id
         };
         await _mediator.Send(query);
         return Ok("Success");
@@ -101,7 +101,7 @@ public class CountryController : ControllerBase
     {
         var query = new DeleteCountry
         {
-            CountryId = id
+            Id = id
         };
         await _mediator.Send(query);
         return Ok("Success");

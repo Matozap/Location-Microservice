@@ -28,11 +28,11 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
 
     public async Task<object> Handle(SoftDeleteState request, CancellationToken cancellationToken)
     {
-        await UpdateState(request.StateId);
+        await UpdateState(request.Id);
 
-        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateData { Id = request.StateId }, Action = EventAction.StateDelete});
+        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateData { Id = request.Id }, Action = EventAction.StateDelete});
 
-        return request.StateId.ToString();
+        return request.Id.ToString();
     }
 
     private async Task UpdateState(int stateId)

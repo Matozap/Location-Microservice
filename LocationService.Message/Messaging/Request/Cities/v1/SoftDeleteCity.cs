@@ -4,5 +4,5 @@ namespace LocationService.Message.Messaging.Request.Cities.v1;
 
 public class SoftDeleteCity : BaseMessage, IRequest<object>
 {
-    public int CityId { get; init; }
+    public int Id { get; init; }
 }

@@ -93,7 +93,7 @@ public class StateController : ControllerBase
     {
         var query = new SoftDeleteState
         {
-            StateId = id
+            Id = id
         };
         await _mediator.Send(query);
         return Ok("Success");

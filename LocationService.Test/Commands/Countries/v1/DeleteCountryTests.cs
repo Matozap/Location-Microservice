@@ -19,7 +19,7 @@ public class DeleteCountryTests
         // Arrange
         var classToHandle = new DeleteCountry
         {
-            CountryId = CountryMockBuilder.GenerateMockCountry().Id
+            Id = CountryMockBuilder.GenerateMockCountry().Id
         };
 
         
@@ -38,7 +38,7 @@ public class DeleteCountryTests
         // Arrange
         var classToHandle = new DeleteCountry
         {
-            CountryId = null
+            Id = null
         };
 
         var handler = (DeleteCountryHandler)CountryMockBuilder.CreateHandler<DeleteCountryHandler>();

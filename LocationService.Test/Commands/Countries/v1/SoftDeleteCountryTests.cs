@@ -19,7 +19,7 @@ public class SoftDeleteCountryTests
         // Arrange
         var classToHandle = new SoftDeleteCountry
         {
-            CountryId = CountryMockBuilder.GenerateMockCountry().Id
+            Id = CountryMockBuilder.GenerateMockCountry().Id
         };
         
         var handler = (SoftDeleteCountryHandler)CountryMockBuilder.CreateHandler<SoftDeleteCountryHandler>();
@@ -37,7 +37,7 @@ public class SoftDeleteCountryTests
         // Arrange
         var classToHandle = new SoftDeleteCountry
         {
-            CountryId = null
+            Id = null
         };
         
         var handler = (SoftDeleteCountryHandler)CountryMockBuilder.CreateHandler<SoftDeleteCountryHandler>();

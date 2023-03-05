@@ -26,8 +26,8 @@ public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
 
     public async Task<object> Handle(GetCountryById request, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request.CountryId);
-        var cacheKey = GetCacheKey(request.CountryId);
+        ArgumentNullException.ThrowIfNull(request.Id);
+        var cacheKey = GetCacheKey(request.Id);
 
         if (request.Source != MessageSource.Command)
         {
@@ -39,7 +39,7 @@ public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
             }
         }
 
-        var dataValue = await GetCountryById(request.CountryId);
+        var dataValue = await GetCountryById(request.Id);
 
         if(dataValue != null)
         {

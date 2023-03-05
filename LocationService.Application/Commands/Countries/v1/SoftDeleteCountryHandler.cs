@@ -29,20 +29,20 @@ public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, objec
 
     public async Task<object> Handle(SoftDeleteCountry request, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(request.CountryId);
+        ArgumentNullException.ThrowIfNull(request.Id);
 
-        await UpdateCountry(request.CountryId);
+        await UpdateCountry(request.Id);
 
-        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryData { Id = request.CountryId }, Action = EventAction.CountryDelete});
+        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryData { Id = request.Id }, Action = EventAction.CountryDelete});
 
-        return request.CountryId;
+        return request.Id;
     }
 
     private async Task UpdateCountry(string countryId)
     {
         var query = new GetCountryById
         {
-            CountryId = countryId
+            Id = countryId
         };
         var readResult = await _mediator.Send(query);
         var existingLocationDto = (CountryData)readResult;

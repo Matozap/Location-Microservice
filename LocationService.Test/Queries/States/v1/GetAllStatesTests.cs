@@ -3,10 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LocationService.Application.Queries.States.v1;
-using LocationService.Message.DTO.Countries.v1;
 using LocationService.Message.DTO.States.v1;
 using LocationService.Message.Messaging.Request.States.v1;
-using LocationService.Test.Queries.Countries;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LocationService.Test.Queries.States.v1;

@@ -30,20 +30,20 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
 
     public async Task<object> Handle(DeleteCountry request, CancellationToken cancellationToken)
     {
-        ArgumentException.ThrowIfNullOrEmpty(request.CountryId);
+        ArgumentException.ThrowIfNullOrEmpty(request.Id);
 
-        await DeleteCountryAsync(request.CountryId);
+        await DeleteCountryAsync(request.Id);
 
-        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryData {Id = request.CountryId}, Action = EventAction.CountryDelete});
+        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryData {Id = request.Id}, Action = EventAction.CountryDelete});
 
-        return request.CountryId;
+        return request.Id;
     }
 
     private async Task DeleteCountryAsync(string countryId)
     {
         var query = new GetCountryById
         {
-            CountryId = countryId,
+            Id = countryId,
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);

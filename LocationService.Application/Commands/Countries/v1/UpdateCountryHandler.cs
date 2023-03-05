@@ -43,7 +43,7 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
     {
         var query = new GetCountryById
         {
-            CountryId = countryData.Id,
+            Id = countryData.Id,
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);
