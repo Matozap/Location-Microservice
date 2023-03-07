@@ -38,12 +38,12 @@ public class CreateCountryTests
     public void CreateCountryInvalidNameTest()
     {
         // Arrange
-        var locationDto = CountryMockBuilder.GenerateMockCountryDtoList(1).First();
-        locationDto.Name = null;
+        var resultDto = CountryMockBuilder.GenerateMockCountryDtoList(1).First();
+        resultDto.Name = null;
         
         var classToHandle = new CreateCountry
         {
-            LocationDetails = locationDto
+            LocationDetails = resultDto
         };
         
         var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();

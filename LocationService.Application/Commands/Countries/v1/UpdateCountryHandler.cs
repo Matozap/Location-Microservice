@@ -47,9 +47,9 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (CountryData)readResult;
+        var resultDto = (CountryData)readResult;
             
-        if(existingLocationDto != null)
+        if(resultDto != null)
         {                
             await _repository.UpdateAsync(countryData.Adapt<CountryData, Domain.Country>());
         }

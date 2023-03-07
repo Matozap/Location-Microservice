@@ -44,11 +44,11 @@ public class DeleteCityHandler : IRequestHandler<DeleteCity, object>
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (CityData)readResult;
+        var existingresultDto = (CityData)readResult;
             
-        if(existingLocationDto != null)
+        if(existingresultDto != null)
         {                
-            await _repository.DeleteAsync(existingLocationDto.Adapt<CityData, Domain.City>());
+            await _repository.DeleteAsync(existingresultDto.Adapt<CityData, Domain.City>());
             _logger.LogInformation("City with id {CityId} was completely deleted", cityId.ToString());
         }
     }

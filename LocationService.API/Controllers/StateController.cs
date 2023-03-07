@@ -19,90 +19,112 @@ public class StateController : ControllerBase
     }
                 
     /// <summary>
-    ///  - Gets all the states in the system.
+    /// Gets all the states in the system.
     /// </summary>
     /// <returns>All States</returns>
-    [HttpGet("all/{countryId}")]
+    /// <response code="200">OK</response>
+    /// <response code="500">Internal Server error</response>
+    [HttpGet("All/{countryId}")]
     public async Task<IActionResult> GetAll(string countryId)
     {
         var query = new GetAllStates()
         {
             CountryId = countryId
         };
+        
         var result = await _mediator.Send(query);
         return Ok(result);
     }
 
     /// <summary>
-    /// - Gets s State by id (number or string).
+    /// Gets s State by id (number or string).
     /// </summary>
-    /// <param name="idCode">State Id or code</param>
-    /// <returns>Country</returns>        
+    /// <param name="code">State Id or code</param>
+    /// <returns>State</returns>
+    /// <response code="200">OK</response>
+    /// <response code="404">Not Found</response>
+    /// <response code="500">Internal Server error</response>
     [HttpGet("{idCode}")]
-    public async Task<IActionResult> GetById(string idCode)
+    public async Task<IActionResult> GetById(string code)
     {
-        var isNumber = int.TryParse(idCode, out var parsedId);
+        var isNumber = int.TryParse(code, out var parsedId);
         var query = new GetStateById
         {
             Id = isNumber ? parsedId : 0,
-            Code = idCode
+            Code = code
         };
+        
         var result = await _mediator.Send(query);
-        return Ok(result);
+
+        return result == null ? NotFound() :
+            Ok(result);
     }
     
     /// <summary>
     /// Creates an state based in the given object. 
     /// </summary>
-    /// <param name="location">CountryDto</param>
+    /// <param name="data">State Data</param>
     /// <returns>State</returns>
+    /// <response code="201">Created</response>
+    /// <response code="409">Conflict</response>
+    /// <response code="500">Internal Server error</response>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] StateData location)
+    public async Task<IActionResult> Create([FromBody] StateData data)
     {
         var query = new CreateState
         {
-            LocationDetails = location
+            LocationDetails = data
         };
+        
         var result = await _mediator.Send(query);
-        return Ok(result);
+        return result == null ? Conflict() : 
+            CreatedAtAction("Create", new {id = ((StateData)result).Id}, result);
     }
 
 
     /// <summary>
     /// Updates an state based in the given object.
     /// </summary>
-    /// <param name="location">CountryDto</param>
+    /// <param name="data">State Data</param>
     /// <returns>Country</returns>
+    /// <response code="200">OK</response>
+    /// <response code="500">Internal Server error</response>
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] StateData location)
+    public async Task<IActionResult> Update([FromBody] StateData data)
     {
         var query = new UpdateState
         {
-            LocationDetails = location
+            LocationDetails = data
         };
+        
         var result = await _mediator.Send(query);
         return Ok(result);
     }
 
     /// <summary>
-    /// Does a soft delete on the State with the given id and returns "Success" if no exception was raised.
+    /// Does a soft delete on the State with the given id.
     /// </summary>
-    /// <param name="id">Country Id</param>
+    /// <param name="id">Id</param>
+    /// <response code="204">No Content</response>
+    /// <response code="500">Internal Server error</response>
     [HttpDelete("Disable/{id}")]
-    public async Task<IActionResult> SoftDelete(int id)
+    public async Task<IActionResult> Disable(int id)
     {
         var query = new SoftDeleteState
         {
             Id = id
         };
+        
         await _mediator.Send(query);
-        return Ok("Success");
+        return NoContent();
     }
 
     /// <summary>
-    /// Does a physical delete on the location with the given id
+    /// Does a physical delete on the location with the given id.
     /// </summary>
-    /// <param name="id">Country Id</param>
+    /// <param name="id">Id</param>
+    /// <response code="204">No Content</response>
+    /// <response code="500">Internal Server error</response>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -110,7 +132,8 @@ public class StateController : ControllerBase
         {
             Id = id
         };
+        
         await _mediator.Send(query);
-        return Ok("Success");
+        return NoContent();
     }
 }

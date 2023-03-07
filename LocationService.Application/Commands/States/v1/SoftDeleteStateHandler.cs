@@ -42,11 +42,11 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
             Id = stateId
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (StateData)readResult;
+        var resultDto = (StateData)readResult;
             
-        if(existingLocationDto != null)
+        if(resultDto != null)
         {
-            var result = existingLocationDto.Adapt<StateData, Domain.State>();
+            var result = resultDto.Adapt<StateData, Domain.State>();
             result.Disabled = true;
             await _repository.UpdateAsync(result);
             _logger.LogInformation("State with id {StateId} was soft deleted", stateId.ToString());

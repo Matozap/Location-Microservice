@@ -47,11 +47,11 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (CountryData)readResult;
+        var resultDto = (CountryData)readResult;
             
-        if(existingLocationDto != null)
+        if(resultDto != null)
         {                
-            await _repository.DeleteAsync(existingLocationDto.Adapt<CountryData, Domain.Country>());
+            await _repository.DeleteAsync(resultDto.Adapt<CountryData, Domain.Country>());
             _logger.LogInformation("Country with id {CountryId} was completely deleted", countryId);
         }
     }

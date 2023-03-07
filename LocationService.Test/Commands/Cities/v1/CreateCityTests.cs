@@ -38,12 +38,12 @@ public class CreateCityTests
     public void CreateCitiyInvalidNameTest()
     {
         // Arrange
-        var locationDto = CityMockBuilder.GenerateMockCityDtoList(1).First();
-        locationDto.Name = null;
+        var resultDto = CityMockBuilder.GenerateMockCityDtoList(1).First();
+        resultDto.Name = null;
         
         var classToHandle = new CreateCity
         {
-            LocationDetails = locationDto
+            LocationDetails = resultDto
         };
         
         var handler = (CreateCityHandler)CityMockBuilder.CreateHandler<CreateCityHandler>();

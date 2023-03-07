@@ -52,8 +52,8 @@ public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
     private async Task<CountryData> GetCountryById(string id)
     {
         var entity = await _repository.GetCountryAsync(e => e.Id == id);
-        var locationDto = entity.Adapt<Domain.Country, CountryData>();
-        return locationDto;
+        var resultDto = entity.Adapt<Domain.Country, CountryData>();
+        return resultDto;
     }
 
     public static string GetCacheKey(string id) => $"Country:id:{id}";

@@ -45,11 +45,11 @@ public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, objec
             Id = countryId
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (CountryData)readResult;
+        var resultDto = (CountryData)readResult;
             
-        if(existingLocationDto != null)
+        if(resultDto != null)
         {
-            var result = existingLocationDto.Adapt<CountryData, Domain.Country>();
+            var result = resultDto.Adapt<CountryData, Domain.Country>();
             result.Disabled = true;
             await _repository.UpdateAsync(result);
             _logger.LogInformation("Country with id {CountryId} was soft deleted", countryId);

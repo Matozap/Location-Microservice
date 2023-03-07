@@ -50,8 +50,8 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
     private async Task<CityData> GetStateById(int id)
     {
         var entity = await _repository.GetCityAsync(e => e.Id == id);
-        var locationDto = entity.Adapt<Domain.City, CityData>();
-        return locationDto;
+        var resultDto = entity.Adapt<Domain.City, CityData>();
+        return resultDto;
     }
 
     public static string GetCacheKey(string id) => $"City:id:{id}";

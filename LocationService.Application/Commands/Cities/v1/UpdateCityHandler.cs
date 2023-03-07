@@ -44,9 +44,9 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (CityData)readResult;
+        var existingresultDto = (CityData)readResult;
             
-        if(existingLocationDto != null)
+        if(existingresultDto != null)
         {                
             await _repository.UpdateAsync(cityData.Adapt<CityData, Domain.City>());
         }

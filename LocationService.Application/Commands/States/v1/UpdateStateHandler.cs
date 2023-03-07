@@ -45,9 +45,9 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (StateData)readResult;
+        var resultDto = (StateData)readResult;
             
-        if(existingLocationDto != null)
+        if(resultDto != null)
         {                
             await _repository.UpdateAsync(stateData.Adapt<StateData, Domain.State>());
         }

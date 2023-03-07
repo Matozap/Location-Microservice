@@ -31,16 +31,23 @@ public class CreateCountryHandler : IRequestHandler<CreateCountry, object>
         ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Name);
         
         var resultEntity = await CreateCountry(request.LocationDetails);
+        if (resultEntity == null) return null;
+            
         _logger.LogInformation("Country with id {CountryID} created successfully", resultEntity.Id);
-        var locationDto = resultEntity.Adapt<Domain.Country, CountryData>();
+        var resultDto = resultEntity.Adapt<Domain.Country, CountryData>();
             
         _ = _eventBus.Publish(new CountryEvent { LocationDetails = request.LocationDetails, Action = EventAction.CountryCreate});
 
-        return locationDto;
+        return resultDto;
     }
 
     private async Task<Domain.Country> CreateCountry(CountryData country)
     {
+        if ((await _repository.GetCountryAsync(e => e.Name == country.Name)) == null)
+        {
+            return null;
+        }
+        
         var entity = country.Adapt<CountryData, Domain.Country>();
         entity.LastUpdateUserId ??= "system";
         entity.LastUpdateDate = DateTime.Now;

@@ -30,16 +30,23 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
         ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Name);
         
         var resultEntity = await CreateState(request.LocationDetails);
+        if (resultEntity == null) return null;
+        
         _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id);
-        var locationDto = resultEntity.Adapt<Domain.State, StateData>();
+        var resultDto = resultEntity.Adapt<Domain.State, StateData>();
             
         _ = _eventBus.Publish(new StateEvent { LocationDetails = request.LocationDetails, Action = EventAction.StateCreate});
 
-        return locationDto;
+        return resultDto;
     }
 
     private async Task<Domain.State> CreateState(StateData state)
     {
+        if ((await _repository.GetStateAsync(e => e.Code == state.Code && e.CountryId == state.CountryId)) == null)
+        {
+            return null;
+        }
+        
         var entity = state.Adapt<StateData, Domain.State>();
         entity.LastUpdateUserId ??= "system";
         entity.LastUpdateDate = DateTime.Now;

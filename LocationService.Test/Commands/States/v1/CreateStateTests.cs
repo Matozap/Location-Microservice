@@ -38,12 +38,12 @@ public class CreateStateTests
     public void CreateStateInvalidNameTest()
     {
         // Arrange
-        var locationDto = StateMockBuilder.GenerateMockStateDtoList(1).First();
-        locationDto.Name = null;
+        var resultDto = StateMockBuilder.GenerateMockStateDtoList(1).First();
+        resultDto.Name = null;
         
         var classToHandle = new CreateState
         {
-            LocationDetails = locationDto
+            LocationDetails = resultDto
         };
         
         var handler = (CreateStateHandler)StateMockBuilder.CreateHandler<CreateStateHandler>();

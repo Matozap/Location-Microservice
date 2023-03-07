@@ -41,7 +41,7 @@ public static class SwaggerExtension
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "Location Service");
             c.DisplayRequestDuration();
             c.DefaultModelExpandDepth(1);
-            c.DefaultModelsExpandDepth(1);
+            c.DefaultModelsExpandDepth(-1);
         });
     }
 }

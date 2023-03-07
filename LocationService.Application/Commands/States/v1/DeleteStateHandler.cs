@@ -44,11 +44,11 @@ public class DeleteStateHandler : IRequestHandler<DeleteState, object>
             Source = MessageSource.Command
         };
         var readResult = await _mediator.Send(query);
-        var existingLocationDto = (StateData)readResult;
+        var resultDto = (StateData)readResult;
             
-        if(existingLocationDto != null)
+        if(resultDto != null)
         {                
-            await _repository.DeleteAsync(existingLocationDto.Adapt<StateData, Domain.State>());
+            await _repository.DeleteAsync(resultDto.Adapt<StateData, Domain.State>());
             _logger.LogInformation("State with id {StateId} was completely deleted", stateId.ToString());
         }
     }

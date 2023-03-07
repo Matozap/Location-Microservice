@@ -30,16 +30,23 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
         ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Name);
         
         var resultEntity = await CreateCity(request.LocationDetails);
-        _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id);
-        var locationDto = resultEntity.Adapt<Domain.City, CityData>();
+        if (resultEntity == null) return null;
+        
+        _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id.ToString());
+        var resultDto = resultEntity.Adapt<Domain.City, CityData>();
             
         _ = _eventBus.Publish(new CityEvent { LocationDetails = request.LocationDetails, Action = EventAction.CityCreate});
 
-        return locationDto;
+        return resultDto;
     }
 
     private async Task<Domain.City> CreateCity(CityData city)
     {
+        if (await _repository.GetCityAsync(e => e.Name == city.Name && e.StateId == city.StateId) == null)
+        {
+            return null;
+        }
+        
         var entity = city.Adapt<CityData, Domain.City>();
         entity.LastUpdateUserId ??= "system";
         entity.LastUpdateDate = DateTime.Now;
