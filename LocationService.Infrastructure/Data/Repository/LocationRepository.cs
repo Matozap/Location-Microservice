@@ -114,14 +114,18 @@ public class LocationRepository : ILocationRepository
     
     private static IQueryable<Country> LoadAllNavigationalProperties(IQueryable<Country> source)
     {
-        return source.Include(c => c.States.Where(s => !s.Disabled)).ThenInclude(s => s.Cities.Where(c => !c.Disabled)).AsNoTracking();
+        return source.Include(c => c.States.Where(s => !s.Disabled))
+            .ThenInclude(s => s.Cities.Where(c => !c.Disabled))
+            .AsNoTracking();
     }
     private static IQueryable<State> LoadAllNavigationalProperties(IQueryable<State> source)
     {
-        return source.Include(s => s.Cities.Where(c => !c.Disabled)).AsNoTracking();
+        return source.Include(s => s.Cities.Where(c => !c.Disabled))
+            .AsNoTracking();
     }
     private static IQueryable<City> LoadAllNavigationalProperties(IQueryable<City> source)
     {
-        return source.AsNoTracking();
+        return source
+            .AsNoTracking();
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LocationService.Application.Commands.Cities.v1;
 using LocationService.Message.Messaging.Request.Cities.v1;
+using LocationService.Test.MockBuilder;
 using LocationService.Test.Queries.Cities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

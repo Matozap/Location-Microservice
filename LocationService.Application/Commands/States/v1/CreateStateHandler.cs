@@ -41,8 +41,9 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
     private async Task<Domain.State> CreateState(StateData state)
     {
         var entity = state.Adapt<StateData, Domain.State>();
-        entity.LastUpdateUserId = "system";
-        entity.LastUpdateDate= DateTime.Now;
+        entity.LastUpdateUserId ??= "system";
+        entity.LastUpdateDate = DateTime.Now;
+        
         return await _repository.AddAsync(entity);
     }
 }

@@ -45,7 +45,7 @@ public sealed class LocationContext : DbContext
             entity.HasPartitionKey(e => e.Id);
             entity.Property(p => p.Id).ToJsonProperty("id").IsRequired();
             entity.Property(p => p.Name).IsRequired();
-            entity.HasMany(c => c.States).WithOne(s => s.Country);
+            entity.HasMany(c => c.States);
         });
     }
     
@@ -57,7 +57,6 @@ public sealed class LocationContext : DbContext
             entity.HasIndex(e => e.Code);
             entity.Property(p => p.Id).ToJsonProperty("id").IsRequired();
             entity.Property(p => p.Name).IsRequired();
-            entity.HasOne(c => c.Country);
             entity.HasMany(s => s.Cities).WithOne(c => c.State);
         });
     }

@@ -15,7 +15,7 @@ using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
-namespace LocationService.Test.Queries.Cities;
+namespace LocationService.Test.MockBuilder;
 
 public static class CityMockBuilder
 {
@@ -54,6 +54,8 @@ public static class CityMockBuilder
     {
         return Fixture.Build<City>()
             .Without(s => s.State)
+            .With(s => s.LastUpdateDate, () => DateTime.Now)
+            .With(s => s.LastUpdateUserId, () => "Test")
             .CreateMany(count)
             .ToList();
     }
@@ -68,6 +70,8 @@ public static class CityMockBuilder
     {
         return Fixture.Build<City>()
             .Without(s => s.State)
+            .With(s => s.LastUpdateDate, () => DateTime.Now)
+            .With(s => s.LastUpdateUserId, () => "Test")
             .Create();
     }
 

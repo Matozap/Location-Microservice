@@ -42,8 +42,9 @@ public class CreateCountryHandler : IRequestHandler<CreateCountry, object>
     private async Task<Domain.Country> CreateCountry(CountryData country)
     {
         var entity = country.Adapt<CountryData, Domain.Country>();
-        entity.LastUpdateUserId = "system";
-        entity.LastUpdateDate= DateTime.Now;
+        entity.LastUpdateUserId ??= "system";
+        entity.LastUpdateDate = DateTime.Now;
+        
         return await _repository.AddAsync(entity);
     }
 }

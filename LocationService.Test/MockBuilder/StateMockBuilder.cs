@@ -15,7 +15,7 @@ using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
-namespace LocationService.Test.Queries.States;
+namespace LocationService.Test.MockBuilder;
 
 public static class StateMockBuilder
 {
@@ -53,8 +53,10 @@ public static class StateMockBuilder
     private static List<State> GenerateMockDomainStateList(int count)
     {
         return Fixture.Build<State>()
-            .Without(s => s.Country)
             .Without(s => s.Cities)
+            .Without(s => s.Country)
+            .With(s => s.LastUpdateDate, () => DateTime.Now)
+            .With(s => s.LastUpdateUserId, () => "Test")
             .CreateMany(count)
             .ToList();
     }
@@ -69,8 +71,10 @@ public static class StateMockBuilder
     public static State GenerateMockState()
     {
         return Fixture.Build<State>()
-            .Without(s => s.Country)
             .Without(s => s.Cities)
+            .Without(s => s.Country)
+            .With(s => s.LastUpdateDate, () => DateTime.Now)
+            .With(s => s.LastUpdateUserId, () => "Test")
             .Create();
     }
 

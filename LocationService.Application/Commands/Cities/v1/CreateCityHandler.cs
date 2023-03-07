@@ -29,7 +29,7 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
     {
         ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Name);
         
-        var resultEntity = await CreateState(request.LocationDetails);
+        var resultEntity = await CreateCity(request.LocationDetails);
         _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id);
         var locationDto = resultEntity.Adapt<Domain.City, CityData>();
             
@@ -38,11 +38,12 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
         return locationDto;
     }
 
-    private async Task<Domain.City> CreateState(CityData city)
+    private async Task<Domain.City> CreateCity(CityData city)
     {
         var entity = city.Adapt<CityData, Domain.City>();
-        entity.LastUpdateUserId = "system";
-        entity.LastUpdateDate= DateTime.Now;
+        entity.LastUpdateUserId ??= "system";
+        entity.LastUpdateDate = DateTime.Now;
+        
         return await _repository.AddAsync(entity);
     }
 }

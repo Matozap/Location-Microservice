@@ -5,6 +5,7 @@ using FluentAssertions;
 using LocationService.Application.Queries.Countries.v1;
 using LocationService.Message.DTO.Countries.v1;
 using LocationService.Message.Messaging.Request.Countries.v1;
+using LocationService.Test.MockBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LocationService.Test.Queries.Countries.v1;
