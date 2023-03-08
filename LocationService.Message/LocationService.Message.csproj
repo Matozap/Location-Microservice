@@ -2,27 +2,36 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <PackageId>NID.LocationService.Message</PackageId>
-    <Authors>Nicolas Zapata</Authors>
-    <Company>NZR</Company>
-    <Product>NID</Product>
-    <Description>Contract library usually used to send messages to the NID Location Service Microservice</Description>
-    <Copyright>NID</Copyright>
+    <PackageId>LocationService.Message</PackageId>
+    <Authors>Sluk4d</Authors>
+    <Company>Matozap</Company>
+    <Product>LocationService.Message</Product>
+    <Description>Location Service Microservice</Description>
+    <Copyright>Matozap</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>NID, Location Service, Location, Contract, Message</PackageTags>
+    <PackageTags>Matozap, Location Service, Microservice, Location, Contract, Message</PackageTags>
     <PackageReleaseNotes>Release Candidate</PackageReleaseNotes>
     <RepositoryType>Microservice Contract</RepositoryType>
-    <PackageIcon>Deloitte.png</PackageIcon>
-    <Version>1.0.3</Version>
+    <PackageIcon>Logo.png</PackageIcon>
+    <Version>1.0.0</Version>
     <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="logo.png" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <None Update="logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <PackageIcon>logo.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".\logo.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
