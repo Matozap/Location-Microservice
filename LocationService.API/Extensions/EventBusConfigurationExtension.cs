@@ -26,9 +26,10 @@ public static class EventBusConfigurationExtension
                 x.SetKebabCaseEndpointNameFormatter();
                 x.AddConsumers(entryAssembly);
 
-                switch (eventBusOptions.UseInMemory)
+                switch (eventBusOptions.BusType)
                 {
-                    case true:
+                    default:
+                    case "InMemory":
                         x.UsingInMemory((context, cfg) =>
                         {
                             SetEventBusMessages(cfg);
@@ -36,7 +37,7 @@ public static class EventBusConfigurationExtension
                         });
                         break;
                     
-                    default:
+                    case "Azure Service Bus":
                         x.UsingAzureServiceBus((context, cfg) =>
                         {
                             cfg.Host(eventBusOptions.ConnectionString);
