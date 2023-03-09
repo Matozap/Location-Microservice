@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using LocationService.Domain;
-using LocationService.Message.DTO.Cities.v1;
-using LocationService.Message.DTO.Countries.v1;
-using LocationService.Message.DTO.States.v1;
+using LocationService.Message.DataTransfer.Cities.v1;
+using LocationService.Message.DataTransfer.Countries.v1;
+using LocationService.Message.DataTransfer.States.v1;
 using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

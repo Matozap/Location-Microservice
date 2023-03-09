@@ -2,9 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Queries.Cities.v1;
-using LocationService.Message.DTO.Cities.v1;
-using LocationService.Message.Messaging.Request.Cities.v1;
+using LocationService.Application.Logic.Cities.Queries.v1;
+using LocationService.Message.DataTransfer.Cities.v1;
+using LocationService.Message.Definition.Cities.Requests.v1;
 using LocationService.Test.MockBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

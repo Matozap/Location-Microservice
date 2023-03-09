@@ -4,13 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoFixture;
-using LocationService.Application.Commands.Cities.v1;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Queries.Cities.v1;
+using LocationService.Application.Logic.Cities.Commands.v1;
+using LocationService.Application.Logic.Cities.Queries.v1;
 using LocationService.Domain;
-using LocationService.Message.DTO.Cities.v1;
-using LocationService.Message.Messaging.Request.Cities.v1;
-using LocationService.Message.Messaging.Response.Cities.v1;
+using LocationService.Message.DataTransfer.Cities.v1;
+using LocationService.Message.Definition.Cities.Requests.v1;
+using LocationService.Message.Definition.Cities.Responses.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -110,8 +110,10 @@ public static class CityMockBuilder
         
         if (typeof(T) == typeof(CreateCityHandler))
         {
+            var repository = GenerateMockRepository(location);
+            repository.GetCityAsync(Arg.Any<Expression<Func<City, bool>>>()).Returns((City)null);
             return new CreateCityHandler(NullLogger<CreateCityHandler>.Instance,
-                GenerateMockRepository(location),
+                repository,
                 GenerateMockEventBus());
         }
         

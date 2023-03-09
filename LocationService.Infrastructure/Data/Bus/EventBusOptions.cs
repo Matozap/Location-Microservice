@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace LocationService.Infrastructure.Data.Queue;
+namespace LocationService.Infrastructure.Data.Bus;
 
 public class EventBusOptions
 {

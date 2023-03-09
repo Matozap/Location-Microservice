@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using LocationService.API.Events.Location;
+using LocationService.API.Consumers.Location;
 using LocationService.Application.Interfaces;
-using LocationService.Infrastructure.Data.Queue;
-using LocationService.Message.Messaging.Event.v1;
+using LocationService.Infrastructure.Data.Bus;
+using LocationService.Message.Definition.Cities.Events.v1;
+using LocationService.Message.Definition.Countries.Events.v1;
+using LocationService.Message.Definition.States.Events.v1;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoFixture;
-using LocationService.Application.Commands.Countries.v1;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Queries.Countries.v1;
+using LocationService.Application.Logic.Countries.Commands.v1;
+using LocationService.Application.Logic.Countries.Queries.v1;
 using LocationService.Domain;
-using LocationService.Message.DTO.Countries.v1;
-using LocationService.Message.Messaging.Request.Countries.v1;
-using LocationService.Message.Messaging.Response.Countries.v1;
+using LocationService.Message.DataTransfer.Countries.v1;
+using LocationService.Message.Definition.Countries.Requests.v1;
+using LocationService.Message.Definition.Countries.Responses.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -111,8 +111,10 @@ public static class CountryMockBuilder
         
         if (typeof(T) == typeof(CreateCountryHandler))
         {
+            var repository = GenerateMockRepository(location);
+            repository.GetCountryAsync(Arg.Any<Expression<Func<Country, bool>>>()).Returns((Country)null);
             return new CreateCountryHandler(NullLogger<CreateCountryHandler>.Instance,
-                GenerateMockRepository(location),
+                repository,
                 GenerateMockEventBus());
         }
         

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using LocationService.Message.DTO.Countries.v1;
-using LocationService.Message.Messaging.Request.Countries.v1;
+using LocationService.Message.DataTransfer.Countries.v1;
+using LocationService.Message.Definition.Countries.Requests.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

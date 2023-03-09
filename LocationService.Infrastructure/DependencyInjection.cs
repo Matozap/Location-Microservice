@@ -1,8 +1,8 @@
 using System;
 using System.Reflection;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Queries.Countries.v1;
-using LocationService.Infrastructure.Data.Cache;
+using LocationService.Application.Logic.Countries.Queries.v1;
+using LocationService.Infrastructure.Data.Caching;
 using LocationService.Infrastructure.Data.Context;
 using LocationService.Infrastructure.Data.Repository;
 using LocationService.Infrastructure.Extensions;

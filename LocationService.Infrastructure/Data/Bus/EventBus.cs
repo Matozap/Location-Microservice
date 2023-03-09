@@ -1,10 +1,10 @@
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
-namespace LocationService.Infrastructure.Data.Queue;
+namespace LocationService.Infrastructure.Data.Bus;
 
 public sealed class EventBus : IEventBus
 {

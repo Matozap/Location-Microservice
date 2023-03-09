@@ -4,13 +4,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoFixture;
-using LocationService.Application.Commands.States.v1;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Queries.States.v1;
+using LocationService.Application.Logic.States.Commands.v1;
+using LocationService.Application.Logic.States.Queries.v1;
 using LocationService.Domain;
-using LocationService.Message.DTO.States.v1;
-using LocationService.Message.Messaging.Request.States.v1;
-using LocationService.Message.Messaging.Response.States.v1;
+using LocationService.Message.DataTransfer.States.v1;
+using LocationService.Message.Definition.States.Requests.v1;
+using LocationService.Message.Definition.States.Responses.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -113,8 +113,10 @@ public static class StateMockBuilder
         
         if (typeof(T) == typeof(CreateStateHandler))
         {
+            var repository = GenerateMockRepository(location);
+            repository.GetStateAsync(Arg.Any<Expression<Func<State, bool>>>()).Returns((State)null);
             return new CreateStateHandler(NullLogger<CreateStateHandler>.Instance,
-                GenerateMockRepository(location),
+                repository,
                 GenerateMockEventBus());
         }
         

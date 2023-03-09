@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Commands.Cities.v1;
-using LocationService.Message.DTO.Cities.v1;
-using LocationService.Message.Messaging.Request.v1;
+using LocationService.Application.Logic.Cities.Commands.v1;
+using LocationService.Message.DataTransfer.Cities.v1;
+using LocationService.Message.Definition.Cities.Requests.v1;
 using LocationService.Test.MockBuilder;
 using LocationService.Test.Queries.Cities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -35,7 +35,7 @@ public class CreateCityTests
     }
 
     [TestMethod]
-    public void CreateCitiyInvalidNameTest()
+    public void CreateCityInvalidNameTest()
     {
         // Arrange
         var resultDto = CityMockBuilder.GenerateMockCityDtoList(1).First();
