@@ -15,9 +15,9 @@ public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
 {
     private readonly ILogger<GetCountryByIdHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IObjectCache _cache;
+    private readonly ICache _cache;
 
-    public GetCountryByIdHandler(ILocationRepository repository, IObjectCache cache, ILogger<GetCountryByIdHandler> logger)
+    public GetCountryByIdHandler(ILocationRepository repository, ICache cache, ILogger<GetCountryByIdHandler> logger)
     {
         _repository = repository;
         _cache = cache;

@@ -13,10 +13,10 @@ namespace LocationService.Application.Queries.Countries.v1;
 public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, object>
 {
     private readonly ILogger<GetAllCountriesHandler> _logger;
-    private readonly IObjectCache _cache;
+    private readonly ICache _cache;
     private readonly ILocationRepository _repository;
 
-    public GetAllCountriesHandler(IObjectCache cache, ILogger<GetAllCountriesHandler> logger, ILocationRepository repository)
+    public GetAllCountriesHandler(ICache cache, ILogger<GetAllCountriesHandler> logger, ILocationRepository repository)
     {
         _logger = logger;
         _cache = cache;

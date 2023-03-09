@@ -13,10 +13,10 @@ namespace LocationService.Application.Queries.Cities.v1;
 public class GetAllCitiesHandler : IRequestHandler<GetAllCities, object>
 {
     private readonly ILogger<GetAllCitiesHandler> _logger;
-    private readonly IObjectCache _cache;
+    private readonly ICache _cache;
     private readonly ILocationRepository _repository;
 
-    public GetAllCitiesHandler(IObjectCache cache, ILogger<GetAllCitiesHandler> logger, ILocationRepository repository)
+    public GetAllCitiesHandler(ICache cache, ILogger<GetAllCitiesHandler> logger, ILocationRepository repository)
     {
         _logger = logger;
         _cache = cache;

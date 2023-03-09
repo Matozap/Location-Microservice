@@ -13,10 +13,10 @@ namespace LocationService.Application.Queries.States.v1;
 public class GetAllStatesHandler : IRequestHandler<GetAllStates, object>
 {
     private readonly ILogger<GetAllStatesHandler> _logger;
-    private readonly IObjectCache _cache;
+    private readonly ICache _cache;
     private readonly ILocationRepository _repository;
 
-    public GetAllStatesHandler(IObjectCache cache, ILogger<GetAllStatesHandler> logger, ILocationRepository repository)
+    public GetAllStatesHandler(ICache cache, ILogger<GetAllStatesHandler> logger, ILocationRepository repository)
     {
         _logger = logger;
         _cache = cache;

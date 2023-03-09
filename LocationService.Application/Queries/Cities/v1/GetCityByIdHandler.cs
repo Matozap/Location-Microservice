@@ -14,9 +14,9 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
 {
     private readonly ILogger<GetCityByIdHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IObjectCache _cache;
+    private readonly ICache _cache;
 
-    public GetCityByIdHandler(ILocationRepository repository, IObjectCache cache, ILogger<GetCityByIdHandler> logger)
+    public GetCityByIdHandler(ILocationRepository repository, ICache cache, ILogger<GetCityByIdHandler> logger)
     {
         _repository = repository;
         _cache = cache;

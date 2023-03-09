@@ -14,9 +14,9 @@ public class GetStateByIdHandler : IRequestHandler<GetStateById, object>
 {
     private readonly ILogger<GetStateByIdHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IObjectCache _cache;
+    private readonly ICache _cache;
 
-    public GetStateByIdHandler(ILocationRepository repository, IObjectCache cache, ILogger<GetStateByIdHandler> logger)
+    public GetStateByIdHandler(ILocationRepository repository, ICache cache, ILogger<GetStateByIdHandler> logger)
     {
         _repository = repository;
         _cache = cache;

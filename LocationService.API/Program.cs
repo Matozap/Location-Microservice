@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LocationService.API;
 
-public class LocalEntryPoint
+public class Program
 {
     private static IConfiguration _configuration;
     public static async Task Main(string[] args)
@@ -54,7 +54,7 @@ public class LocalEntryPoint
                 loggerConfiguration
                     .ReadFrom.Configuration(hostingContext.Configuration)
                     .Enrich.FromLogContext()
-                    .Enrich.WithProperty("ApplicationName", typeof(LocalEntryPoint).Assembly.GetName().Name)
+                    .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name)
                     .Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
             });
 }

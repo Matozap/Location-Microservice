@@ -15,9 +15,9 @@ namespace LocationService.Application.Commands.Cache;
 public class ClearCacheHandler : IRequestHandler<ClearCache, bool>
 {
     private readonly ILogger<ClearCacheHandler> _logger;
-    private readonly IObjectCache _cache;
+    private readonly ICache _cache;
 
-    public ClearCacheHandler(ILogger<ClearCacheHandler> logger, IObjectCache cache)
+    public ClearCacheHandler(ILogger<ClearCacheHandler> logger, ICache cache)
     {
         _logger = logger;
         _cache = cache;

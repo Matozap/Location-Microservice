@@ -22,9 +22,14 @@ public static class DependencyInjection
     {
         var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
         var isProduction = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true" && !isDevelopment;
+        
+        var cacheOptions= new CacheOptions();
+        configuration.GetSection("Cache").Bind(cacheOptions);
+        var locationContextOptions = new LocationContextOptions();
+        configuration.GetSection("LocationContext").Bind(locationContextOptions);
 
-        services.AddDataContext(configuration, isProduction)
-            .AddCache(configuration, isProduction)
+        services.AddDataContext(locationContextOptions, isProduction)
+            .AddCache(cacheOptions)
             .AddMediatR(Assembly.GetExecutingAssembly().GetType(), typeof(ILocationRepository), typeof(GetAllCountriesHandler), typeof(IMapper))
             .EnsureDatabaseIsSeeded();
 
@@ -37,11 +42,8 @@ public static class DependencyInjection
         return app;
     }
 
-    private static IServiceCollection AddDataContext(this IServiceCollection services, IConfiguration configuration, bool isProduction)
+    private static IServiceCollection AddDataContext(this IServiceCollection services, LocationContextOptions locationContextOptions, bool isProduction)
     {
-        var locationContextOptions = new LocationContextOptions();
-        configuration.GetSection("LocationContext").Bind(locationContextOptions);
-        
         switch (isProduction)
         {
             case true:
@@ -62,26 +64,20 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddCache(this IServiceCollection services, IConfiguration configuration, bool isProduction)
+    private static IServiceCollection AddCache(this IServiceCollection services, CacheOptions cacheOptions)
     {
-        var cacheOptions= new CacheOptions();
-        configuration.GetSection("Cache").Bind(cacheOptions);
-        
-        switch (isProduction)
+        switch (cacheOptions.CacheType)
         {
-            case true:
+            case "Redis":
             {
-                if (!cacheOptions.Disabled)
+                services.AddStackExchangeRedisCache(option =>
                 {
-                    services.AddStackExchangeRedisCache(option =>
-                    {
-                        option.Configuration = cacheOptions.ConnectionString;
-                        option.InstanceName = "location";
-                    });
-                }
+                    option.Configuration = cacheOptions.ConnectionString;
+                    option.InstanceName = cacheOptions.InstanceName;
+                });
                 break;
             }
-            case false:
+            default:
             {
                 services.AddDistributedMemoryCache();
                 break;
@@ -89,7 +85,7 @@ public static class DependencyInjection
         }
         
         services.AddSingleton(cacheOptions);
-        services.AddSingleton<IObjectCache, ObjectCache>();
+        services.AddSingleton<ICache, Cache>();
         return services;
     }
 }

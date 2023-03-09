@@ -44,9 +44,9 @@ public static class CityMockBuilder
         return eventBus;
     }
 
-    private static IObjectCache GenerateMockObjectCache()
+    private static ICache GenerateMockObjectCache()
     {
-        var cache = Substitute.For<IObjectCache>();
+        var cache = Substitute.For<ICache>();
         return cache;
     }
 
