@@ -1,7 +1,7 @@
-using LocationService.Infrastructure.Data.Context;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using LocationService.Infrastructure.Database.Context;
 
 namespace LocationService.Infrastructure.Extensions;
 
@@ -14,7 +14,7 @@ public static class InitializeDbContextExtension
         {
             var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
-            using var serviceScope = serviceProvider.GetService<LocationContext>();
+            using var serviceScope = serviceProvider.GetService<DatabaseContext>();
         }
         catch (Exception ex)
         {

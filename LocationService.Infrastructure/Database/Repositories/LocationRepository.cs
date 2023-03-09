@@ -5,16 +5,16 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
-using LocationService.Infrastructure.Data.Context;
+using LocationService.Infrastructure.Database.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace LocationService.Infrastructure.Data.Repository;
+namespace LocationService.Infrastructure.Database.Repositories;
 
 public class LocationRepository : ILocationRepository
 {
-    private readonly LocationContext _applicationContext;
+    private readonly DatabaseContext _applicationContext;
 
-    public LocationRepository(LocationContext applicationContext)
+    public LocationRepository(DatabaseContext applicationContext)
     {
         _applicationContext = applicationContext;
     }

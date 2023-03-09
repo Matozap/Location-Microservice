@@ -6,53 +6,54 @@ using System.Text.Json;
 using LocationService.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace LocationService.Infrastructure.Data.Context;
+namespace LocationService.Infrastructure.Database.Context;
 
-public static class LocationSeedData
+public static class DatabaseSeed
 {
-    private record RawCity(int id, string name);
-    private record RawState(int id, string name, string state_code, RawCity[] cities);
-    private record RawCountry(int id, string name, string iso2, RawState[] states);
+    private record RawCity(int Id, string Name);
+    private record RawState(int Id, string Name, string state_code, RawCity[] Cities);
+    private record RawCountry(string Name, string Iso2, RawState[] States);
     
-    public static void SeedAllCountriesData(LocationContext context)
+    public static void SeedAllCountriesData(DatabaseContext context)
     {
         try
         {
             context.Database.EnsureCreated();
             if (context.Countries.AsNoTracking().OrderBy(e => e.Id).FirstOrDefault() == null)
             {
-                var seedFile = string.Concat(File.ReadAllLines(@"D:\Local\src\Matozap\Location-Microservice\InputData\countries-states-cities.json"));
-                var countryList = JsonSerializer.Deserialize<List<RawCountry>>(seedFile);
+                var path = Path.Combine(AppContext.BaseDirectory, @"Database\Context\Seed", "countries-states-cities.json");
+                var seedFile = string.Concat(File.ReadAllLines(path));
+                var countryList = JsonSerializer.Deserialize<List<RawCountry>>(seedFile, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 foreach (var country in countryList)
                 {
                     context.Countries.Add(new Country
                     {
-                        Id = country.iso2,
-                        Name = country.name,
+                        Id = country.Iso2,
+                        Name = country.Name,
                         LastUpdateDate = DateTime.UtcNow,
                         LastUpdateUserId = "System",
                         Disabled = false
                     });
-                    foreach (var state in country.states)
+                    foreach (var state in country.States)
                     {
                         context.States.Add(new State
                         {
-                            Id = state.id,
+                            Id = state.Id,
                             Code = state.state_code,
-                            Name = state.name,
-                            CountryId = country.iso2,
+                            Name = state.Name,
+                            CountryId = country.Iso2,
                             LastUpdateDate = DateTime.UtcNow,
                             LastUpdateUserId = "System",
                             Disabled = false
                         });
-                        foreach (var city in state.cities)
+                        foreach (var city in state.Cities)
                         {
                             context.Cities.Add(new City
                             {
-                                Id = city.id,
-                                Name = city.name,
-                                StateId = state.id,
+                                Id = city.Id,
+                                Name = city.Name,
+                                StateId = state.Id,
                                 LastUpdateDate = DateTime.UtcNow,
                                 LastUpdateUserId = "System",
                                 Disabled = false

@@ -24,4 +24,10 @@
     <ProjectReference Include="..\LocationService.Domain\LocationService.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>    
+    <None Update="Database\Context\Seed\countries-states-cities.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

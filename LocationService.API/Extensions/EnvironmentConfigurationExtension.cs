@@ -22,11 +22,11 @@ public static class EnvironmentConfigurationExtension
                 var jsonFile = $"{basePath}/appsettings.json";
                 if (!File.Exists(jsonFile))
                 {                        
-                    throw new Exception($"[ConfigurationBuilderExtension] Original Path and fallback path ({jsonFile}) is not valid or does not exists. {GetFiles(basePath)}");
+                    throw new Exception($"[ConfigurationBuilder] Original Path and fallback path ({jsonFile}) is not valid or does not exists. {GetFiles(basePath)}");
                 }
             }
 
-            Console.WriteLine($"[ConfigurationBuilderExtension] Environment: {env.EnvironmentName}");
+            Console.WriteLine($"[ConfigurationBuilder] Environment: {env.EnvironmentName}");
             var builder = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -37,7 +37,7 @@ public static class EnvironmentConfigurationExtension
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ConfigurationBuilderExtension] Error: {ex.Message} - {ex.StackTrace}");
+            Console.WriteLine($"[ConfigurationBuilder] Error: {ex.Message} - {ex.StackTrace}");
             return configuration;
         }
     }

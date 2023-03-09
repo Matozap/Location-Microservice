@@ -60,7 +60,6 @@ public class Startup
     {
         try
         {                
-            app.UseSerilogLogging();
             app.UseSwaggerApi();
                 
             app.UseApplication()

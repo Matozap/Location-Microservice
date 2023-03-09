@@ -1,20 +1,20 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using LocationService.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace LocationService.Infrastructure.Data.Context;
+namespace LocationService.Infrastructure.Database.Context;
 
-public sealed class LocationContext : DbContext
+public sealed class DatabaseContext : DbContext
 {
-    public LocationContext()
+    public DatabaseContext()
     {
     }
 
-    public LocationContext(DbContextOptions<LocationContext> options, ILogger<LocationContext> logger)
+    public DatabaseContext(DbContextOptions<DatabaseContext> options, ILogger<DatabaseContext> logger)
         : base(options)
     {
-        LocationSeedData.SeedAllCountriesData(this);
+        DatabaseSeed.SeedAllCountriesData(this);
     }
 
     public DbSet<Country> Countries { get; set; }
@@ -36,8 +36,7 @@ public sealed class LocationContext : DbContext
         CreateCityModel(modelBuilder);
     }
     
-    private void CreateCountryModel(ModelBuilder modelBuilder)
-    {
+    private void CreateCountryModel(ModelBuilder modelBuilder) =>
         modelBuilder.Entity<Country>(entity =>
         {
             modelBuilder.HasDefaultContainer("Country");
@@ -47,10 +46,8 @@ public sealed class LocationContext : DbContext
             entity.Property(p => p.Name).IsRequired();
             entity.HasMany(c => c.States);
         });
-    }
-    
-    private void CreateStateModel(ModelBuilder modelBuilder)
-    {
+
+    private void CreateStateModel(ModelBuilder modelBuilder) =>
         modelBuilder.Entity<State>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -59,10 +56,8 @@ public sealed class LocationContext : DbContext
             entity.Property(p => p.Name).IsRequired();
             entity.HasMany(s => s.Cities).WithOne(c => c.State);
         });
-    }
-    
-    private void CreateCityModel(ModelBuilder modelBuilder)
-    {
+
+    private void CreateCityModel(ModelBuilder modelBuilder) =>
         modelBuilder.Entity<City>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -70,5 +65,4 @@ public sealed class LocationContext : DbContext
             entity.Property(p => p.Name).IsRequired();
             entity.HasOne(c => c.State).WithMany(s => s.Cities);
         });
-    }
 }

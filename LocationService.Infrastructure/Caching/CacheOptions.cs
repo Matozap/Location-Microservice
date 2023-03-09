@@ -1,4 +1,4 @@
-namespace LocationService.Infrastructure.Data.Caching;
+namespace LocationService.Infrastructure.Caching;
 
 public class CacheOptions
 {

@@ -6,7 +6,7 @@ using LocationService.Application.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
-namespace LocationService.Infrastructure.Data.Caching;
+namespace LocationService.Infrastructure.Caching;
 
 public sealed class Cache : ICache
 {

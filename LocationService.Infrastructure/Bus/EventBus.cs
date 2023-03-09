@@ -4,7 +4,7 @@ using LocationService.Application.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace LocationService.Infrastructure.Data.Bus;
+namespace LocationService.Infrastructure.Bus;
 
 public sealed class EventBus : IEventBus
 {

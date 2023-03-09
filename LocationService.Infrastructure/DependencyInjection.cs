@@ -2,9 +2,9 @@ using System;
 using System.Reflection;
 using LocationService.Application.Interfaces;
 using LocationService.Application.Logic.Countries.Queries.v1;
-using LocationService.Infrastructure.Data.Caching;
-using LocationService.Infrastructure.Data.Context;
-using LocationService.Infrastructure.Data.Repository;
+using LocationService.Infrastructure.Caching;
+using LocationService.Infrastructure.Database.Context;
+using LocationService.Infrastructure.Database.Repositories;
 using LocationService.Infrastructure.Extensions;
 using MapsterMapper;
 using MediatR;
@@ -25,10 +25,10 @@ public static class DependencyInjection
         
         var cacheOptions= new CacheOptions();
         configuration.GetSection("Cache").Bind(cacheOptions);
-        var locationContextOptions = new LocationContextOptions();
-        configuration.GetSection("LocationContext").Bind(locationContextOptions);
+        var databaseOptions = new DatabaseOptions();
+        configuration.GetSection("Database").Bind(databaseOptions);
 
-        services.AddDataContext(locationContextOptions, isProduction)
+        services.AddDataContext(databaseOptions)
             .AddCache(cacheOptions)
             .AddMediatR(Assembly.GetExecutingAssembly().GetType(), typeof(ILocationRepository), typeof(GetAllCountriesHandler), typeof(IMapper))
             .EnsureDatabaseIsSeeded();
@@ -42,20 +42,19 @@ public static class DependencyInjection
         return app;
     }
 
-    private static IServiceCollection AddDataContext(this IServiceCollection services, LocationContextOptions locationContextOptions, bool isProduction)
+    private static IServiceCollection AddDataContext(this IServiceCollection services, DatabaseOptions databaseOptions)
     {
-        switch (isProduction)
+        switch (databaseOptions.DatabaseType)
         {
-            case true:
+            case "SQL Server":
             {
-                services.AddDbContext<LocationContext>(options => options.UseSqlServer(locationContextOptions.ConnectionString));
+                services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(databaseOptions.ConnectionString));
                 break;
             }
             
-            case false:
+            default:
             {
-                var database = locationContextOptions.Database ?? "Local";
-                services.AddDbContext<LocationContext>(options => options.UseInMemoryDatabase(databaseName: database));
+                services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase(databaseName: databaseOptions.InstanceName));
                 break;
             }
         }
