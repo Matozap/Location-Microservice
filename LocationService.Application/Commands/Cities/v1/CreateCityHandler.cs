@@ -42,7 +42,7 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
 
     private async Task<Domain.City> CreateCity(CityData city)
     {
-        if (await _repository.GetCityAsync(e => e.Name == city.Name && e.StateId == city.StateId) == null)
+        if (await _repository.GetCityAsync(e => e.Name == city.Name && e.StateId == city.StateId) != null)
         {
             return null;
         }

@@ -43,7 +43,7 @@ public class CreateCountryHandler : IRequestHandler<CreateCountry, object>
 
     private async Task<Domain.Country> CreateCountry(CountryData country)
     {
-        if ((await _repository.GetCountryAsync(e => e.Name == country.Name)) == null)
+        if (await _repository.GetCountryAsync(e => e.Name == country.Name) != null)
         {
             return null;
         }

@@ -32,7 +32,7 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
         var resultEntity = await CreateState(request.LocationDetails);
         if (resultEntity == null) return null;
         
-        _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id);
+        _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id.ToString());
         var resultDto = resultEntity.Adapt<Domain.State, StateData>();
             
         _ = _eventBus.Publish(new StateEvent { LocationDetails = request.LocationDetails, Action = EventAction.StateCreate});
@@ -42,7 +42,7 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
 
     private async Task<Domain.State> CreateState(StateData state)
     {
-        if ((await _repository.GetStateAsync(e => e.Code == state.Code && e.CountryId == state.CountryId)) == null)
+        if (await _repository.GetStateAsync(e => e.Code == state.Code && e.CountryId == state.CountryId) != null)
         {
             return null;
         }

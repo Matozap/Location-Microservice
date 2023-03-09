@@ -12,8 +12,8 @@ services:
     container_name: "location.api"
     build: .
     ports:
-      - "6010:5000"
-      - "6011:5001"
+      - "7010:5000"
+      - "7011:5001"
     volumes:
       - "local_location_code:/code"
     restart: on-failure
@@ -25,7 +25,7 @@ services:
     hostname: "location.redis"
     image: redis
     ports:
-      - "6001:6379"
+      - "7001:6379"
     volumes:
       - "local_redis_data:/data"
   sql:
@@ -33,7 +33,7 @@ services:
     hostname: "location.mssql"
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     ports:
-      - "6000:1433"
+      - "7000:1433"
     volumes:
       - "local_sql_data:/data"
     environment:

@@ -2,9 +2,10 @@ using LocationService.Message.DTO.Cities.v1;
 
 namespace LocationService.Message.Messaging.Event.v1;
 
-public class CityEvent : BaseEvent
+public class CityEvent
 {
     public CityData LocationDetails { get; init; }
-    protected override string GetVersion() => "V1";
+    public EventAction Action { get; set; }
+    protected string GetVersion() => "v1";
 }
 

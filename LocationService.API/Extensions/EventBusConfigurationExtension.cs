@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Reflection;
+using LocationService.API.Events.Location;
 using LocationService.Application.Interfaces;
 using LocationService.Infrastructure.Data.Queue;
 using LocationService.Message.Messaging.Event.v1;
@@ -21,20 +24,14 @@ public static class EventBusConfigurationExtension
             services.AddMassTransit(x =>
             {
                 x.SetKebabCaseEndpointNameFormatter();
-                x.SetInMemorySagaRepositoryProvider();
                 x.AddConsumers(entryAssembly);
-                x.AddSagaStateMachines(entryAssembly);
-                x.AddSagas(entryAssembly);
-                x.AddActivities(entryAssembly);
 
                 switch (eventBusOptions.UseInMemory)
                 {
                     case true:
                         x.UsingInMemory((context, cfg) =>
                         {
-                            cfg.Message<CountryEvent>(e => e.SetEntityName(nameof(CountryEvent)));
-                            cfg.Message<StateEvent>(e => e.SetEntityName(nameof(StateEvent)));
-                            cfg.Message<CityEvent>(e => e.SetEntityName(nameof(CityEvent)));
+                            SetEventBusMessages(cfg);
                             cfg.ConfigureEndpoints(context);
                         });
                         break;
@@ -43,24 +40,9 @@ public static class EventBusConfigurationExtension
                         x.UsingAzureServiceBus((context, cfg) =>
                         {
                             cfg.Host(eventBusOptions.ConnectionString);
-                            
-                            cfg.Message<CountryEvent>(e => e.SetEntityName(nameof(CountryEvent)));
-                            cfg.Message<StateEvent>(e => e.SetEntityName(nameof(StateEvent)));
-                            cfg.Message<CityEvent>(e => e.SetEntityName(nameof(CityEvent)));
 
-                            foreach (var (subscriptionKey,subscriptionValue) in eventBusOptions.Subscriptions)
-                            {
-                                if (!string.IsNullOrEmpty(subscriptionValue))
-                                {
-                                    cfg.SubscriptionEndpoint(subscriptionValue,eventBusOptions.Destination, configurator =>
-                                    {
-                                        configurator.ConfigureDeadLetterQueueDeadLetterTransport();
-                                        configurator.ConfigureDeadLetterQueueErrorTransport();
-                                        configurator.PublishFaults = false;
-                                    });
-                                }
-                            }
-
+                            SetEventBusMessages(cfg);
+                            RegisterSubscription(context, cfg, eventBusOptions.Subscriptions);
                             cfg.ConfigureEndpoints(context);
                         });
                         break;
@@ -71,5 +53,44 @@ public static class EventBusConfigurationExtension
         services.AddSingleton(eventBusOptions);
         services.AddScoped<IEventBus, EventBus>();
         return services;
-    } 
+    }
+
+    private static void SetEventBusMessages<T>(IBusFactoryConfigurator<T> busFactoryConfigurator) where T : IReceiveEndpointConfigurator
+    {
+        busFactoryConfigurator.Message<CountryEvent>(e => e.SetEntityName(nameof(CountryEvent)));
+        busFactoryConfigurator.Message<StateEvent>(e => e.SetEntityName(nameof(StateEvent)));
+        busFactoryConfigurator.Message<CityEvent>(e => e.SetEntityName(nameof(CityEvent)));
+    }
+    
+    private static void RegisterSubscription(IBusRegistrationContext context, IServiceBusBusFactoryConfigurator busFactoryConfigurator, Dictionary<string,string> subscriptions)
+    {
+        foreach (var (subscriptionKey,subscriptionValue) in subscriptions)
+        {
+            if (!string.IsNullOrEmpty(subscriptionValue))
+            {
+                busFactoryConfigurator.SubscriptionEndpoint(subscriptionValue,subscriptionKey, configurator =>
+                {
+                    switch (subscriptionKey)
+                    {
+                        case "CountryEvent":
+                            configurator.ConfigureConsumer<CountryEventConsumer>(context);
+                            break;
+                        case "StateEvent":
+                            configurator.ConfigureConsumer<StateEventConsumer>(context);
+                            break;
+                        case "CityEvent":
+                            configurator.ConfigureConsumer<CityEventConsumer>(context);
+                            break;
+                    }
+                                        
+                    configurator.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10)));
+                    configurator.UseMessageRetry(r => r.Immediate(3));
+                                        
+                    configurator.ConfigureDeadLetterQueueDeadLetterTransport();
+                    configurator.ConfigureDeadLetterQueueErrorTransport();
+                    configurator.PublishFaults = false;
+                });
+            }
+        }
+    }
 }
