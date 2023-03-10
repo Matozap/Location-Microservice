@@ -21,7 +21,7 @@ public static class DatabaseSeed
             context.Database.EnsureCreated();
             if (context.Countries.AsNoTracking().OrderBy(e => e.Id).FirstOrDefault() == null)
             {
-                var path = Path.Combine(AppContext.BaseDirectory, @"Database\Context\Seed", "countries-states-cities.json");
+                var path = Path.Combine(AppContext.BaseDirectory, "Database","Context","Seed", "countries-states-cities.json");
                 var seedFile = string.Concat(File.ReadAllLines(path));
                 var countryList = JsonSerializer.Deserialize<List<RawCountry>>(seedFile, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -37,26 +37,25 @@ public static class DatabaseSeed
                     });
                     foreach (var state in country.States)
                     {
-                        context.States.Add(new State
+                        var createdEntity = context.States.Add(new State
                         {
-                            Id = state.Id,
                             Code = state.state_code,
                             Name = state.Name,
                             CountryId = country.Iso2,
                             LastUpdateDate = DateTime.UtcNow,
                             LastUpdateUserId = "System",
                             Disabled = false
-                        });
+                        }).Entity;
                         foreach (var city in state.Cities)
                         {
                             context.Cities.Add(new City
                             {
-                                Id = city.Id,
                                 Name = city.Name,
-                                StateId = state.Id,
+                                StateId = createdEntity.Id,
                                 LastUpdateDate = DateTime.UtcNow,
                                 LastUpdateUserId = "System",
-                                Disabled = false
+                                Disabled = false,
+                                State = createdEntity
                             });
                         }
                     }

@@ -12,13 +12,16 @@ public static class InitializeDbContextExtension
     {
         try
         {
+            Console.WriteLine("[Database] Seeding starting");
             var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
             using var serviceScope = serviceProvider.GetService<DatabaseContext>();
+            Console.WriteLine("[Database] Seeding completed successfully");
         }
         catch (Exception ex)
         {
             Console.WriteLine("[EnsureDatabaseIsSeeded] - " + ex.Message + " - " + ex.StackTrace);
+            throw;
         }
     }
 }

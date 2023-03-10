@@ -37,16 +37,8 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
 
     private async Task UpdateState(StateData stateData)
     {
-        var query = new GetStateById
-        {
-            Id = stateData.Id,
-            Code = stateData.Code,
-            Source = MessageSource.Command
-        };
-        var readResult = await _mediator.Send(query);
-        var resultDto = (StateData)readResult;
-            
-        if(resultDto != null)
+        var entity = await _repository.GetStateAsync(c => c.Id == stateData.Id);
+        if(entity != null)
         {                
             await _repository.UpdateAsync(stateData.Adapt<StateData, Domain.State>());
         }

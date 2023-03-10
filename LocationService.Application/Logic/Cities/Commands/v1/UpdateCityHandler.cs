@@ -37,15 +37,8 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
 
     private async Task UpdateCity(CityData cityData)
     {
-        var query = new GetCityById
-        {
-            Id = cityData.Id,
-            Source = MessageSource.Command
-        };
-        var readResult = await _mediator.Send(query);
-        var existingresultDto = (CityData)readResult;
-            
-        if(existingresultDto != null)
+        var entity = await _repository.GetCityAsync(c => c.Id == cityData.Id);
+        if(entity != null)
         {                
             await _repository.UpdateAsync(cityData.Adapt<CityData, Domain.City>());
         }

@@ -35,7 +35,7 @@ public class ClearCacheHandler : IRequestHandler<ClearCache, bool>
             if (!string.IsNullOrEmpty(request.CountryId))
             {
                 const string message = "Clearing location by country cache";
-                _logger.LogInformation(message);
+                _logger.LogDebug(message);
                 var cacheKey = GetCountryByIdHandler.GetCacheKey(request.CountryId);
                 await _cache.RemoveValueAsync(cacheKey, cancellationToken);
                 
@@ -46,7 +46,7 @@ public class ClearCacheHandler : IRequestHandler<ClearCache, bool>
             if (!string.IsNullOrEmpty(request.StateCode) || request.StateId > 0)
             {
                 const string message = "Clearing location by state cache";
-                _logger.LogInformation(message);
+                _logger.LogDebug(message);
                 var cacheKey = GetStateByIdHandler.GetCacheKey(request.StateId, request.StateCode);
                 await _cache.RemoveValueAsync(cacheKey, cancellationToken);
                 
@@ -57,7 +57,7 @@ public class ClearCacheHandler : IRequestHandler<ClearCache, bool>
             if (request.CityId > 0)
             {
                 const string message = "Clearing location by city cache";
-                _logger.LogInformation(message);
+                _logger.LogDebug(message);
                 var cacheKey = GetCityByIdHandler.GetCacheKey(request.CityId.ToString());
                 await _cache.RemoveValueAsync(cacheKey, cancellationToken);
                 

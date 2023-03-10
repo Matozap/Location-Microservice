@@ -29,6 +29,7 @@ public class Program
         {
             Log.Information("Host starting...");
             Console.WriteLine("[Program] Host Starting");
+            await Task.Delay(5000);
             await CreateHostBuilder(null).Build().RunAsync();
             Console.WriteLine("[Program] Host Stopped Successfully");
         }

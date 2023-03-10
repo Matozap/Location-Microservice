@@ -116,16 +116,18 @@ public class LocationRepository : ILocationRepository
     {
         return source.Include(c => c.States.Where(s => !s.Disabled))
             .ThenInclude(s => s.Cities.Where(c => !c.Disabled))
+            .AsSplitQuery()
             .AsNoTracking();
     }
     private static IQueryable<State> LoadAllNavigationalProperties(IQueryable<State> source)
     {
         return source.Include(s => s.Cities.Where(c => !c.Disabled))
+            .AsSplitQuery()
             .AsNoTracking();
     }
     private static IQueryable<City> LoadAllNavigationalProperties(IQueryable<City> source)
     {
-        return source
+        return source.AsSplitQuery()
             .AsNoTracking();
     }
 }
