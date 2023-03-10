@@ -20,9 +20,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-        var isProduction = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true" && !isDevelopment;
-        
         var cacheOptions= new CacheOptions();
         configuration.GetSection("Cache").Bind(cacheOptions);
         var databaseOptions = new DatabaseOptions();
@@ -30,7 +27,8 @@ public static class DependencyInjection
 
         services.AddDataContext(databaseOptions)
             .AddCache(cacheOptions)
-            .AddMediatR(Assembly.GetExecutingAssembly().GetType(), typeof(ILocationRepository), typeof(GetAllCountriesHandler), typeof(IMapper))
+            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), 
+                typeof(DependencyInjection).Assembly, typeof(LocationService.Application.DependencyInjection).Assembly, typeof(IMapper).Assembly))
             .EnsureDatabaseIsSeeded();
 
         return services;

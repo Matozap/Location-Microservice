@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
-namespace LocationService.API.Extensions;
+namespace LocationService.API.Helpers;
 
 [ExcludeFromCodeCoverage]
 public static class EnvironmentConfigurationExtension
@@ -52,10 +52,10 @@ public static class EnvironmentConfigurationExtension
                 basePath = $"{basePath}/{RootFolderName}";
                 var jsonFile = $"{basePath}/appsettings.json";
                 if (!File.Exists(jsonFile))
-                    throw new Exception($"[ConfigurationBuilderExtension] - Original Path and fallback path ({jsonFile}) is not valid or does not exist.{GetFiles(basePath)}");
+                    throw new Exception($"[ConfigurationBuilder] - Original Path and fallback path ({jsonFile}) is not valid or does not exist.{GetFiles(basePath)}");
             }
 
-            Console.WriteLine($"[ConfigurationBuilderExtension] Settings used: appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json");
+            Console.WriteLine($"[ConfigurationBuilder] Settings used: appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json");
 
             return new ConfigurationBuilder()
                 .SetBasePath(basePath)
@@ -65,7 +65,7 @@ public static class EnvironmentConfigurationExtension
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ConfigurationBuilderExtension] Error: {ex.Message} - {ex.StackTrace}");
+            Console.WriteLine($"[ConfigurationBuilder] Error: {ex.Message} - {ex.StackTrace}");
             return null;
         }
     }

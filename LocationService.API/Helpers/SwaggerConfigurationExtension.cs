@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 
-namespace LocationService.API.Extensions;
+namespace LocationService.API.Helpers;
 
-public static class SwaggerExtension
+public static class SwaggerConfigurationExtension
 {
     public static void ConfigureSwagger(this IServiceCollection services)
     {

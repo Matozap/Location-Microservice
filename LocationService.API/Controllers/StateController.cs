@@ -44,7 +44,7 @@ public class StateController : ControllerBase
     /// <response code="200">OK</response>
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
-    [HttpGet("{idCode}")]
+    [HttpGet("{code}")]
     public async Task<IActionResult> GetById(string code)
     {
         var isNumber = int.TryParse(code, out var parsedId);

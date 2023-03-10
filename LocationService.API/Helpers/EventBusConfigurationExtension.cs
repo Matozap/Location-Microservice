@@ -11,7 +11,7 @@ using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LocationService.API.Extensions;
+namespace LocationService.API.Helpers;
 
 public static class EventBusConfigurationExtension
 {
