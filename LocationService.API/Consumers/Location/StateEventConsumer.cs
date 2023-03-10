@@ -23,14 +23,14 @@ public class StateEventConsumer : IConsumer<StateEvent>
     {
         try
         {
-            _logger.LogInformation("Received message from {Source} sent on {SentTime} with correlation id {CorrelationId}", context.SourceAddress, context.SentTime.ToString(), context.CorrelationId.ToString());
+            _logger.LogInformation("Received message from {Source} sent on {SentTime}", context.SourceAddress, context.SentTime.ToString());
             var locationEvent = context.Message;
             switch (locationEvent.Action)
             {
                 case EventAction.StateCreate:
-                case EventAction.StateUpdate : 
-                case EventAction.StateDelete :
-                    _logger.LogDebug("Removing cache key for State id {StateId} ", locationEvent.LocationDetails.Id.ToString());
+                case EventAction.StateUpdate: 
+                case EventAction.StateDelete:
+                    _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(StateEvent), locationEvent.LocationDetails.Id.ToString());
                     _ = _mediator.Send(new ClearCache
                     {
                         StateId = locationEvent.LocationDetails.Id,
@@ -46,7 +46,7 @@ public class StateEventConsumer : IConsumer<StateEvent>
         }
         catch (Exception e)
         {
-            _logger.LogError("Cannot consume location event - {Error}", e.Message);
+            _logger.LogError("Cannot consume {Event} event - {Error}",nameof(StateEvent), e.Message);
             throw;
         }
     }
