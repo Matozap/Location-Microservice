@@ -19,11 +19,10 @@ public static class SwaggerConfigurationExtension
                 Title = "Location Service",
                 Version = "v1",
                 Description = "Location Service API",
-                TermsOfService = new Uri("https://idontcare.com"),
+                TermsOfService = new Uri("https://matozap.com"),
                 Contact = new OpenApiContact
                 {
-                    Name = "Sluk4d",
-                    Url = new Uri("http://idontcare.com")
+                    Name = "Sluk4d"
                 }
             });
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
