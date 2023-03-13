@@ -1,13 +1,10 @@
-using System;
 using System.Reflection;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Logic.Countries.Queries.v1;
 using LocationService.Infrastructure.Caching;
 using LocationService.Infrastructure.Database.Context;
 using LocationService.Infrastructure.Database.Repositories;
 using LocationService.Infrastructure.Extensions;
 using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +44,26 @@ public static class DependencyInjection
             case "SQL Server":
             {
                 services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(databaseOptions.ConnectionString));
+                break;
+            }
+            
+            case "MySql":
+            {
+                var serverVersion = ServerVersion.AutoDetect(databaseOptions.ConnectionString);
+
+                services.AddDbContext<DatabaseContext>(
+                    dbContextOptions => dbContextOptions
+                        .UseMySql(databaseOptions.ConnectionString, serverVersion)
+                        .EnableSensitiveDataLogging()
+                        .EnableDetailedErrors()
+                );
+                
+                break;
+            }
+            
+            case "Postgres":
+            {
+                services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(databaseOptions.ConnectionString));
                 break;
             }
             

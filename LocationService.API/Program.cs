@@ -1,17 +1,14 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Threading.Tasks;
-using LocationService.API.Helpers;
 
 
 namespace LocationService.API;
 
 public class Program
 {
-    private static IConfiguration _configuration;
     public static async Task Main(string[] args)
     {
         await RunServer();
@@ -19,23 +16,26 @@ public class Program
 
     private static async Task RunServer()
     {
-        Console.WriteLine("[Program] Starting Main");
-        _configuration = EnvironmentConfigurationExtension.GetDefaultEnvironmentConfiguration();
         Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(_configuration)
-            .CreateLogger();
+            .WriteTo.Console()
+            .CreateBootstrapLogger(); 
+        Log.Information("[Program] Starting Main");
 
         try
         {
-            Log.Information("Host starting...");
-            Console.WriteLine("[Program] Host Starting");
-            await Task.Delay(5000);
+            Log.Information("[Program] Host starting...");
+
+            if (int.TryParse(Environment.GetEnvironmentVariable("DELAYED_START"), out var delay))
+            {
+                Log.Information("[Program] Starting delay: {Delay}", delay);
+                await Task.Delay(delay);
+            }
+
             await CreateHostBuilder(null).Build().RunAsync();
-            Console.WriteLine("[Program] Host Stopped Successfully");
+            Log.Information("[Program] Host Stopped Successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Program]Host terminated unexpectedly - {ex}");
             Log.Fatal(ex, "Host terminated unexpectedly");
         }
         finally

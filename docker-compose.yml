@@ -4,7 +4,9 @@ name: "location-service"
 volumes:
   local_location_code: {}
   local_redis_data: {}
-  local_sql_data: {}
+  local_sqlserver_data: {}
+  local_mysql_data: {}
+  local_postgres_data: {}
   
 services:
   location.service:
@@ -16,26 +18,58 @@ services:
       - "7011:5001"
     volumes:
       - "local_location_code:/code"
-    restart: on-failure
+    environment:
+      DELAYED_START: 20000
+    restart: "on-failure"
     depends_on:
-      - redis
-      - sql   
+      - "redis"
+      - "sqlserver"
+      - "mysql"
+      - "postgres"
+  
   redis:
     container_name: "location.redis"
     hostname: "location.redis"
-    image: redis
+    image: "redis"
     ports:
       - "7001:6379"
     volumes:
       - "local_redis_data:/data"
-  sql:
+  
+  sqlserver:
     container_name: "location.mssql"
     hostname: "location.mssql"
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     ports:
-      - "7000:1433"
+      - "7050:1433"
     volumes:
-      - "local_sql_data:/data"
+      - "local_sqlserver_data:/data"
     environment:
       MSSQL_SA_PASSWORD: "Password.1"
       ACCEPT_EULA: "Y"
+  
+  mysql:
+    container_name: "location.mysql"
+    image: "mysql"
+    command: "--default-authentication-plugin=mysql_native_password"
+    ports:
+      - "7051:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "production"
+      MYSQL_USER: "sa"
+      MYSQL_PASSWORD: "Password.1"
+    volumes:
+      - "local_mysql_data:/var/lib/mysql"
+        
+  postgres:
+    container_name: "location.postgres"
+    image: "postgres"
+    ports:
+      - "7052:5432"
+    environment:
+      POSTGRES_USER: "sa"
+      POSTGRES_PASSWORD: "Password.1"
+      POSTGRES_DB: "production"
+    volumes:
+      - "local_postgres_data:/var/lib/postgres"

@@ -7,7 +7,6 @@ using LocationService.Application.Logic.Countries.Commands.v1;
 using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
 using LocationService.Test.MockBuilder;
-using LocationService.Test.Queries.Countries;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LocationService.Test.Commands.Countries.v1;

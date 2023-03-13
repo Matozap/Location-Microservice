@@ -7,7 +7,6 @@ using LocationService.Application.Logic.Cities.Commands.v1;
 using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
 using LocationService.Test.MockBuilder;
-using LocationService.Test.Queries.Cities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LocationService.Test.Commands.Cities.v1;

@@ -42,34 +42,6 @@ public static class EnvironmentConfigurationExtension
         }
     }
 
-    public static IConfiguration GetDefaultEnvironmentConfiguration()
-    {
-        try
-        {
-            var basePath = Directory.GetCurrentDirectory();
-            if (!File.Exists($"{basePath}/appsettings.json"))
-            {
-                basePath = $"{basePath}/{RootFolderName}";
-                var jsonFile = $"{basePath}/appsettings.json";
-                if (!File.Exists(jsonFile))
-                    throw new Exception($"[ConfigurationBuilder] - Original Path and fallback path ({jsonFile}) is not valid or does not exist.{GetFiles(basePath)}");
-            }
-
-            Console.WriteLine($"[ConfigurationBuilder] Settings used: appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json");
-
-            return new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-                .Build();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[ConfigurationBuilder] Error: {ex.Message} - {ex.StackTrace}");
-            return null;
-        }
-    }
-
     private static string GetFiles(string path)
     {
         var filePaths = Directory.GetFiles(path, "*.*",
