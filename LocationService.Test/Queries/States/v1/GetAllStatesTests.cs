@@ -6,14 +6,13 @@ using LocationService.Application.Logic.States.Queries.v1;
 using LocationService.Message.DataTransfer.States.v1;
 using LocationService.Message.Definition.States.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Queries.States.v1;
 
-[TestClass]
 public class GetAllStatesTests
 {
-    [TestMethod]
+    [Fact]
     public async Task GetAllStatesTest()
     {
         // Arrange

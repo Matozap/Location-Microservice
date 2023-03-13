@@ -7,14 +7,13 @@ using LocationService.Application.Logic.States.Commands.v1;
 using LocationService.Message.DataTransfer.States.v1;
 using LocationService.Message.Definition.States.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.States.v1;
 
-[TestClass]
 public class UpdateStateTests
 {
-    [TestMethod]
+    [Fact]
     public async Task UpdateStateTest()
     {
         // Arrange
@@ -32,7 +31,7 @@ public class UpdateStateTests
         result.Should().NotBeNull();
     }
 
-    [TestMethod]
+    [Fact]
     public void UpdateStateInvalidStateIdTest()
     {
         // Arrange

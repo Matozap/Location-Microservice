@@ -8,14 +8,13 @@ using LocationService.Application.Logic.Cities.Commands.v1;
 using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.Cities.v1;
 
-[TestClass]
 public class CreateCityTests
 {
-    [TestMethod]
+    [Fact]
     public async Task CreateCityTest()
     {
         // Arrange
@@ -33,7 +32,7 @@ public class CreateCityTests
         result.Should().NotBeNull().And.BeOfType<CityData>();
     }
 
-    [TestMethod]
+    [Fact]
     public void CreateCityInvalidNameTest()
     {
         // Arrange

@@ -4,14 +4,13 @@ using FluentAssertions;
 using LocationService.Application.Logic.States.Commands.v1;
 using LocationService.Message.Definition.States.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.States.v1;
 
-[TestClass]
 public class SoftDeleteStateTests
 {
-    [TestMethod]
+    [Fact]
     public async Task SoftDeleteStateTest()
     {
         // Arrange

@@ -4,14 +4,13 @@ using FluentAssertions;
 using LocationService.Application.Logic.Cities.Commands.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.Cities.v1;
 
-[TestClass]
 public class SoftDeleteCityTests
 {
-    [TestMethod]
+    [Fact]
     public async Task SoftDeleteCityTest()
     {
         // Arrange

@@ -6,14 +6,13 @@ using FluentAssertions;
 using LocationService.Application.Logic.Countries.Commands.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.Countries.v1;
 
-[TestClass]
 public class DeleteCountryTests
 {
-    [TestMethod]
+    [Fact]
     public async Task DeleteCountryTest()
     {
         // Arrange
@@ -32,7 +31,7 @@ public class DeleteCountryTests
         result.Should().NotBeNull();
     }
 
-    [TestMethod]
+    [Fact]
     public void DeleteCountryInvalidCountryIdTest()
     {
         // Arrange

@@ -8,14 +8,13 @@ using LocationService.Application.Logic.States.Commands.v1;
 using LocationService.Message.DataTransfer.States.v1;
 using LocationService.Message.Definition.States.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.States.v1;
 
-[TestClass]
 public class CreateStateTests
 {
-    [TestMethod]
+    [Fact]
     public async Task CreateStateTest()
     {
         // Arrange
@@ -33,7 +32,7 @@ public class CreateStateTests
         result.Should().NotBeNull().And.BeOfType<StateData>();
     }
 
-    [TestMethod]
+    [Fact]
     public void CreateStateInvalidNameTest()
     {
         // Arrange

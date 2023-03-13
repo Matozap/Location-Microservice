@@ -4,14 +4,13 @@ using FluentAssertions;
 using LocationService.Application.Logic.States.Commands.v1;
 using LocationService.Message.Definition.States.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.States.v1;
 
-[TestClass]
 public class DeleteStateTests
 {
-    [TestMethod]
+    [Fact]
     public async Task DeleteStateTest()
     {
         // Arrange
@@ -20,7 +19,6 @@ public class DeleteStateTests
             Id = StateMockBuilder.GenerateMockState().Id
         };
 
-        
         var handler = (DeleteStateHandler)StateMockBuilder.CreateHandler<DeleteStateHandler>();
 
         //Act

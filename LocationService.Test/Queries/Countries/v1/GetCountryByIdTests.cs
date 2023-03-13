@@ -6,14 +6,13 @@ using LocationService.Application.Logic.Countries.Queries.v1;
 using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Queries.Countries.v1;
 
-[TestClass]
 public class GetCountryByIdTests
 {
-    [TestMethod]
+    [Fact]
     public async Task GetCountryByIdTestsTest()
     {
         // Arrange
@@ -31,7 +30,7 @@ public class GetCountryByIdTests
         result.Should().NotBeNull();
     }
 
-    [TestMethod]
+    [Fact]
     public void GetCountryByClientIdInvalidRangeTest()
     {
         // Arrange

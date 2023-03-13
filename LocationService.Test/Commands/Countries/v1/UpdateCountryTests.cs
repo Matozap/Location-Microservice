@@ -7,14 +7,13 @@ using LocationService.Application.Logic.Countries.Commands.v1;
 using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
 using LocationService.Test.MockBuilder;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace LocationService.Test.Commands.Countries.v1;
 
-[TestClass]
 public class UpdateCountryTests
 {
-    [TestMethod]
+    [Fact]
     public async Task UpdateCountryTest()
     {
         // Arrange
@@ -32,7 +31,7 @@ public class UpdateCountryTests
         result.Should().NotBeNull();
     }
 
-    [TestMethod]
+    [Fact]
     public void UpdateCountryInvalidCountryIdTest()
     {
         // Arrange
