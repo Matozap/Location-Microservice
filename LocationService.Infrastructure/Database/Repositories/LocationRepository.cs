@@ -24,10 +24,14 @@ public class LocationRepository : ILocationRepository
         var result = _applicationContext.Set<Country>()
             .Where(e => !e.Disabled)
             .OrderBy(e => e.Name)
-            .Select(e => new Country()
+            .Select(e => new Country
             {
                 Id = e.Id,
-                Name = e.Name
+                Name = e.Name,
+                Currency = e.Currency,
+                CurrencyName = e.CurrencyName,
+                Region = e.Region,
+                SubRegion = e.SubRegion
             });
         return await result.ToListAsync();
     }

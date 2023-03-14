@@ -10,9 +10,9 @@ namespace LocationService.Infrastructure.Database.Context;
 
 public static class DatabaseSeed
 {
-    private record RawCity(int Id, string Name);
-    private record RawState(int Id, string Name, string state_code, RawCity[] Cities);
-    private record RawCountry(string Name, string Iso2, RawState[] States);
+    private record RawCity(string Name);
+    private record RawState(string Name, string Code, RawCity[] Cities);
+    private record RawCountry(string Id, string Name, string Currency, string CurrencyName, string Region, string SubRegion, RawState[] States);
     
     public static void SeedAllCountriesData(DatabaseContext context)
     {
@@ -24,13 +24,17 @@ public static class DatabaseSeed
                 var path = Path.Combine(AppContext.BaseDirectory, "Database","Context","Seed", "countries-states-cities.json");
                 var seedFile = string.Concat(File.ReadAllLines(path));
                 var countryList = JsonSerializer.Deserialize<List<RawCountry>>(seedFile, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
+                
                 foreach (var country in countryList)
                 {
                     context.Countries.Add(new Country
                     {
-                        Id = country.Iso2,
+                        Id = country.Id,
                         Name = country.Name,
+                        Currency = country.Currency,
+                        CurrencyName = country.CurrencyName,
+                        Region = country.Region,
+                        SubRegion = country.SubRegion,
                         LastUpdateDate = DateTime.UtcNow,
                         LastUpdateUserId = "System",
                         Disabled = false
@@ -39,9 +43,9 @@ public static class DatabaseSeed
                     {
                         var createdEntity = context.States.Add(new State
                         {
-                            Code = state.state_code,
+                            Code = state.Code,
                             Name = state.Name,
-                            CountryId = country.Iso2,
+                            CountryId = country.Id,
                             LastUpdateDate = DateTime.UtcNow,
                             LastUpdateUserId = "System",
                             Disabled = false

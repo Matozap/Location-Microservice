@@ -53,7 +53,7 @@ public static class CityMockBuilder
     private static List<City> GenerateMockDomainCityList(int count)
     {
         return Fixture.Build<City>()
-            .Without(s => s.State)
+            .With(s => s.State, () => new State())
             .With(s => s.LastUpdateDate, () => DateTime.Now)
             .With(s => s.LastUpdateUserId, () => "Test")
             .CreateMany(count)

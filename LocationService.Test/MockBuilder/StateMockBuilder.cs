@@ -54,7 +54,7 @@ public static class StateMockBuilder
     {
         return Fixture.Build<State>()
             .Without(s => s.Cities)
-            .Without(s => s.Country)
+            .With(s => s.Country, () => new Country())
             .With(s => s.LastUpdateDate, () => DateTime.Now)
             .With(s => s.LastUpdateUserId, () => "Test")
             .CreateMany(count)

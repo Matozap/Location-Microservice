@@ -7,6 +7,10 @@ public class CountryData
 {
     public string Id { get; set; }
     public string Name { get; set; }
+    public string Currency { get; set; }
+    public string CurrencyName { get; set; }
+    public string Region { get; set; }
+    public string SubRegion { get; set; }
     
     public List<StateData> States { get; set; }
 }
