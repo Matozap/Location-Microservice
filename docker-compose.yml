@@ -73,3 +73,13 @@ services:
       POSTGRES_DB: "production"
     volumes:
       - "local_postgres_data:/var/lib/postgres"
+        
+  rabbitmq:
+    container_name: "location.rabbitmq"
+    hostname: "location.rabbitmq"
+    image: "rabbitmq:3.11-management-alpine"
+    ports:
+      - "6332:5672"
+      - "6333:15672"
+    volumes:
+      - "local_postgres_data:/var/lib/postgres"

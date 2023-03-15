@@ -49,6 +49,16 @@ public static class EventBusConfigurationExtension
                             cfg.ConfigureEndpoints(context);
                         });
                         break;
+                    case "RabbitMQ":
+                        x.UsingRabbitMq((context, cfg) =>
+                        {
+                            cfg.Host(new Uri(eventBusOptions.ConnectionString));
+
+                            SetEventBusMessages(cfg);
+                            RegisterSubscription2(context, cfg, eventBusOptions.Subscriptions);
+                            cfg.ConfigureEndpoints(context);
+                        });
+                        break;
                 }
             });
         }
@@ -72,6 +82,38 @@ public static class EventBusConfigurationExtension
             if (!string.IsNullOrEmpty(subscriptionValue))
             {
                 busFactoryConfigurator.SubscriptionEndpoint(subscriptionValue,subscriptionKey, configurator =>
+                {
+                    switch (subscriptionKey)
+                    {
+                        case "CountryEvent":
+                            configurator.ConfigureConsumer<CountryEventConsumer>(context);
+                            break;
+                        case "StateEvent":
+                            configurator.ConfigureConsumer<StateEventConsumer>(context);
+                            break;
+                        case "CityEvent":
+                            configurator.ConfigureConsumer<CityEventConsumer>(context);
+                            break;
+                    }
+                                        
+                    configurator.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10)));
+                    configurator.UseMessageRetry(r => r.Immediate(3));
+                                        
+                    configurator.ConfigureDeadLetterQueueDeadLetterTransport();
+                    configurator.ConfigureDeadLetterQueueErrorTransport();
+                    configurator.PublishFaults = false;
+                });
+            }
+        }
+    }
+    
+    private static void RegisterSubscription2(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator busFactoryConfigurator, Dictionary<string,string> subscriptions)
+    {
+        foreach (var (subscriptionKey,subscriptionValue) in subscriptions)
+        {
+            if (!string.IsNullOrEmpty(subscriptionValue))
+            {
+                busFactoryConfigurator.ReceiveEndpoint(subscriptionValue,configurator =>
                 {
                     switch (subscriptionKey)
                     {

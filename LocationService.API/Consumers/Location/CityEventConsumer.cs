@@ -23,7 +23,7 @@ public class CityEventConsumer : IConsumer<CityEvent>
     {
         try
         {
-            _logger.LogInformation("Received message from {Source} sent on {SentTime}", context.SourceAddress, context.SentTime.ToString());
+            _logger.LogInformation("Received message of type {MessageType} from {Source} sent on {SentTime}", nameof(CityEvent), context.SourceAddress, context.SentTime.ToString());
             var locationEvent = context.Message;
             switch (locationEvent.Action)
             {
