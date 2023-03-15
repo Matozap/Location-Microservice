@@ -25,7 +25,7 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
 
     public async Task<object> Handle(GetCityById request, CancellationToken cancellationToken)
     {
-        var cacheKey = GetCacheKey(request.Id.ToString());
+        var cacheKey = GetCacheKey(request.Id);
 
         if (request.Source != MessageSource.Command)
         {

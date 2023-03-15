@@ -16,14 +16,12 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
 {
     private readonly ILogger<UpdateCountryHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IMediator _mediator;
     private readonly IEventBus _eventBus;
 
-    public UpdateCountryHandler(ILogger<UpdateCountryHandler> logger, ILocationRepository repository, IMediator mediator, IEventBus eventBus)
+    public UpdateCountryHandler(ILogger<UpdateCountryHandler> logger, ILocationRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
-        _mediator = mediator;
         _eventBus = eventBus;
     }
 

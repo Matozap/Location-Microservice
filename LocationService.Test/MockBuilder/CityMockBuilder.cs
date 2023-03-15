@@ -88,7 +88,6 @@ public static class CityMockBuilder
         {
             return new UpdateCityHandler(NullLogger<UpdateCityHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         
@@ -96,7 +95,6 @@ public static class CityMockBuilder
         {
             return new SoftDeleteCityHandler(NullLogger<SoftDeleteCityHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         
@@ -104,7 +102,6 @@ public static class CityMockBuilder
         {
             return new DeleteCityHandler(NullLogger<DeleteCityHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         

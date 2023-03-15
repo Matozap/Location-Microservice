@@ -32,7 +32,7 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
         var resultEntity = await CreateCity(request.LocationDetails);
         if (resultEntity == null) return null;
         
-        _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id.ToString());
+        _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id);
         var resultDto = resultEntity.Adapt<Domain.City, CityData>();
             
         _ = _eventBus.Publish(new CityEvent { LocationDetails = request.LocationDetails, Action = EventAction.CityCreate});

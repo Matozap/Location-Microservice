@@ -91,7 +91,6 @@ public static class StateMockBuilder
         {
             return new UpdateStateHandler(NullLogger<UpdateStateHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         
@@ -99,7 +98,6 @@ public static class StateMockBuilder
         {
             return new SoftDeleteStateHandler(NullLogger<SoftDeleteStateHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         
@@ -107,7 +105,6 @@ public static class StateMockBuilder
         {
             return new DeleteStateHandler(NullLogger<DeleteStateHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         

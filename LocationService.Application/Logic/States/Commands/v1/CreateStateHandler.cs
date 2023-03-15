@@ -32,7 +32,7 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
         var resultEntity = await CreateState(request.LocationDetails);
         if (resultEntity == null) return null;
         
-        _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id.ToString());
+        _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id);
         var resultDto = resultEntity.Adapt<Domain.State, StateData>();
             
         _ = _eventBus.Publish(new StateEvent { LocationDetails = request.LocationDetails, Action = EventAction.StateCreate});

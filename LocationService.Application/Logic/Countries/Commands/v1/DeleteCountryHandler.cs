@@ -6,7 +6,6 @@ using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Countries.Events.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
-using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -16,14 +15,12 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
 {
     private readonly ILogger<DeleteCountryHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IMediator _mediator;
     private readonly IEventBus _eventBus;
 
-    public DeleteCountryHandler(ILogger<DeleteCountryHandler> logger, ILocationRepository repository, IMediator mediator, IEventBus eventBus)
+    public DeleteCountryHandler(ILogger<DeleteCountryHandler> logger, ILocationRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
-        _mediator = mediator;
         _eventBus = eventBus;
     }
 
@@ -40,17 +37,11 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
 
     private async Task DeleteCountryAsync(string countryId)
     {
-        var query = new GetCountryById
-        {
-            Id = countryId,
-            Source = MessageSource.Command
-        };
-        var readResult = await _mediator.Send(query);
-        var resultDto = (CountryData)readResult;
+        var entity = await _repository.GetCountryAsync(c => c.Id == countryId || c.Code == countryId);
             
-        if(resultDto != null)
+        if(entity != null)
         {                
-            await _repository.DeleteAsync(resultDto.Adapt<CountryData, Domain.Country>());
+            await _repository.DeleteAsync(entity);
             _logger.LogInformation("Country with id {CountryId} was completely deleted", countryId);
         }
     }

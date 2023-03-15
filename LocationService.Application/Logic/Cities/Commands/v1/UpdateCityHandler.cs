@@ -15,21 +15,19 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
 {
     private readonly ILogger<UpdateCityHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IMediator _mediator;
     private readonly IEventBus _eventBus;
 
-    public UpdateCityHandler(ILogger<UpdateCityHandler> logger, ILocationRepository repository, IMediator mediator, IEventBus eventBus)
+    public UpdateCityHandler(ILogger<UpdateCityHandler> logger, ILocationRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
-        _mediator = mediator;
         _eventBus = eventBus;
     }
 
     public async Task<object> Handle(UpdateCity request, CancellationToken cancellationToken)
     {
         await UpdateCity(request.LocationDetails);
-        _logger.LogInformation("City with id {CityID} updated successfully", request.LocationDetails.Id.ToString());
+        _logger.LogInformation("City with id {CityID} updated successfully", request.LocationDetails.Id);
         _ = _eventBus.Publish(new CityEvent { LocationDetails = request.LocationDetails, Action = EventAction.CityUpdate});
             
         return request.LocationDetails;

@@ -30,7 +30,7 @@ public class CityEventConsumer : IConsumer<CityEvent>
                 case EventAction.CityCreate:
                 case EventAction.CityUpdate: 
                 case EventAction.CityDelete: 
-                    _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(CityEvent), locationEvent.LocationDetails.Id.ToString());
+                    _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(CityEvent), locationEvent.LocationDetails.Id);
                     _ = _mediator.Send(new ClearCache
                     {
                         CityId = locationEvent.LocationDetails.Id,

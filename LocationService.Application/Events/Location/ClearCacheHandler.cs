@@ -58,7 +58,7 @@ public class ClearCacheHandler : IRequestHandler<ClearCache, bool>
             {
                 const string message = "Clearing location by city cache";
                 _logger.LogDebug(message);
-                var cacheKey = GetCityByIdHandler.GetCacheKey(request.CityId.ToString());
+                var cacheKey = GetCityByIdHandler.GetCacheKey(request.CityId);
                 await _cache.RemoveValueAsync(cacheKey, cancellationToken);
                 
                 cacheKey = GetAllCitiesHandler.GetCacheKey(request.StateId);

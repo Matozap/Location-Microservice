@@ -89,7 +89,6 @@ public static class CountryMockBuilder
         {
             return new UpdateCountryHandler(NullLogger<UpdateCountryHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         
@@ -97,7 +96,6 @@ public static class CountryMockBuilder
         {
             return new SoftDeleteCountryHandler(NullLogger<SoftDeleteCountryHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         
@@ -105,7 +103,6 @@ public static class CountryMockBuilder
         {
             return new DeleteCountryHandler(NullLogger<DeleteCountryHandler>.Instance,
                 GenerateMockRepository(location),
-                mediator,
                 GenerateMockEventBus());
         }
         

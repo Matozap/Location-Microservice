@@ -5,7 +5,6 @@ using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
-using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -15,14 +14,12 @@ public class DeleteCityHandler : IRequestHandler<DeleteCity, object>
 {
     private readonly ILogger<DeleteCityHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IMediator _mediator;
     private readonly IEventBus _eventBus;
 
-    public DeleteCityHandler(ILogger<DeleteCityHandler> logger, ILocationRepository repository, IMediator mediator, IEventBus eventBus)
+    public DeleteCityHandler(ILogger<DeleteCityHandler> logger, ILocationRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
-        _mediator = mediator;
         _eventBus = eventBus;
     }
 
@@ -32,23 +29,17 @@ public class DeleteCityHandler : IRequestHandler<DeleteCity, object>
 
         _ = _eventBus.Publish(new CityEvent { LocationDetails = new CityData {Id = request.Id}, Action = EventAction.CityDelete});
 
-        return request.Id.ToString();
+        return request.Id;
     }
 
     private async Task DeleteCityAsync(string cityId)
     {
-        var query = new GetCityById
-        {
-            Id = cityId,
-            Source = MessageSource.Command
-        };
-        var readResult = await _mediator.Send(query);
-        var existingDto = (CityData)readResult;
-            
-        if(existingDto != null)
+        var entity = await _repository.GetCityAsync(c => c.Id == cityId);
+        
+        if(entity != null)
         {                
-            await _repository.DeleteAsync(existingDto.Adapt<CityData, Domain.City>());
-            _logger.LogInformation("City with id {CityId} was completely deleted", cityId.ToString());
+            await _repository.DeleteAsync(entity);
+            _logger.LogInformation("City with id {CityId} was completely deleted", cityId);
         }
     }
 }

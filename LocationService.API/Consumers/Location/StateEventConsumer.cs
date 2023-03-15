@@ -30,7 +30,7 @@ public class StateEventConsumer : IConsumer<StateEvent>
                 case EventAction.StateCreate:
                 case EventAction.StateUpdate: 
                 case EventAction.StateDelete:
-                    _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(StateEvent), locationEvent.LocationDetails.Id.ToString());
+                    _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(StateEvent), locationEvent.LocationDetails.Id);
                     _ = _mediator.Send(new ClearCache
                     {
                         StateId = locationEvent.LocationDetails.Id,

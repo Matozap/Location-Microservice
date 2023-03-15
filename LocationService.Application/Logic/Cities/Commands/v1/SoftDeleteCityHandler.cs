@@ -5,7 +5,6 @@ using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
-using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -15,14 +14,12 @@ public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
 {
     private readonly ILogger<SoftDeleteCityHandler> _logger;
     private readonly ILocationRepository _repository;
-    private readonly IMediator _mediator;
     private readonly IEventBus _eventBus;
 
-    public SoftDeleteCityHandler(ILogger<SoftDeleteCityHandler> logger, ILocationRepository repository, IMediator mediator, IEventBus eventBus)
+    public SoftDeleteCityHandler(ILogger<SoftDeleteCityHandler> logger, ILocationRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
-        _mediator = mediator;
         _eventBus = eventBus;
     }
 
@@ -32,24 +29,17 @@ public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
 
         _ = _eventBus.Publish(new CityEvent { LocationDetails = new CityData { Id = request.Id }, Action = EventAction.CityDelete});
 
-        return request.Id.ToString();
+        return request.Id;
     }
 
     private async Task UpdateCity(string cityId)
     {
-        var query = new GetCityById
+        var entity = await _repository.GetCityAsync(c => c.Id == cityId);
+        if(entity != null)
         {
-            Id = cityId
-        };
-        var readResult = await _mediator.Send(query);
-        var existingDto = (CityData)readResult;
-            
-        if(existingDto != null)
-        {
-            var result = existingDto.Adapt<CityData, Domain.City>();
-            result.Disabled = true;
-            await _repository.UpdateAsync(result);
-            _logger.LogInformation("City with id {CityId} was soft deleted", cityId.ToString());
+            entity.Disabled = true;
+            await _repository.UpdateAsync(entity);
+            _logger.LogInformation("City with id {CityId} was soft deleted", cityId);
         }
     }
 }
