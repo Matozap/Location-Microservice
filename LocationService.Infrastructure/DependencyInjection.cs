@@ -7,6 +7,7 @@ using LocationService.Infrastructure.Extensions;
 using MapsterMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,6 +68,16 @@ public static class DependencyInjection
                 break;
             }
             
+            case "Cosmos":
+            {
+                services.AddDbContext<DatabaseContext>(options => options.UseCosmos(databaseOptions.ConnectionString, databaseOptions.InstanceName, opt =>
+                {
+                    opt.ConnectionMode(ConnectionMode.Direct);
+                    opt.ContentResponseOnWriteEnabled(false);
+                }));
+                break;
+            }
+            
             default:
             {
                 services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase(databaseName: databaseOptions.InstanceName));
@@ -74,6 +85,7 @@ public static class DependencyInjection
             }
         }
         
+        services.AddSingleton(databaseOptions);
         services.AddScoped<ILocationRepository, LocationRepository>();
         return services;
     }

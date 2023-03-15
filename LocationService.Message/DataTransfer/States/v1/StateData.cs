@@ -5,7 +5,7 @@ namespace LocationService.Message.DataTransfer.States.v1;
 
 public class StateData
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     public string Code { get; init; }
     public string Name { get; set; }
     public string CountryId { get; set; }

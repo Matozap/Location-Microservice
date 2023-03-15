@@ -33,7 +33,7 @@ public class CountryController : ControllerBase
     /// <summary>
     /// Gets a country by id (string).
     /// </summary>
-    /// <param name="id">Id</param>
+    /// <param name="id">Id or Code</param>
     /// <returns>Country</returns>
     /// <response code="200">OK</response>
     /// <response code="404">Not Found</response>
@@ -95,7 +95,7 @@ public class CountryController : ControllerBase
     /// <summary>
     /// Does a soft delete on the country with the given id.
     /// </summary>
-    /// <param name="id">Id</param>
+    /// <param name="id">Id or Code</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("Disable/{id}")]
@@ -113,7 +113,7 @@ public class CountryController : ControllerBase
     /// <summary>
     /// Does a physical delete on the country with the given id.
     /// </summary>
-    /// <param name="id">Id</param>
+    /// <param name="id">Id or Code</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("{id}")]

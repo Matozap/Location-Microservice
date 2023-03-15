@@ -35,7 +35,7 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
         return request.Id.ToString();
     }
 
-    private async Task UpdateState(int stateId)
+    private async Task UpdateState(string stateId)
     {
         var query = new GetStateById
         {

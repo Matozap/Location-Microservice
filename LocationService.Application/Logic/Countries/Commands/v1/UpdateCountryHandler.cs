@@ -40,7 +40,7 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
 
     private async Task UpdateCountry(CountryData countryData)
     {
-        var entity = await _repository.GetCountryAsync(c => c.Id == countryData.Id);
+        var entity = await _repository.GetCountryAsync(c => c.Id == countryData.Id || c.Code == countryData.Code);
         if(entity != null)
         {                
             await _repository.UpdateAsync(countryData.Adapt<CountryData, Domain.Country>());

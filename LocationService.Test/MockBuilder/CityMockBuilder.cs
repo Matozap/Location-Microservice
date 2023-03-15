@@ -32,7 +32,7 @@ public static class CityMockBuilder
         repository.UpdateAsync(mockCity).Returns(mockCity);
         repository.DeleteAsync(mockCity).Returns(mockCity);
         
-        repository.GetAllCitiesAsync(Arg.Any<int>()).Returns(mockCounties);
+        repository.GetAllCitiesAsync(Arg.Any<string>()).Returns(mockCounties);
         repository.GetCityAsync(Arg.Any<Expression<Func<City, bool>>>()).Returns(mockCity);
         return repository;
     }

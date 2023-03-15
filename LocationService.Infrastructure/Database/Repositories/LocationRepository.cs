@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Infrastructure.Database.Context;
+using LocationService.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocationService.Infrastructure.Database.Repositories;
@@ -13,10 +14,12 @@ namespace LocationService.Infrastructure.Database.Repositories;
 public class LocationRepository : ILocationRepository
 {
     private readonly DatabaseContext _applicationContext;
+    private readonly DatabaseOptions _databaseOptions;
 
-    public LocationRepository(DatabaseContext applicationContext)
+    public LocationRepository(DatabaseContext applicationContext, DatabaseOptions databaseOptions)
     {
         _applicationContext = applicationContext;
+        _databaseOptions = databaseOptions;
     }
 
     public async Task<List<Country>> GetAllCountriesAsync()
@@ -27,6 +30,7 @@ public class LocationRepository : ILocationRepository
             .Select(e => new Country
             {
                 Id = e.Id,
+                Code = e.Code,
                 Name = e.Name,
                 Currency = e.Currency,
                 CurrencyName = e.CurrencyName,
@@ -38,22 +42,24 @@ public class LocationRepository : ILocationRepository
 
     public async Task<List<State>> GetAllStatesAsync(string countryId)
     {
+        var parentByCode = await _applicationContext.Set<Country>().FirstOrDefaultAsync(e => e.Code == countryId) ?? new Country();
         var result = _applicationContext.Set<State>()
-            .Where(s => s.CountryId == countryId)
+            .Where(s => s.CountryId == countryId || s.CountryId == parentByCode.Id)
             .Where(e => !e.Disabled)
             .OrderBy(e => e.Name);
             
-        return await LoadAllNavigationalProperties(result).ToListAsync();
+        return await LoadAllNavigationalPropertiesAsync(result);
     }
 
-    public async Task<List<City>> GetAllCitiesAsync(int stateId)
+    public async Task<List<City>> GetAllCitiesAsync(string stateId)
     {
+        var parentByCode = await _applicationContext.Set<State>().FirstOrDefaultAsync(e => e.Code == stateId) ?? new State();
         var result = _applicationContext.Set<City>()
-            .Where(s => s.StateId == stateId)
+            .Where(s => s.StateId == stateId || s.StateId == parentByCode.Id)
             .Where(e => !e.Disabled)
             .OrderBy(e => e.Name);
         
-        return await LoadAllNavigationalProperties(result).ToListAsync();
+        return await LoadAllNavigationalPropertiesAsync(result);
     }
 
     public async Task<Country> GetCountryAsync(Expression<Func<Country, bool>> predicate)
@@ -63,7 +69,7 @@ public class LocationRepository : ILocationRepository
             .Where(predicate)
             .OrderBy(e => e.Name);;
 
-        return await LoadAllNavigationalProperties(result).FirstOrDefaultAsync();
+        return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
 
     public async Task<State> GetStateAsync(Expression<Func<State, bool>> predicate)
@@ -73,7 +79,7 @@ public class LocationRepository : ILocationRepository
             .Where(predicate)
             .OrderBy(e => e.Name);
 
-        return await LoadAllNavigationalProperties(result).FirstOrDefaultAsync();
+        return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
 
     public async Task<City> GetCityAsync(Expression<Func<City, bool>> predicate)
@@ -83,13 +89,32 @@ public class LocationRepository : ILocationRepository
             .Where(predicate)
             .OrderBy(e => e.Name);;
 
-        return await LoadAllNavigationalProperties(result).FirstOrDefaultAsync();
+        return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
-   
-    public async Task<T> AddAsync<T>(T entity) where T: class
+
+    public async Task<Country> AddAsync(Country entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-            
+        entity.Id = UniqueIdGenerator.GenerateSequentialId();
+        return await AddAsync<Country>(entity);
+    }
+    
+    public async Task<State> AddAsync(State entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        entity.Id = UniqueIdGenerator.GenerateSequentialId();
+        return await AddAsync<State>(entity);
+    }
+    
+    public async Task<City> AddAsync(City entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        entity.Id = UniqueIdGenerator.GenerateSequentialId();
+        return await AddAsync<City>(entity);
+    }
+
+    private async Task<T> AddAsync<T>(T entity) where T: class
+    {
         await _applicationContext.AddAsync(entity);
         await _applicationContext.SaveChangesAsync();
 
@@ -116,22 +141,57 @@ public class LocationRepository : ILocationRepository
         return entity;
     }
     
-    private static IQueryable<Country> LoadAllNavigationalProperties(IQueryable<Country> source)
+    private async Task<List<Country>> LoadAllNavigationalPropertiesAsync(IQueryable<Country> source)
     {
-        return source.Include(c => c.States.Where(s => !s.Disabled))
-            .ThenInclude(s => s.Cities.Where(c => !c.Disabled))
-            .AsSplitQuery()
-            .AsNoTracking();
+        switch (_databaseOptions.EngineType)
+        {
+            case EngineType.NonRelational:
+            {
+                var partialResult = await source.AsNoTracking().ToListAsync();
+                return partialResult.Select(e =>
+                {
+                    e.States = _applicationContext.Set<State>().Where(s => s.CountryId == e.Id).AsNoTracking().ToList();
+                    return e;
+                }).ToList();
+            }
+            case EngineType.Relational:
+            default:
+                return source.Include(c => c.States.Where(s => !s.Disabled))
+                    .ThenInclude(s => s.Cities.Where(c => !c.Disabled))
+                    .AsSplitQuery()
+                    .AsNoTracking()
+                    .ToList();
+        }
     }
-    private static IQueryable<State> LoadAllNavigationalProperties(IQueryable<State> source)
+    
+    private async Task<List<State>> LoadAllNavigationalPropertiesAsync(IQueryable<State> source)
     {
-        return source.Include(s => s.Cities.Where(c => !c.Disabled))
-            .AsSplitQuery()
-            .AsNoTracking();
+        switch (_databaseOptions.EngineType)
+        {
+            case EngineType.NonRelational:
+            {
+                var partialResult = await source.AsNoTracking().ToListAsync();
+                return partialResult.Select(e =>
+                {
+                    e.Cities = _applicationContext.Set<City>().Where(s => s.StateId == e.Id).AsNoTracking().ToList();
+                    return e;
+                }).ToList();
+            }
+            case EngineType.Relational:
+            default:
+                return source.Include(s => s.Cities.Where(c => !c.Disabled))
+                    .AsSplitQuery()
+                    .AsNoTracking()
+                    .ToList();
+        }
     }
-    private static IQueryable<City> LoadAllNavigationalProperties(IQueryable<City> source)
+    
+    private async Task<List<City>> LoadAllNavigationalPropertiesAsync(IQueryable<City> source)
     {
-        return source.AsSplitQuery()
-            .AsNoTracking();
+        return _databaseOptions.EngineType switch
+        {
+            EngineType.NonRelational => await source.AsNoTracking().ToListAsync(),
+            _ => source.AsSplitQuery().AsNoTracking().ToList()
+        };
     }
 }

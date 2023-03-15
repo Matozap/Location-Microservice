@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using LocationService.Domain;
+using LocationService.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocationService.Infrastructure.Database.Context;
@@ -11,25 +13,31 @@ namespace LocationService.Infrastructure.Database.Context;
 public static class DatabaseSeed
 {
     private record RawCity(string Name);
-    private record RawState(string Name, string Code, RawCity[] Cities);
-    private record RawCountry(string Id, string Name, string Currency, string CurrencyName, string Region, string SubRegion, RawState[] States);
-    
-    public static void SeedAllCountriesData(DatabaseContext context)
+    private record RawState(string Code, string Name, RawCity[] Cities);
+    private record RawCountry(string Code, string Name, string Currency, string CurrencyName, string Region, string SubRegion, RawState[] States);
+
+    public static async Task SeedAllCountriesDataAsync(DatabaseContext context)
     {
         try
         {
-            context.Database.EnsureCreated();
+            await context.Database.EnsureCreatedAsync();
             if (context.Countries.AsNoTracking().OrderBy(e => e.Id).FirstOrDefault() == null)
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "Database","Context","Seed", "countries-states-cities.json");
-                var seedFile = string.Concat(File.ReadAllLines(path));
+                var seedFile = string.Concat(await File.ReadAllLinesAsync(path));
                 var countryList = JsonSerializer.Deserialize<List<RawCountry>>(seedFile, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                context.ChangeTracker.AutoDetectChangesEnabled = false;
+                var countries = new List<Country>(countryList.Count);
+                var states = new List<State>();
+                var cities = new List<City>();
                 
                 foreach (var country in countryList)
                 {
-                    context.Countries.Add(new Country
+                    var newCountry = new Country
                     {
-                        Id = country.Id,
+                        Id = UniqueIdGenerator.GenerateSequentialId(),
+                        Code = country.Code,
                         Name = country.Name,
                         Currency = country.Currency,
                         CurrencyName = country.CurrencyName,
@@ -38,34 +46,39 @@ public static class DatabaseSeed
                         LastUpdateDate = DateTime.UtcNow,
                         LastUpdateUserId = "System",
                         Disabled = false
-                    });
+                    };
+                    countries.Add(newCountry);
+
                     foreach (var state in country.States)
                     {
-                        var createdEntity = context.States.Add(new State
+                        var newState = new State
                         {
+                            Id = UniqueIdGenerator.GenerateSequentialId(),
                             Code = state.Code,
                             Name = state.Name,
-                            CountryId = country.Id,
+                            CountryId = newCountry.Id,
                             LastUpdateDate = DateTime.UtcNow,
                             LastUpdateUserId = "System",
                             Disabled = false
-                        }).Entity;
-                        foreach (var city in state.Cities)
+                        };
+                        states.Add(newState);
+
+                        cities.AddRange(state.Cities.Select(city => new City
                         {
-                            context.Cities.Add(new City
-                            {
-                                Name = city.Name,
-                                StateId = createdEntity.Id,
-                                LastUpdateDate = DateTime.UtcNow,
-                                LastUpdateUserId = "System",
-                                Disabled = false,
-                                State = createdEntity
-                            });
-                        }
+                            Id = UniqueIdGenerator.GenerateSequentialId(),
+                            Name = city.Name,
+                            StateId = newState.Id,
+                            LastUpdateDate = DateTime.UtcNow,
+                            LastUpdateUserId = "System",
+                            Disabled = false
+                        }));
                     }
                 }
 
-                context.SaveChanges();
+                await context.Countries.AddRangeAsync(countries);
+                await context.States.AddRangeAsync(states);
+                await context.Cities.AddRangeAsync(cities);
+                await context.SaveChangesAsync();
             }
         }
         catch (Exception ex)

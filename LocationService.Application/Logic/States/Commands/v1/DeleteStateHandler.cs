@@ -35,7 +35,7 @@ public class DeleteStateHandler : IRequestHandler<DeleteState, object>
         return request.Id.ToString();
     }
 
-    private async Task DeleteStateAsync(int stateId)
+    private async Task DeleteStateAsync(string stateId)
     {
         var query = new GetStateById
         {

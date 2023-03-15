@@ -41,11 +41,11 @@ public class GetAllCitiesHandler : IRequestHandler<GetAllCities, object>
         return dataValue;
     }
 
-    private async Task<List<CityData>> GetAllCities(int stateId)
+    private async Task<List<CityData>> GetAllCities(string stateId)
     {
         var allLocations = await _repository.GetAllCitiesAsync(stateId);
         return allLocations.Adapt<List<CityData>>();
     }
     
-    public static string GetCacheKey(int id) => $"Cities:{id}";
+    public static string GetCacheKey(string id) => $"Cities:{id}";
 }

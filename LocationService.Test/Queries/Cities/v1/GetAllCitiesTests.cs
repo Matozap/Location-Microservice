@@ -18,7 +18,7 @@ public class GetAllCitiesTests
         // Arrange
         var classToHandle = new GetAllCities()
         {
-            StateId = 1
+            StateId = "1"
         };
         var handler = (GetAllCitiesHandler)CityMockBuilder.CreateHandler<GetAllCitiesHandler>();
 

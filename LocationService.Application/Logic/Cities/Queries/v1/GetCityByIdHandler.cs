@@ -47,7 +47,7 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
         return dataValue;
     }
 
-    private async Task<CityData> GetStateById(int id)
+    private async Task<CityData> GetStateById(string id)
     {
         var entity = await _repository.GetCityAsync(e => e.Id == id);
         var resultDto = entity.Adapt<Domain.City, CityData>();

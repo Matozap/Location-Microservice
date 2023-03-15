@@ -47,10 +47,9 @@ public class StateController : ControllerBase
     [HttpGet("{code}")]
     public async Task<IActionResult> GetById(string code)
     {
-        var isNumber = int.TryParse(code, out var parsedId);
         var query = new GetStateById
         {
-            Id = isNumber ? parsedId : 0,
+            Id = code,
             Code = code
         };
         
@@ -108,7 +107,7 @@ public class StateController : ControllerBase
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("Disable/{id}")]
-    public async Task<IActionResult> Disable(int id)
+    public async Task<IActionResult> Disable(string id)
     {
         var query = new SoftDeleteState
         {
@@ -126,7 +125,7 @@ public class StateController : ControllerBase
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(string id)
     {
         var query = new DeleteState
         {

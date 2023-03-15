@@ -10,11 +10,13 @@ public interface ILocationRepository
 {
     Task<List<Country>> GetAllCountriesAsync();
     Task<List<State>> GetAllStatesAsync(string countryId);
-    Task<List<City>> GetAllCitiesAsync(int stateId);
+    Task<List<City>> GetAllCitiesAsync(string stateId);
     Task<Country> GetCountryAsync(Expression<Func<Country, bool>> predicate);
     Task<State> GetStateAsync(Expression<Func<State, bool>> predicate);
     Task<City> GetCityAsync(Expression<Func<City, bool>> predicate);
-    Task<T> AddAsync<T>(T entity) where T : class;
+    Task<Country> AddAsync(Country entity);
+    Task<State> AddAsync(State entity);
+    Task<City> AddAsync(City entity);
     Task<T> UpdateAsync<T>(T entity) where T : class;
     Task<T> DeleteAsync<T>(T entity) where T : class;
 }

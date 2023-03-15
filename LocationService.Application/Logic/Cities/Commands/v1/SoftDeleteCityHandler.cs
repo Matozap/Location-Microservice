@@ -35,18 +35,18 @@ public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
         return request.Id.ToString();
     }
 
-    private async Task UpdateCity(int cityId)
+    private async Task UpdateCity(string cityId)
     {
         var query = new GetCityById
         {
             Id = cityId
         };
         var readResult = await _mediator.Send(query);
-        var existingresultDto = (CityData)readResult;
+        var existingDto = (CityData)readResult;
             
-        if(existingresultDto != null)
+        if(existingDto != null)
         {
-            var result = existingresultDto.Adapt<CityData, Domain.City>();
+            var result = existingDto.Adapt<CityData, Domain.City>();
             result.Disabled = true;
             await _repository.UpdateAsync(result);
             _logger.LogInformation("City with id {CityId} was soft deleted", cityId.ToString());

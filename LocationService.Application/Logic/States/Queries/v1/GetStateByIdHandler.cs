@@ -47,16 +47,16 @@ public class GetStateByIdHandler : IRequestHandler<GetStateById, object>
         return dataValue;
     }
 
-    private async Task<StateData> GetStateById(int id, string code)
+    private async Task<StateData> GetStateById(string id, string code)
     {
         var entity = await _repository.GetStateAsync(e => e.Id == id || e.Code == code);
         var resultDto = entity.Adapt<Domain.State, StateData>();
         return resultDto;
     }
 
-    public static string GetCacheKey(int id, string code)
+    public static string GetCacheKey(string id, string code)
     {
-        var key = id > 0 ? id.ToString() : code;
+        var key = !string.IsNullOrEmpty(id) ? id : code;
         return $"State:id:{key}";
     }
 }

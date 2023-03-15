@@ -25,7 +25,7 @@ public class CityController : ControllerBase
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("All/{stateId}")]
-    public async Task<IActionResult> GetAll(int stateId)
+    public async Task<IActionResult> GetAll(string stateId)
     {
         var query = new GetAllCities
         {
@@ -45,7 +45,7 @@ public class CityController : ControllerBase
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(string id)
     {
         var query = new GetCityById
         {
@@ -106,7 +106,7 @@ public class CityController : ControllerBase
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("Disable/{id}")]
-    public async Task<IActionResult> Disable(int id)
+    public async Task<IActionResult> Disable(string id)
     {
         var query = new SoftDeleteCity
         {
@@ -124,7 +124,7 @@ public class CityController : ControllerBase
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(string id)
     {
         var query = new DeleteCity
         {

@@ -16,6 +16,7 @@ public static class InitializeDbContextExtension
             var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
             using var serviceScope = serviceProvider.GetService<DatabaseContext>();
+            serviceScope.SeedData();
             Console.WriteLine("[Database] Seeding completed successfully");
         }
         catch (Exception ex)
