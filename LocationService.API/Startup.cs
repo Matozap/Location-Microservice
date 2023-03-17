@@ -31,12 +31,6 @@ public class Startup
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             ServicePointManager.DefaultConnectionLimit = 10000;
-            services.AddDataProtection().UseCryptographicAlgorithms(
-                new AuthenticatedEncryptorConfiguration
-                {
-                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
-                    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
-                });
             
             services.AddAuthorization();
             services.AddCors();
