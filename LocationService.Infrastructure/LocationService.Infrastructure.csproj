@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>    
-    <None Update="Database\Context\Seed\countries-states-cities.json">
+    <None Update="Database\Context\Seed\seed.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
