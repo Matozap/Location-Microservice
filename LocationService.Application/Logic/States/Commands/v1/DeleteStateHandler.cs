@@ -1,10 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.States.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.States.Events.v1;
 using LocationService.Message.Definition.States.Requests.v1;
+using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -25,14 +27,19 @@ public class DeleteStateHandler : IRequestHandler<DeleteState, object>
 
     public async Task<object> Handle(DeleteState request, CancellationToken cancellationToken)
     {
-        await DeleteStateAsync(request.Id);
+        var entity = await DeleteStateAsync(request.Id);
 
-        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateData {Id = request.Id}, Action = EventAction.StateDelete});
+        if (entity != null)
+        {
+            var publishData = entity.Adapt<State, StateData>();
+            publishData.Cities = null;
+            _ = _eventBus.Publish(new StateEvent { LocationDetails = publishData, Action = EventAction.StateDelete });
+        }
 
         return request.Id;
     }
 
-    private async Task DeleteStateAsync(string stateId)
+    private async Task<State> DeleteStateAsync(string stateId)
     {
         var entity = await _repository.GetStateAsync(c => c.Id == stateId || c.Code == stateId);
             
@@ -41,5 +48,7 @@ public class DeleteStateHandler : IRequestHandler<DeleteState, object>
             await _repository.DeleteAsync(entity);
             _logger.LogInformation("State with id {StateId} was completely deleted", stateId);
         }
+
+        return entity;
     }
 }

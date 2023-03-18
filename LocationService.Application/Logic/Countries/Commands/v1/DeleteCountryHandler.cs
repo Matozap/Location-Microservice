@@ -2,10 +2,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Countries.Events.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
+using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -28,14 +30,19 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
     {
         ArgumentException.ThrowIfNullOrEmpty(request.Id);
 
-        await DeleteCountryAsync(request.Id);
+        var entity = await DeleteCountryAsync(request.Id);
 
-        _ = _eventBus.Publish(new CountryEvent { LocationDetails = new CountryData {Id = request.Id}, Action = EventAction.CountryDelete});
+        if (entity != null)
+        {
+            var publishData = entity.Adapt<Country, CountryData>();
+            publishData.States = null;
+            _ = _eventBus.Publish(new CountryEvent { LocationDetails = publishData, Action = EventAction.CountryDelete });
+        }
 
         return request.Id;
     }
 
-    private async Task DeleteCountryAsync(string countryId)
+    private async Task<Country> DeleteCountryAsync(string countryId)
     {
         var entity = await _repository.GetCountryAsync(c => c.Id == countryId || c.Code == countryId);
             
@@ -44,5 +51,7 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
             await _repository.DeleteAsync(entity);
             _logger.LogInformation("Country with id {CountryId} was completely deleted", countryId);
         }
+
+        return entity;
     }
 }

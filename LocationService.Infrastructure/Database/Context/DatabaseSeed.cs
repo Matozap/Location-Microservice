@@ -23,7 +23,7 @@ public static class DatabaseSeed
             await context.Database.EnsureCreatedAsync();
             if (context.Countries.AsNoTracking().OrderBy(e => e.Id).FirstOrDefault() == null)
             {
-                var path = Path.Combine(AppContext.BaseDirectory, "Database","Context","Seed", "countries-states-cities.json");
+                var path = Path.Combine(AppContext.BaseDirectory, "Database","Context","Seed", "seed.json");
                 var seedFile = string.Concat(await File.ReadAllLinesAsync(path));
                 var countryList = JsonSerializer.Deserialize<List<RawCountry>>(seedFile, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 

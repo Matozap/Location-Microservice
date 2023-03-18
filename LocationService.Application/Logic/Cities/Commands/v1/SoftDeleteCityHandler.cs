@@ -1,10 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
+using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -25,21 +27,28 @@ public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
 
     public async Task<object> Handle(SoftDeleteCity request, CancellationToken cancellationToken)
     {
-        await UpdateCity(request.Id);
+        var entity = await UpdateCity(request.Id);
 
-        _ = _eventBus.Publish(new CityEvent { LocationDetails = new CityData { Id = request.Id }, Action = EventAction.CityDelete});
+        if (entity != null)
+        {
+            var publishData = entity.Adapt<City, CityData>();
+            _ = _eventBus.Publish(new CityEvent { LocationDetails = publishData, Action = EventAction.CityDelete });
+        }
 
         return request.Id;
     }
 
-    private async Task UpdateCity(string cityId)
+    private async Task<City> UpdateCity(string cityId)
     {
         var entity = await _repository.GetCityAsync(c => c.Id == cityId);
+        
         if(entity != null)
         {
             entity.Disabled = true;
             await _repository.UpdateAsync(entity);
             _logger.LogInformation("City with id {CityId} was soft deleted", cityId);
         }
+
+        return entity;
     }
 }

@@ -1,10 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.States.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.States.Events.v1;
 using LocationService.Message.Definition.States.Requests.v1;
+using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -25,14 +27,19 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
 
     public async Task<object> Handle(SoftDeleteState request, CancellationToken cancellationToken)
     {
-        await UpdateState(request.Id);
+        var entity = await UpdateState(request.Id);
 
-        _ = _eventBus.Publish(new StateEvent { LocationDetails = new StateData { Id = request.Id }, Action = EventAction.StateDelete});
+        if (entity != null)
+        {
+            var publishData = entity.Adapt<State, StateData>();
+            publishData.Cities = null;
+            _ = _eventBus.Publish(new StateEvent { LocationDetails = publishData, Action = EventAction.StateDelete });
+        }
 
         return request.Id;
     }
 
-    private async Task UpdateState(string stateId)
+    private async Task<State> UpdateState(string stateId)
     {
         var entity = await _repository.GetStateAsync(c => c.Id == stateId || c.Code == stateId);
             
@@ -42,5 +49,7 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
             await _repository.UpdateAsync(entity);
             _logger.LogInformation("State with id {StateId} was soft deleted", stateId);
         }
+        
+        return entity;
     }
 }
