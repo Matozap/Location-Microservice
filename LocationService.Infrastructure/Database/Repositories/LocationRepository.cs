@@ -25,17 +25,17 @@ public class LocationRepository : ILocationRepository
     public async Task<List<Country>> GetAllCountriesAsync()
     {
         var result = _applicationContext.Set<Country>()
-            .Where(e => !e.Disabled)
-            .OrderBy(e => e.Name)
-            .Select(e => new Country
+            .Where(country => !country.Disabled)
+            .OrderBy(country => country.Name)
+            .Select(country => new Country
             {
-                Id = e.Id,
-                Code = e.Code,
-                Name = e.Name,
-                Currency = e.Currency,
-                CurrencyName = e.CurrencyName,
-                Region = e.Region,
-                SubRegion = e.SubRegion
+                Id = country.Id,
+                Code = country.Code,
+                Name = country.Name,
+                Currency = country.Currency,
+                CurrencyName = country.CurrencyName,
+                Region = country.Region,
+                SubRegion = country.SubRegion
             });
         return await result.ToListAsync();
     }
@@ -44,9 +44,9 @@ public class LocationRepository : ILocationRepository
     {
         var parentByCode = await _applicationContext.Set<Country>().FirstOrDefaultAsync(e => e.Code == countryId) ?? new Country();
         var result = _applicationContext.Set<State>()
-            .Where(s => s.CountryId == countryId || s.CountryId == parentByCode.Id)
-            .Where(e => !e.Disabled)
-            .OrderBy(e => e.Name);
+            .Where(state => state.CountryId == countryId || state.CountryId == parentByCode.Id)
+            .Where(state => !state.Disabled)
+            .OrderBy(state => state.Name);
             
         return await LoadAllNavigationalPropertiesAsync(result);
     }
@@ -55,9 +55,9 @@ public class LocationRepository : ILocationRepository
     {
         var parentByCode = await _applicationContext.Set<State>().FirstOrDefaultAsync(e => e.Code == stateId) ?? new State();
         var result = _applicationContext.Set<City>()
-            .Where(s => s.StateId == stateId || s.StateId == parentByCode.Id)
-            .Where(e => !e.Disabled)
-            .OrderBy(e => e.Name);
+            .Where(city => city.StateId == stateId || city.StateId == parentByCode.Id)
+            .Where(city => !city.Disabled)
+            .OrderBy(city => city.Name);
         
         return await LoadAllNavigationalPropertiesAsync(result);
     }
@@ -65,9 +65,9 @@ public class LocationRepository : ILocationRepository
     public async Task<Country> GetCountryAsync(Expression<Func<Country, bool>> predicate)
     {
         var result = _applicationContext.Set<Country>()
-            .Where(e => !e.Disabled)
+            .Where(country => !country.Disabled)
             .Where(predicate)
-            .OrderBy(e => e.Name);;
+            .OrderBy(country => country.Name);;
 
         return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
@@ -75,9 +75,9 @@ public class LocationRepository : ILocationRepository
     public async Task<State> GetStateAsync(Expression<Func<State, bool>> predicate)
     {
         var result = _applicationContext.Set<State>()
-            .Where(e => !e.Disabled)
+            .Where(state => !state.Disabled)
             .Where(predicate)
-            .OrderBy(e => e.Name);
+            .OrderBy(state => state.Name);
 
         return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
@@ -85,9 +85,9 @@ public class LocationRepository : ILocationRepository
     public async Task<City> GetCityAsync(Expression<Func<City, bool>> predicate)
     {
         var result = _applicationContext.Set<City>()
-            .Where(e => !e.Disabled)
+            .Where(city => !city.Disabled)
             .Where(predicate)
-            .OrderBy(e => e.Name);;
+            .OrderBy(city => city.Name);;
 
         return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
@@ -148,16 +148,27 @@ public class LocationRepository : ILocationRepository
             case EngineType.NonRelational:
             {
                 var partialResult = await source.AsNoTracking().ToListAsync();
-                return partialResult.Select(e =>
+                return partialResult.Select(country =>
                 {
-                    e.States = _applicationContext.Set<State>().Where(s => s.CountryId == e.Id).AsNoTracking().ToList();
-                    return e;
+                    country.States = _applicationContext.Set<State>().Where(state => state.CountryId == country.Id)
+                        .AsNoTracking()
+                        .ToList();
+
+                    country.States = country.States.Select(f =>
+                    {
+                        f.Cities = _applicationContext.Set<City>().Where(city => city.StateId == f.Id)
+                            .AsNoTracking()
+                            .ToList();
+                        return f;
+                    }).ToList();
+
+                    return country;
                 }).ToList();
             }
             case EngineType.Relational:
             default:
-                return source.Include(c => c.States.Where(s => !s.Disabled))
-                    .ThenInclude(s => s.Cities.Where(c => !c.Disabled))
+                return source.Include(country => country.States.Where(state => !state.Disabled))
+                    .ThenInclude(s => s.Cities.Where(city => !city.Disabled))
                     .AsSplitQuery()
                     .AsNoTracking()
                     .ToList();
@@ -171,15 +182,17 @@ public class LocationRepository : ILocationRepository
             case EngineType.NonRelational:
             {
                 var partialResult = await source.AsNoTracking().ToListAsync();
-                return partialResult.Select(e =>
+                return partialResult.Select(state =>
                 {
-                    e.Cities = _applicationContext.Set<City>().Where(s => s.StateId == e.Id).AsNoTracking().ToList();
-                    return e;
+                    state.Cities = _applicationContext.Set<City>().Where(city => city.StateId == state.Id)
+                        .AsNoTracking()
+                        .ToList();
+                    return state;
                 }).ToList();
             }
             case EngineType.Relational:
             default:
-                return source.Include(s => s.Cities.Where(c => !c.Disabled))
+                return source.Include(state => state.Cities.Where(c => !c.Disabled))
                     .AsSplitQuery()
                     .AsNoTracking()
                     .ToList();
