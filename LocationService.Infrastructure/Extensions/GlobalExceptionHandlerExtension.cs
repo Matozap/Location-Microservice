@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
 
 namespace LocationService.Infrastructure.Extensions;
 
@@ -41,28 +40,28 @@ public static class GlobalExceptionHandlerExtension
                     string result;
                     if (!env.IsDevelopment() && exceptionHandlerFeature.Error is not ValidationException)
                     {
-                        result = JsonSerializer.Serialize(new
+                        result = new
                         {
                             Error = $"An unexpected error happened. - Detail: {exceptionHandlerFeature.Error.Message}"
-                        });
+                        }.Serialize();
                     }
                     else
                     {
                         if (exceptionHandlerFeature.Error is ValidationException)
                         {
-                            result = JsonSerializer.Serialize(new
+                            result = new
                             {
                                 Error = $"Validation Error - Detail: {exceptionHandlerFeature.Error.Message}"
-                            });
+                            }.Serialize();
                         }
                         else
                         {
-                            result = JsonSerializer.Serialize(new
+                            result = new
                             {
                                 Error = exceptionHandlerFeature.Error.Message,
                                 Timestamp = DateTime.Now.ToString("yyyy-MM-dd H-m-ss"),
                                 Type = exceptionHandlerFeature.Error.GetType().Name
-                            });
+                            }.Serialize();
                         }
                     }
 

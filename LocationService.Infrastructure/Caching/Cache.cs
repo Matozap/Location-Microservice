@@ -1,8 +1,8 @@
 using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Infrastructure.Extensions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
@@ -40,7 +40,7 @@ public sealed class Cache : ICache
             {
                 return null;
             }
-            var deserializedObj = JsonSerializer.Deserialize<T>(result);
+            var deserializedObj = result.Deserialize<T>();
             SetHealthyStatus();
             return deserializedObj;
         }
@@ -68,7 +68,7 @@ public sealed class Cache : ICache
                 SlidingExpiration = TimeSpan.FromSeconds(30)
             };
 
-            var result = JsonSerializer.Serialize(value);
+            var result = value.Serialize();
             await _distributedCache.SetStringAsync(cacheKey, result, cacheEntryOptions, token);
             SetHealthyStatus();
         }

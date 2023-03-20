@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using LocationService.Domain;
+using LocationService.Infrastructure.Extensions;
 using LocationService.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +25,7 @@ public static class DatabaseSeed
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "Database","Context","Seed", "seed.json");
                 var seedFile = string.Concat(await File.ReadAllLinesAsync(path));
-                var countryList = JsonSerializer.Deserialize<List<RawCountry>>(seedFile, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var countryList = seedFile.Deserialize<List<RawCountry>>();
 
                 context.ChangeTracker.AutoDetectChangesEnabled = false;
                 var countries = new List<Country>(countryList.Count);
