@@ -55,7 +55,7 @@ public static class EventBusConfigurationExtension
                             cfg.Host(new Uri(eventBusOptions.ConnectionString));
 
                             SetEventBusMessages(cfg);
-                            RegisterSubscription2(context, cfg, eventBusOptions.Subscriptions);
+                            RegisterSubscriptionOnRabbitMq(context, cfg, eventBusOptions.Subscriptions);
                             cfg.ConfigureEndpoints(context);
                         });
                         break;
@@ -107,7 +107,7 @@ public static class EventBusConfigurationExtension
         }
     }
     
-    private static void RegisterSubscription2(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator busFactoryConfigurator, Dictionary<string,string> subscriptions)
+    private static void RegisterSubscriptionOnRabbitMq(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator busFactoryConfigurator, Dictionary<string,string> subscriptions)
     {
         foreach (var (subscriptionKey,subscriptionValue) in subscriptions)
         {
