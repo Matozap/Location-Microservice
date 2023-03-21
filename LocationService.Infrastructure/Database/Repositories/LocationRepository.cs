@@ -92,29 +92,10 @@ public class LocationRepository : ILocationRepository
         return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
 
-    public async Task<Country> AddAsync(Country entity)
+    public async Task<T> AddAsync<T>(T entity) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
         entity.Id = UniqueIdGenerator.GenerateSequentialId();
-        return await AddAsync<Country>(entity);
-    }
-    
-    public async Task<State> AddAsync(State entity)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-        entity.Id = UniqueIdGenerator.GenerateSequentialId();
-        return await AddAsync<State>(entity);
-    }
-    
-    public async Task<City> AddAsync(City entity)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-        entity.Id = UniqueIdGenerator.GenerateSequentialId();
-        return await AddAsync<City>(entity);
-    }
-
-    private async Task<T> AddAsync<T>(T entity) where T: class
-    {
         await _applicationContext.AddAsync(entity);
         await _applicationContext.SaveChangesAsync();
 

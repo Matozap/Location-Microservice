@@ -14,9 +14,10 @@ public interface ILocationRepository
     Task<Country> GetCountryAsync(Expression<Func<Country, bool>> predicate);
     Task<State> GetStateAsync(Expression<Func<State, bool>> predicate);
     Task<City> GetCityAsync(Expression<Func<City, bool>> predicate);
-    Task<Country> AddAsync(Country entity);
-    Task<State> AddAsync(State entity);
-    Task<City> AddAsync(City entity);
+    Task<T> AddAsync<T>(T entity) where T : EntityBase;
+    // Task<Country> AddAsync(Country entity);
+    // Task<State> AddAsync(State entity);
+    // Task<City> AddAsync(City entity);
     Task<T> UpdateAsync<T>(T entity) where T : class;
     Task<T> DeleteAsync<T>(T entity) where T : class;
 }

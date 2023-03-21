@@ -27,7 +27,6 @@ public class CreateCountryHandler : IRequestHandler<CreateCountry, object>
 
     public async Task<object> Handle(CreateCountry request, CancellationToken cancellationToken)
     {
-        ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Id);
         ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Name);
         
         var resultEntity = await CreateCountry(request.LocationDetails);

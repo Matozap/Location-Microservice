@@ -1,8 +1,8 @@
-using System;
+ using System;
 using System.Collections.Generic;
-using System.Reflection;
-using LocationService.API.Consumers.Location;
-using LocationService.Application.Interfaces;
+ using System.Linq;
+ using System.Reflection;
+ using LocationService.Application.Interfaces;
 using LocationService.Infrastructure.Bus;
 using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Countries.Events.v1;
@@ -45,7 +45,7 @@ public static class EventBusConfigurationExtension
                             cfg.Host(eventBusOptions.ConnectionString);
 
                             SetEventBusMessages(cfg);
-                            RegisterSubscription(context, cfg, eventBusOptions.Subscriptions);
+                            RegisterSubscriptionDynamically(context, eventBusOptions.Subscriptions, cfg);
                             cfg.ConfigureEndpoints(context);
                         });
                         break;
@@ -55,7 +55,7 @@ public static class EventBusConfigurationExtension
                             cfg.Host(new Uri(eventBusOptions.ConnectionString));
 
                             SetEventBusMessages(cfg);
-                            RegisterSubscriptionOnRabbitMq(context, cfg, eventBusOptions.Subscriptions);
+                            RegisterSubscriptionDynamically(context, eventBusOptions.Subscriptions, cfg);
                             cfg.ConfigureEndpoints(context);
                         });
                         break;
@@ -74,68 +74,51 @@ public static class EventBusConfigurationExtension
         busFactoryConfigurator.Message<StateEvent>(e => e.SetEntityName(nameof(StateEvent)));
         busFactoryConfigurator.Message<CityEvent>(e => e.SetEntityName(nameof(CityEvent)));
     }
-    
-    private static void RegisterSubscription(IBusRegistrationContext context, IServiceBusBusFactoryConfigurator busFactoryConfigurator, Dictionary<string,string> subscriptions)
+
+    private static void RegisterSubscriptionDynamically<T>(IRegistrationContext context, Dictionary<string, string> subscriptions, IBusFactoryConfigurator<T> busFactoryConfigurator) where T : IReceiveEndpointConfigurator
     {
         foreach (var (subscriptionKey,subscriptionValue) in subscriptions)
         {
-            if (!string.IsNullOrEmpty(subscriptionValue))
+            if (!string.IsNullOrWhiteSpace(subscriptionValue))
             {
-                busFactoryConfigurator.SubscriptionEndpoint(subscriptionValue,subscriptionKey, configurator =>
+                if (busFactoryConfigurator is IServiceBusBusFactoryConfigurator azureBusConfigurator)
                 {
-                    switch (subscriptionKey)
+                    azureBusConfigurator.SubscriptionEndpoint(subscriptionValue,subscriptionKey, configurator =>
                     {
-                        case "CountryEvent":
-                            configurator.ConfigureConsumer<CountryEventConsumer>(context);
-                            break;
-                        case "StateEvent":
-                            configurator.ConfigureConsumer<StateEventConsumer>(context);
-                            break;
-                        case "CityEvent":
-                            configurator.ConfigureConsumer<CityEventConsumer>(context);
-                            break;
-                    }
-                                        
-                    configurator.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10)));
-                    configurator.UseMessageRetry(r => r.Immediate(3));
-                                        
-                    configurator.ConfigureDeadLetterQueueDeadLetterTransport();
-                    configurator.ConfigureDeadLetterQueueErrorTransport();
-                    configurator.PublishFaults = false;
-                });
+                        AddConsumersFromConfiguration(context, configurator, subscriptionKey);
+                    });
+                }
+                
+                if (busFactoryConfigurator is IRabbitMqBusFactoryConfigurator rabbitBusConfigurator)
+                {
+                    rabbitBusConfigurator.ReceiveEndpoint(subscriptionValue, configurator =>
+                    {
+                        AddConsumersFromConfiguration(context, configurator, subscriptionKey);
+                    });
+                }
             }
         }
     }
-    
-    private static void RegisterSubscriptionOnRabbitMq(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator busFactoryConfigurator, Dictionary<string,string> subscriptions)
+
+    private static void AddConsumersFromConfiguration(IRegistrationContext context, IReceiveEndpointConfigurator configurator, string subscriptionKey)
     {
-        foreach (var (subscriptionKey,subscriptionValue) in subscriptions)
+        var interfaceType = typeof(IConsumer);
+        var consumerTypes =
+            AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => interfaceType.IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
+                .ToList();
+        
+        foreach (var consumerType in consumerTypes.Where(consumerType => consumerType.Name == $"{subscriptionKey}Consumer"))
         {
-            if (!string.IsNullOrEmpty(subscriptionValue))
-            {
-                busFactoryConfigurator.ReceiveEndpoint(subscriptionValue,configurator =>
-                {
-                    switch (subscriptionKey)
-                    {
-                        case "CountryEvent":
-                            configurator.ConfigureConsumer<CountryEventConsumer>(context);
-                            break;
-                        case "StateEvent":
-                            configurator.ConfigureConsumer<StateEventConsumer>(context);
-                            break;
-                        case "CityEvent":
-                            configurator.ConfigureConsumer<CityEventConsumer>(context);
-                            break;
-                    }
-                                        
-                    configurator.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10)));
-                    configurator.UseMessageRetry(r => r.Immediate(3));
-                                        
-                    configurator.ConfigureDeadLetterQueueDeadLetterTransport();
-                    configurator.ConfigureDeadLetterQueueErrorTransport();
-                    configurator.PublishFaults = false;
-                });
-            }
+            configurator.ConfigureConsumer(context, consumerType);
         }
+                                        
+        configurator.UseDelayedRedelivery(r => r.Intervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10)));
+        configurator.UseMessageRetry(r => r.Immediate(3));
+                                        
+        configurator.ConfigureDeadLetterQueueDeadLetterTransport();
+        configurator.ConfigureDeadLetterQueueErrorTransport();
+        configurator.PublishFaults = false;
     }
 }
