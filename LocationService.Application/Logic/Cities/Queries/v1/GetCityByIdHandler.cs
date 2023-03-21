@@ -13,10 +13,10 @@ namespace LocationService.Application.Logic.Cities.Queries.v1;
 public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
 {
     private readonly ILogger<GetCityByIdHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly ICache _cache;
 
-    public GetCityByIdHandler(ILocationRepository repository, ICache cache, ILogger<GetCityByIdHandler> logger)
+    public GetCityByIdHandler(IRepository repository, ICache cache, ILogger<GetCityByIdHandler> logger)
     {
         _repository = repository;
         _cache = cache;

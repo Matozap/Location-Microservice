@@ -15,10 +15,10 @@ namespace LocationService.Application.Logic.Cities.Commands.v1;
 public class CreateCityHandler : IRequestHandler<CreateCity, object>
 {
     private readonly ILogger<CreateCityHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public CreateCityHandler(ILogger<CreateCityHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public CreateCityHandler(ILogger<CreateCityHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

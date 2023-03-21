@@ -15,10 +15,10 @@ namespace LocationService.Application.Logic.Cities.Commands.v1;
 public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
 {
     private readonly ILogger<SoftDeleteCityHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public SoftDeleteCityHandler(ILogger<SoftDeleteCityHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public SoftDeleteCityHandler(ILogger<SoftDeleteCityHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

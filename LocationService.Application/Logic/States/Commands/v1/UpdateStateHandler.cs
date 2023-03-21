@@ -14,10 +14,10 @@ namespace LocationService.Application.Logic.States.Commands.v1;
 public class UpdateStateHandler : IRequestHandler<UpdateState, object>
 {
     private readonly ILogger<UpdateStateHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public UpdateStateHandler(ILogger<UpdateStateHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public UpdateStateHandler(ILogger<UpdateStateHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

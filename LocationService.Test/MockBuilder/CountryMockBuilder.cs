@@ -21,12 +21,12 @@ public static class CountryMockBuilder
 {
     private static readonly Fixture Fixture = new();
 
-    private static ILocationRepository GenerateMockRepository(Country location = null, int rowCount = 100)
+    private static IRepository GenerateMockRepository(Country location = null, int rowCount = 100)
     {
         var mockCountry = location ?? GenerateMockCountry();
         var mockCounties = GenerateMockDomainCountryList(rowCount);
         
-        var repository = Substitute.For<ILocationRepository>();
+        var repository = Substitute.For<IRepository>();
         
         repository.AddAsync(Arg.Any<Country>()).Returns(mockCountry);
         repository.UpdateAsync(mockCountry).Returns(mockCountry);

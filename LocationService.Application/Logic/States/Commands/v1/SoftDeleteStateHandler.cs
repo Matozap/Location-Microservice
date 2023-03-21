@@ -15,10 +15,10 @@ namespace LocationService.Application.Logic.States.Commands.v1;
 public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
 {
     private readonly ILogger<SoftDeleteStateHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public SoftDeleteStateHandler(ILogger<SoftDeleteStateHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public SoftDeleteStateHandler(ILogger<SoftDeleteStateHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

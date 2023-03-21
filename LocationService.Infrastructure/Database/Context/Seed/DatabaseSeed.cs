@@ -8,7 +8,7 @@ using LocationService.Infrastructure.Extensions;
 using LocationService.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 
-namespace LocationService.Infrastructure.Database.Context;
+namespace LocationService.Infrastructure.Database.Context.Seed;
 
 public static class DatabaseSeed
 {

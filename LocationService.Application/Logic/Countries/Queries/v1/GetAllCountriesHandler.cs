@@ -14,9 +14,9 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, object>
 {
     private readonly ILogger<GetAllCountriesHandler> _logger;
     private readonly ICache _cache;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
 
-    public GetAllCountriesHandler(ICache cache, ILogger<GetAllCountriesHandler> logger, ILocationRepository repository)
+    public GetAllCountriesHandler(ICache cache, ILogger<GetAllCountriesHandler> logger, IRepository repository)
     {
         _logger = logger;
         _cache = cache;

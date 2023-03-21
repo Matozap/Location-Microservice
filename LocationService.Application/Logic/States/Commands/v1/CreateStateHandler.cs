@@ -15,10 +15,10 @@ namespace LocationService.Application.Logic.States.Commands.v1;
 public class CreateStateHandler : IRequestHandler<CreateState, object>
 {
     private readonly ILogger<CreateStateHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public CreateStateHandler(ILogger<CreateStateHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public CreateStateHandler(ILogger<CreateStateHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

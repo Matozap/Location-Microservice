@@ -14,10 +14,10 @@ namespace LocationService.Application.Logic.Cities.Commands.v1;
 public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
 {
     private readonly ILogger<UpdateCityHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public UpdateCityHandler(ILogger<UpdateCityHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public UpdateCityHandler(ILogger<UpdateCityHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

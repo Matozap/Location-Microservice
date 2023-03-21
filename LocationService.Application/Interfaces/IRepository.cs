@@ -6,7 +6,7 @@ using LocationService.Domain;
 
 namespace LocationService.Application.Interfaces;
 
-public interface ILocationRepository
+public interface IRepository
 {
     Task<List<Country>> GetAllCountriesAsync();
     Task<List<State>> GetAllStatesAsync(string countryId);
@@ -15,9 +15,6 @@ public interface ILocationRepository
     Task<State> GetStateAsync(Expression<Func<State, bool>> predicate);
     Task<City> GetCityAsync(Expression<Func<City, bool>> predicate);
     Task<T> AddAsync<T>(T entity) where T : EntityBase;
-    // Task<Country> AddAsync(Country entity);
-    // Task<State> AddAsync(State entity);
-    // Task<City> AddAsync(City entity);
-    Task<T> UpdateAsync<T>(T entity) where T : class;
-    Task<T> DeleteAsync<T>(T entity) where T : class;
+    Task<T> UpdateAsync<T>(T entity) where T : EntityBase;
+    Task<T> DeleteAsync<T>(T entity) where T : EntityBase;
 }

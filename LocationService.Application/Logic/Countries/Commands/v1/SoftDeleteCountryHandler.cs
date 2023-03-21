@@ -16,10 +16,10 @@ namespace LocationService.Application.Logic.Countries.Commands.v1;
 public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, object>
 {
     private readonly ILogger<SoftDeleteCountryHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public SoftDeleteCountryHandler(ILogger<SoftDeleteCountryHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public SoftDeleteCountryHandler(ILogger<SoftDeleteCountryHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

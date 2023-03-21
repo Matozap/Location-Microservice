@@ -14,10 +14,10 @@ namespace LocationService.Application.Logic.Countries.Queries.v1;
 public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
 {
     private readonly ILogger<GetCountryByIdHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly ICache _cache;
 
-    public GetCountryByIdHandler(ILocationRepository repository, ICache cache, ILogger<GetCountryByIdHandler> logger)
+    public GetCountryByIdHandler(IRepository repository, ICache cache, ILogger<GetCountryByIdHandler> logger)
     {
         _repository = repository;
         _cache = cache;

@@ -16,10 +16,10 @@ namespace LocationService.Application.Logic.Countries.Commands.v1;
 public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
 {
     private readonly ILogger<DeleteCountryHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public DeleteCountryHandler(ILogger<DeleteCountryHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public DeleteCountryHandler(ILogger<DeleteCountryHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
@@ -42,14 +42,14 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, object>
         return request.Id;
     }
 
-    private async Task<Country> DeleteCountryAsync(string countryId)
+    private async Task<Country> DeleteCountryAsync(string id)
     {
-        var entity = await _repository.GetCountryAsync(c => c.Id == countryId || c.Code == countryId);
+        var entity = await _repository.GetCountryAsync(c => c.Id == id || c.Code == id);
             
         if(entity != null)
         {                
             await _repository.DeleteAsync(entity);
-            _logger.LogInformation("Country with id {CountryId} was completely deleted", countryId);
+            _logger.LogInformation("Country with id {CountryId} was completely deleted", id);
         }
 
         return entity;

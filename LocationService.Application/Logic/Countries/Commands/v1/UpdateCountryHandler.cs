@@ -15,10 +15,10 @@ namespace LocationService.Application.Logic.Countries.Commands.v1;
 public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
 {
     private readonly ILogger<UpdateCountryHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public UpdateCountryHandler(ILogger<UpdateCountryHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public UpdateCountryHandler(ILogger<UpdateCountryHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

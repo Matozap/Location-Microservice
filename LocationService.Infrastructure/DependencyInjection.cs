@@ -86,7 +86,7 @@ public static class DependencyInjection
         }
         
         services.AddSingleton(databaseOptions);
-        services.AddScoped<ILocationRepository, LocationRepository>();
+        services.AddScoped<IRepository, EfRepository>();
         return services;
     }
 

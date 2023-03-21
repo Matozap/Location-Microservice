@@ -14,9 +14,9 @@ public class GetAllStatesHandler : IRequestHandler<GetAllStates, object>
 {
     private readonly ILogger<GetAllStatesHandler> _logger;
     private readonly ICache _cache;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
 
-    public GetAllStatesHandler(ICache cache, ILogger<GetAllStatesHandler> logger, ILocationRepository repository)
+    public GetAllStatesHandler(ICache cache, ILogger<GetAllStatesHandler> logger, IRepository repository)
     {
         _logger = logger;
         _cache = cache;

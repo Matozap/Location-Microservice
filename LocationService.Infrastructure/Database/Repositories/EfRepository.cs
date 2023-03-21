@@ -11,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LocationService.Infrastructure.Database.Repositories;
 
-public class LocationRepository : ILocationRepository
+public class EfRepository : IRepository
 {
     private readonly DatabaseContext _applicationContext;
     private readonly DatabaseOptions _databaseOptions;
 
-    public LocationRepository(DatabaseContext applicationContext, DatabaseOptions databaseOptions)
+    public EfRepository(DatabaseContext applicationContext, DatabaseOptions databaseOptions)
     {
         _applicationContext = applicationContext;
         _databaseOptions = databaseOptions;
@@ -98,27 +98,27 @@ public class LocationRepository : ILocationRepository
         entity.Id = UniqueIdGenerator.GenerateSequentialId();
         await _applicationContext.AddAsync(entity);
         await _applicationContext.SaveChangesAsync();
-
+    
         return entity;
     }
     
-    public async Task<T> UpdateAsync<T>(T entity) where T: class
+    public async Task<T> UpdateAsync<T>(T entity) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
             
         _applicationContext.Update(entity);
         await _applicationContext.SaveChangesAsync();
-
+    
         return entity;
     }
     
-    public async Task<T> DeleteAsync<T>(T entity) where T: class
+    public async Task<T> DeleteAsync<T>(T entity) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
             
         _applicationContext.Remove(entity);
         await _applicationContext.SaveChangesAsync();
-
+    
         return entity;
     }
     

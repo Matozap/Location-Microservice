@@ -21,12 +21,12 @@ public static class StateMockBuilder
 {
     private static readonly Fixture Fixture = new();
 
-    private static ILocationRepository GenerateMockRepository(State location = null, int rowCount = 100)
+    private static IRepository GenerateMockRepository(State location = null, int rowCount = 100)
     {
         var mockState = location ?? GenerateMockState();
         var mockCounties = GenerateMockDomainStateList(rowCount);
         
-        var repository = Substitute.For<ILocationRepository>();
+        var repository = Substitute.For<IRepository>();
         
         repository.AddAsync(Arg.Any<State>()).Returns(mockState);
         repository.UpdateAsync(mockState).Returns(mockState);

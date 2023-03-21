@@ -15,10 +15,10 @@ namespace LocationService.Application.Logic.States.Commands.v1;
 public class DeleteStateHandler : IRequestHandler<DeleteState, object>
 {
     private readonly ILogger<DeleteStateHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public DeleteStateHandler(ILogger<DeleteStateHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public DeleteStateHandler(ILogger<DeleteStateHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;

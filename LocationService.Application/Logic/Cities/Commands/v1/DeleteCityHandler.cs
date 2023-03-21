@@ -15,10 +15,10 @@ namespace LocationService.Application.Logic.Cities.Commands.v1;
 public class DeleteCityHandler : IRequestHandler<DeleteCity, object>
 {
     private readonly ILogger<DeleteCityHandler> _logger;
-    private readonly ILocationRepository _repository;
+    private readonly IRepository _repository;
     private readonly IEventBus _eventBus;
 
-    public DeleteCityHandler(ILogger<DeleteCityHandler> logger, ILocationRepository repository, IEventBus eventBus)
+    public DeleteCityHandler(ILogger<DeleteCityHandler> logger, IRepository repository, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
