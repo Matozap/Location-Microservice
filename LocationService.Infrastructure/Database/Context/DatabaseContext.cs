@@ -42,7 +42,7 @@ public sealed class DatabaseContext : DbContext
         CreateCityModel(modelBuilder);
     }
     
-    private void CreateCountryModel(ModelBuilder modelBuilder)
+    private static void CreateCountryModel(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Country>().ToContainer("Country");
         modelBuilder.Entity<Country>(entity =>
@@ -58,7 +58,7 @@ public sealed class DatabaseContext : DbContext
         });
     }
 
-    private void CreateStateModel(ModelBuilder modelBuilder)
+    private static void CreateStateModel(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<State>().ToContainer("State");
         modelBuilder.Entity<State>(entity =>
@@ -75,7 +75,7 @@ public sealed class DatabaseContext : DbContext
         });
     }
 
-    private void CreateCityModel(ModelBuilder modelBuilder)
+    private static void CreateCityModel(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<City>().ToContainer("City");
         modelBuilder.Entity<City>(entity =>

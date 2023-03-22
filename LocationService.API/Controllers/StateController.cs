@@ -27,7 +27,7 @@ public class StateController : ControllerBase
     [HttpGet("All/{countryId}")]
     public async Task<IActionResult> GetAll(string countryId)
     {
-        var query = new GetAllStates()
+        var query = new GetAllStates
         {
             CountryId = countryId
         };

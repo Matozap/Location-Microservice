@@ -31,7 +31,6 @@ public static class EventBusConfigurationExtension
                 switch (eventBusOptions.BusType)
                 {
                     default:
-                    case "InMemory":
                         x.UsingInMemory((context, cfg) =>
                         {
                             SetEventBusMessages(cfg);
@@ -81,20 +80,20 @@ public static class EventBusConfigurationExtension
         {
             if (!string.IsNullOrWhiteSpace(subscriptionValue))
             {
-                if (busFactoryConfigurator is IServiceBusBusFactoryConfigurator azureBusConfigurator)
+                switch (busFactoryConfigurator)
                 {
-                    azureBusConfigurator.SubscriptionEndpoint(subscriptionValue,subscriptionKey, configurator =>
-                    {
-                        AddConsumersFromConfiguration(context, configurator, subscriptionKey);
-                    });
-                }
-                
-                if (busFactoryConfigurator is IRabbitMqBusFactoryConfigurator rabbitBusConfigurator)
-                {
-                    rabbitBusConfigurator.ReceiveEndpoint(subscriptionValue, configurator =>
-                    {
-                        AddConsumersFromConfiguration(context, configurator, subscriptionKey);
-                    });
+                    case IServiceBusBusFactoryConfigurator azureBusConfigurator:
+                        azureBusConfigurator.SubscriptionEndpoint(subscriptionValue,subscriptionKey, configurator =>
+                        {
+                            AddConsumersFromConfiguration(context, configurator, subscriptionKey);
+                        });
+                        break;
+                    case IRabbitMqBusFactoryConfigurator rabbitBusConfigurator:
+                        rabbitBusConfigurator.ReceiveEndpoint(subscriptionValue, configurator =>
+                        {
+                            AddConsumersFromConfiguration(context, configurator, subscriptionKey);
+                        });
+                        break;
                 }
             }
         }

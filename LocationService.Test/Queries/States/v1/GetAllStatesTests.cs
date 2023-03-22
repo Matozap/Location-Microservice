@@ -16,7 +16,7 @@ public class GetAllStatesTests
     public async Task GetAllStatesTest()
     {
         // Arrange
-        var classToHandle = new GetAllStates()
+        var classToHandle = new GetAllStates
         {
             CountryId = "CO"
         };

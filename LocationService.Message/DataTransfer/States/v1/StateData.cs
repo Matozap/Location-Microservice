@@ -9,5 +9,5 @@ public class StateData
     public string Code { get; init; }
     public string Name { get; set; }
     public string CountryId { get; set; }
-    public virtual List<CityData> Cities { get; set; }
+    public List<CityData> Cities { get; set; }
 }

@@ -67,7 +67,7 @@ public class EfRepository : IRepository
         var result = _applicationContext.Set<Country>()
             .Where(country => !country.Disabled)
             .Where(predicate)
-            .OrderBy(country => country.Name);;
+            .OrderBy(country => country.Name);
 
         return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
@@ -87,7 +87,7 @@ public class EfRepository : IRepository
         var result = _applicationContext.Set<City>()
             .Where(city => !city.Disabled)
             .Where(predicate)
-            .OrderBy(city => city.Name);;
+            .OrderBy(city => city.Name);
 
         return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
     }
