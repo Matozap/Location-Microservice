@@ -30,8 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LocationService.Application\LocationService.Application.csproj" />
-    <ProjectReference Include="..\LocationService.Domain\LocationService.Domain.csproj" />
-    <ProjectReference Include="..\LocationService.Message\LocationService.Message.csproj" />
   </ItemGroup>
 
 </Project>

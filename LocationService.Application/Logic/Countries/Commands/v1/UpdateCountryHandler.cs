@@ -29,19 +29,20 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
     {
         ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Id);
         
-        await UpdateCountry(request.LocationDetails);
+        var result = await UpdateCountry(request.LocationDetails);
         _logger.LogInformation("Country with id {CountryID} created successfully", request.LocationDetails.Id);
         _ = _eventBus.Publish(new CountryEvent { LocationDetails = request.LocationDetails, Action = EventAction.CountryUpdate});
             
-        return request.LocationDetails;
+        return result;
     }
 
-    private async Task UpdateCountry(CountryData countryData)
+    private async Task<CountryData> UpdateCountry(CountryData countryData)
     {
-        var entity = await _repository.GetCountryAsync(c => c.Id == countryData.Id || c.Code == countryData.Code);
-        if(entity != null)
-        {                
-            await _repository.UpdateAsync(countryData.Adapt<CountryData, Domain.Country>());
-        }
+        var entity = await _repository.GetCountryAsync(e => e.Id == countryData.Id || e.Code == countryData.Code);
+        if (entity == null) return null;
+        
+        var changes = countryData.Adapt(entity);
+        await _repository.UpdateAsync(changes);
+        return changes.Adapt<Domain.Country, CountryData>();
     }
 }

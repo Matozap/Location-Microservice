@@ -1,7 +1,4 @@
 using System;
-using System.IO.Compression;
-using System.Net;
-using System.Text.Json.Serialization;
 using LocationService.API.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using LocationService.Application;
 using LocationService.Infrastructure;
-using Microsoft.AspNetCore.ResponseCompression;
 
 namespace LocationService.API;
 
@@ -26,28 +22,7 @@ public class Startup
     {
         try
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-            ServicePointManager.DefaultConnectionLimit = 10000;
-            
-            services.AddAuthorization();
-            services.AddCors();
-            services.AddHealthChecks();
-            services.AddControllers();
-            services.AddMvc();
-            services.AddApplication()
-                .AddInfrastructure(Configuration)
-                .AddEventBus(Configuration)
-                .AddControllers()
-                .AddJsonOptions(x => x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
-            services.ConfigureSwagger();
-            services.AddResponseCompression();
-
-            services.Configure<GzipCompressionProviderOptions>
-            (options => 
-            { 
-                options.Level = CompressionLevel.Fastest; 
-            }); 
-            services.AddApplicationInsightsTelemetry();
+            services.AddStartupServicesForControllers(Configuration);
         }
         catch (Exception ex)
         {

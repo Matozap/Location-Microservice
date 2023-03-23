@@ -2,15 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <AzureFunctionsVersion>V4</AzureFunctionsVersion>
     <UserSecretsId>8d908e14-2c91-42ed-932a-242a5dc0b044</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
+    <NoWarn>$(NoWarn);1591;4011</NoWarn>
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
     <LangVersion>11</LangVersion>    
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.7.0" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,9 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LocationService.Application\LocationService.Application.csproj" />
-    <ProjectReference Include="..\LocationService.Domain\LocationService.Domain.csproj" />
-    <ProjectReference Include="..\LocationService.Infrastructure\LocationService.Infrastructure.csproj" />
-    <ProjectReference Include="..\LocationService.Message\LocationService.Message.csproj" />
+    <ProjectReference Include="..\LocationService.Infrastructure\LocationService.Infrastructure.csproj" />    
   </ItemGroup>
 
 </Project>

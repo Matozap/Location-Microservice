@@ -26,19 +26,20 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
 
     public async Task<object> Handle(UpdateState request, CancellationToken cancellationToken)
     {
-        await UpdateState(request.LocationDetails);
+        var result = await UpdateState(request.LocationDetails);
         _logger.LogInformation("State with id {StateID} updated successfully", request.LocationDetails.Id);
         _ = _eventBus.Publish(new StateEvent { LocationDetails = request.LocationDetails, Action = EventAction.StateUpdate});
             
-        return request.LocationDetails;
+        return result;
     }
 
-    private async Task UpdateState(StateData stateData)
+    private async Task<StateData> UpdateState(StateData stateData)
     {
         var entity = await _repository.GetStateAsync(c => c.Id == stateData.Id);
-        if(entity != null)
-        {                
-            await _repository.UpdateAsync(stateData.Adapt<StateData, Domain.State>());
-        }
+        if (entity == null) return null;
+        
+        var changes = stateData.Adapt(entity);
+        await _repository.UpdateAsync(changes);
+        return changes.Adapt<Domain.State, StateData>();
     }
 }

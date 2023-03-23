@@ -16,12 +16,15 @@ public static class DependencyInjection
     {
         TypeAdapterConfig<Country, CountryData>
             .NewConfig()
+            .TwoWays()
             .IgnoreNullValues(true);
         TypeAdapterConfig<State, StateData>
             .NewConfig()
+            .TwoWays()
             .IgnoreNullValues(true);
         TypeAdapterConfig<City, CityData>
             .NewConfig()
+            .TwoWays()
             .IgnoreNullValues(true);
             
         return services;

@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocationService.Test", "LocationService.Test\LocationService.Test.csproj", "{60FAB142-AD53-47FE-9D0D-CD3F9C7C51E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationService.AFX", "LocationService.AFX\LocationService.AFX.csproj", "{F5E23A18-38B1-4608-B23B-8541AB8C07DA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{60FAB142-AD53-47FE-9D0D-CD3F9C7C51E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60FAB142-AD53-47FE-9D0D-CD3F9C7C51E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60FAB142-AD53-47FE-9D0D-CD3F9C7C51E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5E23A18-38B1-4608-B23B-8541AB8C07DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5E23A18-38B1-4608-B23B-8541AB8C07DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5E23A18-38B1-4608-B23B-8541AB8C07DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5E23A18-38B1-4608-B23B-8541AB8C07DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,7 +63,6 @@ Global
 		{B559DAF4-07F1-41CD-90BB-AB132E6C5BDD} = {0971B637-3B16-4299-B2A8-D02A1B5A37F2}
 		{B778F163-A57C-4760-893E-050EA9701CE9} = {55E38E26-AE62-4695-9834-B22FA42D8B52}
 		{60FAB142-AD53-47FE-9D0D-CD3F9C7C51E3} = {B778F163-A57C-4760-893E-050EA9701CE9}
-		{F5E23A18-38B1-4608-B23B-8541AB8C07DA} = {0971B637-3B16-4299-B2A8-D02A1B5A37F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21A1377E-E65A-45FA-959F-78F948B4D5AB}
