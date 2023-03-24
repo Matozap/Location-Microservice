@@ -6,7 +6,7 @@
     <UserSecretsId>8d908e14-2c91-42ed-932a-242a5dc0b044</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591;4011</NoWarn>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
     <LangVersion>11</LangVersion>    
   </PropertyGroup>
@@ -20,8 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="NSwag.MSBuild" Version="13.18.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,8 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LocationService.Application\LocationService.Application.csproj" />
-    <ProjectReference Include="..\LocationService.Infrastructure\LocationService.Infrastructure.csproj" />    
+    <ProjectReference Include="..\LocationService.Infrastructure\LocationService.Infrastructure.csproj" />
   </ItemGroup>
-
 </Project>
