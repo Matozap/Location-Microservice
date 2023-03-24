@@ -45,7 +45,7 @@ public class CityController : ControllerBase
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> Get(string id)
     {
         var query = new GetCityById
         {

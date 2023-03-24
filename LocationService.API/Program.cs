@@ -3,6 +3,8 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+using LocationService.API.Helpers;
+using Microsoft.Extensions.Configuration;
 
 
 namespace LocationService.API;
@@ -25,18 +27,28 @@ public class Program
         {
             Log.Information("[Program] Host starting...");
 
-            if (int.TryParse(Environment.GetEnvironmentVariable("DELAYED_START"), out var delay))
+            var isFunctionRuntime = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("FUNCTIONS_WORKER_RUNTIME"));
+
+            if (isFunctionRuntime)
             {
-                Log.Information("[Program] Starting delay: {Delay}", delay);
-                await Task.Delay(delay);
+                await CreateFunctionHost().RunAsync();
+            }
+            else
+            {
+                if (int.TryParse(Environment.GetEnvironmentVariable("DELAYED_START"), out var delay))
+                {
+                    Log.Information("[Program] Starting delay: {Delay}", delay);
+                    await Task.Delay(delay);
+                }
+
+                await CreateHostBuilder(null).Build().RunAsync();
             }
 
-            await CreateHostBuilder(null).Build().RunAsync();
             Log.Information("[Program] Host Stopped Successfully");
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "Host terminated unexpectedly");
+            Log.Fatal(ex, "[Program] Host terminated unexpectedly");
         }
         finally
         {
@@ -51,11 +63,31 @@ public class Program
                 webBuilder.UseStartup<Startup>()
                     .CaptureStartupErrors(true);
             })
-            .UseSerilog((hostingContext, loggerConfiguration) => {
-                loggerConfiguration
-                    .ReadFrom.Configuration(hostingContext.Configuration)
-                    .Enrich.FromLogContext()
-                    .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name ?? "Application")
-                    .Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
-            });
+            .CreateLogger();
+    
+    private static IHost CreateFunctionHost() =>
+        new HostBuilder()
+            .ConfigureFunctionsWorkerDefaults()
+            .ConfigureAppConfiguration((hostingContext, configBuilder) =>
+            {
+                var env = hostingContext.HostingEnvironment;
+                configBuilder
+                    .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+            })
+            .ConfigureServices((appBuilder, services) =>
+            {
+                try
+                {
+                    var configuration = appBuilder.Configuration;
+                    services.AddStartupServicesForFunctions(configuration);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[Startup] ERROR at ConfigureServices {ex}");
+                }
+                Console.WriteLine("[Startup] ConfigureServices [DONE]");
+            })
+            .CreateLogger()
+            .Build();
 }

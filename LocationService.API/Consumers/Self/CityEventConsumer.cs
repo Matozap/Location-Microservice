@@ -6,7 +6,7 @@ using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace LocationService.API.Consumers.Location;
+namespace LocationService.API.Consumers.Self;
 
 public class CityEventConsumer : IConsumer<CityEvent>
 {

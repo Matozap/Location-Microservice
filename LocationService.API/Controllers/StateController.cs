@@ -45,7 +45,7 @@ public class StateController : ControllerBase
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("{code}")]
-    public async Task<IActionResult> GetById(string code)
+    public async Task<IActionResult> Get(string code)
     {
         var query = new GetStateById
         {
