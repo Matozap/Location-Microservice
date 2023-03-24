@@ -174,6 +174,7 @@ public class EfRepository : IRepository
             case EngineType.Relational:
             default:
                 return source.Include(state => state.Cities.Where(c => !c.Disabled))
+                    .Include(state => state.Country)
                     .AsSplitQuery()
                     .AsNoTracking()
                     .ToList();
@@ -182,10 +183,12 @@ public class EfRepository : IRepository
     
     private async Task<List<City>> LoadAllNavigationalPropertiesAsync(IQueryable<City> source)
     {
-        return _databaseOptions.EngineType switch
+        switch (_databaseOptions.EngineType)
         {
-            EngineType.NonRelational => await source.AsNoTracking().ToListAsync(),
-            _ => source.AsSplitQuery().AsNoTracking().ToList()
-        };
+            case EngineType.NonRelational:
+                return await source.AsNoTracking().ToListAsync();
+            default:
+                return source.AsSplitQuery().Include(city => city.State).AsNoTracking().ToList();
+        }
     }
 }

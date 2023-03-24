@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace LocationService.API.Helpers;
 
@@ -28,6 +30,18 @@ public static class StartupServicesExtension
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         AddSharedStartupServices(services, configuration);
+    }
+
+    public static IHostBuilder CreateLogger(this IHostBuilder webHostBuilder)
+    {
+        return webHostBuilder.UseSerilog((hostingContext, loggerConfiguration) =>
+        {
+            loggerConfiguration
+                .ReadFrom.Configuration(hostingContext.Configuration)
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name ?? "Application")
+                .Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
+        });
     }
 
     private static void AddSharedStartupServices(IServiceCollection services, IConfiguration configuration)

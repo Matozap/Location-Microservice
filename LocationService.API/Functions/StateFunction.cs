@@ -1,34 +1,39 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.Definition.Countries.Requests.v1;
+using LocationService.Message.DataTransfer.States.v1;
+using LocationService.Message.Definition.States.Requests.v1;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
 namespace LocationService.API.Functions;
 
-public class CountryFunction
+public class StateFunction
 {
     private readonly IMediator _mediator;
 
-    public CountryFunction(IMediator mediator)
+    public StateFunction(IMediator mediator)
     {
         _mediator = mediator;
     }
     
-    [Function($"Country-{nameof(GetAll)}")]
-    public async Task<HttpResponseData> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Country/All")] HttpRequestData req)
+    [Function($"State-{nameof(GetAll)}")]
+    public async Task<HttpResponseData> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "State/All/{countryId}")] HttpRequestData req, string countryId)
     {
+        var query = new GetAllStates
+        {
+            CountryId = countryId
+        };
+        
         var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(await _mediator.Send(new GetAllCountries()));
+        await response.WriteAsJsonAsync(await _mediator.Send(query));
         return response;
     }
     
-    [Function($"Country-{nameof(Get)}")]
-    public async Task<HttpResponseData> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Country/{id}")] HttpRequestData req, string id)
+    [Function($"State-{nameof(Get)}")]
+    public async Task<HttpResponseData> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "State/{id}")] HttpRequestData req, string id)
     {
-        var query = new GetCountryById
+        var query = new GetStateById
         {
             Id = id
         };
@@ -45,12 +50,12 @@ public class CountryFunction
         return response;
     }
     
-    [Function($"Country-{nameof(Create)}")]
-    public async Task<HttpResponseData> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Country")] HttpRequestData req)
+    [Function($"State-{nameof(Create)}")]
+    public async Task<HttpResponseData> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "State")] HttpRequestData req)
     {
-        var data = await req.ReadFromJsonAsync<CountryData>();
+        var data = await req.ReadFromJsonAsync<StateData>();
         
-        var query = new CreateCountry
+        var query = new CreateState
         {
             LocationDetails = data
         };
@@ -67,12 +72,12 @@ public class CountryFunction
         return response;
     }
     
-    [Function($"Country-{nameof(Update)}")]
-    public async Task<HttpResponseData> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "Country")] HttpRequestData req)
+    [Function($"State-{nameof(Update)}")]
+    public async Task<HttpResponseData> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "State")] HttpRequestData req)
     {
-        var data = await req.ReadFromJsonAsync<CountryData>();
+        var data = await req.ReadFromJsonAsync<StateData>();
         
-        var query = new UpdateCountry
+        var query = new UpdateState
         {
             LocationDetails = data
         };
@@ -84,10 +89,10 @@ public class CountryFunction
         return response;
     }
     
-    [Function($"Country-{nameof(Disable)}")]
-    public async Task<HttpResponseData> Disable([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Country/Disable/{id}" )] HttpRequestData req, string id)
+    [Function($"State-{nameof(Disable)}")]
+    public async Task<HttpResponseData> Disable([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "State/Disable/{id}" )] HttpRequestData req, string id)
     {
-        var query = new SoftDeleteCountry
+        var query = new SoftDeleteState
         {
             Id = id
         };
@@ -98,10 +103,10 @@ public class CountryFunction
         return response;
     }
     
-    [Function($"Country-{nameof(Delete)}")]
-    public async Task<HttpResponseData> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Country/{id}")] HttpRequestData req, string id)
+    [Function($"State-{nameof(Delete)}")]
+    public async Task<HttpResponseData> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "State/{id}")] HttpRequestData req, string id)
     {
-        var query = new DeleteCountry
+        var query = new DeleteState
         {
             Id = id
         };

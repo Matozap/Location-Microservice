@@ -37,8 +37,10 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
     {
         var entity = await _repository.GetStateAsync(c => c.Id == stateData.Id);
         if (entity == null) return null;
-        
+
+        stateData.CountryId = entity.CountryId;
         var changes = stateData.Adapt(entity);
+        
         await _repository.UpdateAsync(changes);
         return changes.Adapt<Domain.State, StateData>();
     }

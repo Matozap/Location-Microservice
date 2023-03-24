@@ -38,7 +38,9 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
         var entity = await _repository.GetCityAsync(c => c.Id == cityData.Id);
         if (entity == null) return null;
         
+        cityData.StateId = entity.StateId;
         var changes = cityData.Adapt(entity);
+        
         await _repository.UpdateAsync(changes);
         return changes.Adapt<Domain.City, CityData>();
     }

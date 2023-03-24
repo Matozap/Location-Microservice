@@ -20,11 +20,17 @@ public static class DependencyInjection
             .IgnoreNullValues(true);
         TypeAdapterConfig<State, StateData>
             .NewConfig()
-            .TwoWays()
+            .IgnoreNullValues(true);
+        TypeAdapterConfig<StateData, State>
+            .NewConfig()
+            .Map(dest => dest.Country, src => (Country)null)
             .IgnoreNullValues(true);
         TypeAdapterConfig<City, CityData>
             .NewConfig()
-            .TwoWays()
+            .IgnoreNullValues(true);
+        TypeAdapterConfig<CityData, City>
+            .NewConfig()
+            .Map(dest => dest.State, src => (State)null)
             .IgnoreNullValues(true);
             
         return services;

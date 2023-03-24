@@ -48,7 +48,7 @@ public class Program
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "Host terminated unexpectedly");
+            Log.Fatal(ex, "[Program] Host terminated unexpectedly");
         }
         finally
         {
@@ -63,13 +63,7 @@ public class Program
                 webBuilder.UseStartup<Startup>()
                     .CaptureStartupErrors(true);
             })
-            .UseSerilog((hostingContext, loggerConfiguration) => {
-                loggerConfiguration
-                    .ReadFrom.Configuration(hostingContext.Configuration)
-                    .Enrich.FromLogContext()
-                    .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name ?? "Application")
-                    .Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
-            });
+            .CreateLogger();
     
     private static IHost CreateFunctionHost() =>
         new HostBuilder()
@@ -94,5 +88,6 @@ public class Program
                 }
                 Console.WriteLine("[Startup] ConfigureServices [DONE]");
             })
+            .CreateLogger()
             .Build();
 }
