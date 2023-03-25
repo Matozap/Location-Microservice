@@ -48,10 +48,11 @@ public sealed class DatabaseContext : DbContext
         modelBuilder.Entity<Country>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(p => p.Id).ToJsonProperty("id").IsRequired();
-            entity.Property(p => p.Code).IsRequired();
+            entity.Property(e => e.Id).ToJsonProperty("id").IsRequired();
+            entity.Property(e => e.Code).IsRequired();
             entity.HasIndex(e => e.Code);
-            entity.Property(p => p.Name).IsRequired();
+            entity.Property(e => e.Name).IsRequired();
+            entity.HasIndex(e => e.Code);
             entity.HasMany(c => c.States);
             entity.HasNoDiscriminator();
             entity.HasPartitionKey(e => e.Id);
@@ -68,6 +69,7 @@ public sealed class DatabaseContext : DbContext
             entity.Property(e => e.Code).IsRequired();
             entity.HasIndex(e => e.Code);
             entity.Property(e => e.Name).IsRequired();
+            entity.HasIndex(e => e.Name);
             entity.HasMany(s => s.Cities).WithOne(c => c.State);
             entity.HasNoDiscriminator();
             entity.HasPartitionKey(e => e.CountryId);
@@ -81,10 +83,10 @@ public sealed class DatabaseContext : DbContext
         modelBuilder.Entity<City>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(p => p.Id).ToJsonProperty("id").IsRequired();
-            entity.Property(p => p.Name).IsRequired();
+            entity.Property(e => e.Id).ToJsonProperty("id").IsRequired();
+            entity.Property(e => e.Name).IsRequired();
             entity.HasIndex(e => e.Name);
-            entity.HasOne(c => c.State).WithMany(s => s.Cities);
+            entity.HasOne(city => city.State).WithMany(state => state.Cities);
             entity.HasNoDiscriminator();
             entity.HasPartitionKey(e => e.StateId);
             entity.HasManualThroughput(10000);

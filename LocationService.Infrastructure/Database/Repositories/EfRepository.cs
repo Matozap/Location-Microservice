@@ -131,13 +131,13 @@ public class EfRepository : IRepository
                 var partialResult = await source.AsNoTracking().ToListAsync();
                 return partialResult.Select(country =>
                 {
-                    country.States = _applicationContext.Set<State>().Where(state => state.CountryId == country.Id)
+                    country.States = _applicationContext.Set<State>().Where(state => state.CountryId == country.Id).OrderBy(state => state.Name)
                         .AsNoTracking()
                         .ToList();
 
                     country.States = country.States.Select(f =>
                     {
-                        f.Cities = _applicationContext.Set<City>().Where(city => city.StateId == f.Id)
+                        f.Cities = _applicationContext.Set<City>().Where(city => city.StateId == f.Id).OrderBy(city => city.Name)
                             .AsNoTracking()
                             .ToList();
                         return f;
@@ -148,8 +148,8 @@ public class EfRepository : IRepository
             }
             case EngineType.Relational:
             default:
-                return source.Include(country => country.States.Where(state => !state.Disabled))
-                    .ThenInclude(s => s.Cities.Where(city => !city.Disabled))
+                return source.Include(country => country.States.Where(state => !state.Disabled).OrderBy(state => state.Name))
+                    .ThenInclude(s => s.Cities.Where(city => !city.Disabled).OrderBy(city => city.Name))
                     .AsSplitQuery()
                     .AsNoTracking()
                     .ToList();
@@ -165,7 +165,7 @@ public class EfRepository : IRepository
                 var partialResult = await source.AsNoTracking().ToListAsync();
                 return partialResult.Select(state =>
                 {
-                    state.Cities = _applicationContext.Set<City>().Where(city => city.StateId == state.Id)
+                    state.Cities = _applicationContext.Set<City>().Where(city => city.StateId == state.Id).OrderBy(city => city.Name)
                         .AsNoTracking()
                         .ToList();
                     return state;
@@ -173,7 +173,7 @@ public class EfRepository : IRepository
             }
             case EngineType.Relational:
             default:
-                return source.Include(state => state.Cities.Where(c => !c.Disabled))
+                return source.Include(state => state.Cities.Where(c => !c.Disabled).OrderBy(city => city.Name))
                     .Include(state => state.Country)
                     .AsSplitQuery()
                     .AsNoTracking()

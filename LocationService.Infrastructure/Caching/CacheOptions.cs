@@ -8,6 +8,15 @@ public class CacheOptions
     public string ConnectionString { get; set; }
     public HealthCheckOptions HealthCheck { get; set; }
     public bool Disabled { get; set; }
+    public string SqlServerTableExistQuery => $"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND  TABLE_NAME = '{InstanceName}'";
+    public string SqlServerTableCreateQuery => 
+        @$"CREATE TABLE [dbo].[{InstanceName}](
+            [Id] [nvarchar](449) NOT NULL,
+            [Value] [varbinary](max) NOT NULL,
+            [ExpiresAtTime] [datetimeoffset](7) NOT NULL,
+            [SlidingExpirationInSeconds] [bigint] NULL,
+            [AbsoluteExpiration] [datetimeoffset](7) NULL,
+            PRIMARY KEY CLUSTERED ([Id] ASC))";
 }
 
 
