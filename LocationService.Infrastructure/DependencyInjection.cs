@@ -1,3 +1,5 @@
+using System;
+using System.Data;
 using System.Reflection;
 using LocationService.Application.Interfaces;
 using LocationService.Infrastructure.Caching;
@@ -8,6 +10,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,7 +50,6 @@ public static class DependencyInjection
                 services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(databaseOptions.ConnectionString));
                 break;
             }
-            
             case "MySql":
             {
                 var serverVersion = ServerVersion.AutoDetect(databaseOptions.ConnectionString);
@@ -61,13 +63,11 @@ public static class DependencyInjection
                 
                 break;
             }
-            
             case "Postgres":
             {
                 services.AddDbContext<DatabaseContext>(options => options.UseNpgsql(databaseOptions.ConnectionString));
                 break;
             }
-            
             case "Cosmos":
             {
                 services.AddDbContext<DatabaseContext>(options => options.UseCosmos(databaseOptions.ConnectionString, databaseOptions.InstanceName, opt =>
@@ -77,7 +77,6 @@ public static class DependencyInjection
                 }));
                 break;
             }
-            
             default:
             {
                 services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase(databaseName: databaseOptions.InstanceName));
@@ -103,6 +102,17 @@ public static class DependencyInjection
                 });
                 break;
             }
+            case "Sql Server":
+            {
+                services.AddDistributedSqlServerCache(option =>
+                {
+                    option.ConnectionString = cacheOptions.ConnectionString;
+                    option.SchemaName = "dbo";
+                    option.TableName = cacheOptions.InstanceName;
+                });
+                CreateSqlCacheIfNotExists(cacheOptions);
+                break;
+            }
             default:
             {
                 services.AddDistributedMemoryCache();
@@ -113,5 +123,34 @@ public static class DependencyInjection
         services.AddSingleton(cacheOptions);
         services.AddSingleton<ICache, Cache>();
         return services;
+    }
+
+    private static void CreateSqlCacheIfNotExists(CacheOptions cacheOptions)
+    {
+        if (cacheOptions?.ConnectionString == null) return;
+        using var connection = new SqlConnection(cacheOptions.ConnectionString);
+        connection.Open();
+        
+        var command = new SqlCommand(cacheOptions.SqlServerTableExistQuery, connection);
+        using (var reader = command.ExecuteReader(CommandBehavior.SingleRow))
+        {
+            if (reader.Read())
+            {
+                return;
+            }
+        }
+        using (var transaction = connection.BeginTransaction())
+        {
+            try
+            {
+                command = new SqlCommand(cacheOptions.SqlServerTableCreateQuery, connection, transaction);
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+            }
+        }
     }
 }

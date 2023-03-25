@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
@@ -14,6 +16,7 @@ public sealed class Cache : ICache
     private int _currentErrorCount;
     private bool _automaticallyDisabled;
     private DateTime _automaticallyDisabledTime;
+    private readonly List<string> _errorMessages;
     private readonly IDistributedCache _distributedCache;
     private readonly CacheOptions _cacheOptions;
     private readonly ILogger<Cache> _logger;
@@ -23,6 +26,7 @@ public sealed class Cache : ICache
         _distributedCache = cache;
         _cacheOptions = cacheOptions;
         _logger = logger;
+        _errorMessages = new List<string>();
     }
 
     public async Task<T> GetCacheValueAsync<T>(string key, CancellationToken token = default) where T : class
@@ -46,6 +50,7 @@ public sealed class Cache : ICache
         }
         catch (Exception ex)
         {
+            _errorMessages.Add(ex.Message);
             _logger.LogDebug("Could not get cache key {CacheKey} - {Error}",key, ex.Message);
             SetUnhealthyStatus();
             return null;
@@ -74,6 +79,7 @@ public sealed class Cache : ICache
         }
         catch (Exception ex)
         {
+            _errorMessages.Add(ex.Message);
             _logger.LogDebug("Could not set cache key {CacheKey} - {Error}",key, ex.Message);
             SetUnhealthyStatus();
         }
@@ -94,6 +100,7 @@ public sealed class Cache : ICache
         }
         catch (Exception ex)
         {
+            _errorMessages.Add(ex.Message);
             _logger.LogDebug("Could not remove key {CacheKey} from cache - {Error}", key, ex.Message);
             SetUnhealthyStatus();
         }
@@ -115,7 +122,10 @@ public sealed class Cache : ICache
             _cacheOptions.Disabled = true;
             _automaticallyDisabled = true;
             _automaticallyDisabledTime = DateTime.UtcNow;
-            _logger.LogWarning("Cache was switched to disabled after reaching the max number of consecutive errors allowed ({ErrorsAllowed})", _cacheOptions.HealthCheck.MaxErrorsAllowed.ToString());
+            var errors = string.Join(", ", _errorMessages.Distinct().ToList());
+            _logger.LogWarning("Cache was switched to disabled after reaching the max number of consecutive errors allowed ({ErrorsAllowed}) - Errors Found: {Errors}"
+                , _cacheOptions.HealthCheck.MaxErrorsAllowed.ToString(), errors);
+            _errorMessages.Clear();
         }
     }
     
