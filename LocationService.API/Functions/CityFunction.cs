@@ -18,7 +18,7 @@ public class CityFunction
     }
     
     [Function($"City-{nameof(GetAll)}")]
-    public async Task<HttpResponseData> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "City/All/{stateId}")] HttpRequestData req, string stateId)
+    public async Task<HttpResponseData> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "cities/{stateId}")] HttpRequestData req, string stateId)
     {
         var query = new GetAllCities
         {
@@ -31,7 +31,7 @@ public class CityFunction
     }
     
     [Function($"City-{nameof(Get)}")]
-    public async Task<HttpResponseData> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "City/{id}")] HttpRequestData req, string id)
+    public async Task<HttpResponseData> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "city/{id}")] HttpRequestData req, string id)
     {
         var query = new GetCityById
         {
@@ -51,7 +51,7 @@ public class CityFunction
     }
     
     [Function($"City-{nameof(Create)}")]
-    public async Task<HttpResponseData> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "City")] HttpRequestData req)
+    public async Task<HttpResponseData> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "city")] HttpRequestData req)
     {
         var data = await req.ReadFromJsonAsync<CityData>();
         
@@ -73,7 +73,7 @@ public class CityFunction
     }
     
     [Function($"City-{nameof(Update)}")]
-    public async Task<HttpResponseData> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "City")] HttpRequestData req)
+    public async Task<HttpResponseData> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "city")] HttpRequestData req)
     {
         var data = await req.ReadFromJsonAsync<CityData>();
         
@@ -90,7 +90,7 @@ public class CityFunction
     }
     
     [Function($"City-{nameof(Disable)}")]
-    public async Task<HttpResponseData> Disable([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "City/Disable/{id}" )] HttpRequestData req, string id)
+    public async Task<HttpResponseData> Disable([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "city/disable/{id}" )] HttpRequestData req, string id)
     {
         var query = new SoftDeleteCity
         {
@@ -104,7 +104,7 @@ public class CityFunction
     }
     
     [Function($"City-{nameof(Delete)}")]
-    public async Task<HttpResponseData> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "City/{id}")] HttpRequestData req, string id)
+    public async Task<HttpResponseData> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "city/{id}")] HttpRequestData req, string id)
     {
         var query = new DeleteCity
         {

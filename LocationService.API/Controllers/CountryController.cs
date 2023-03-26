@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LocationService.API.Controllers;
 
 [Produces("application/json")]
-[Route("api/[controller]")]
+[Route("api/")]
 [ApiController]
 public class CountryController : ControllerBase
 {
@@ -24,7 +24,7 @@ public class CountryController : ControllerBase
     /// <returns>All countries</returns>
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
-    [HttpGet("")]
+    [HttpGet("countries")]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _mediator.Send(new GetAllCountries()));
@@ -38,7 +38,7 @@ public class CountryController : ControllerBase
     /// <response code="200">OK</response>
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
-    [HttpGet("{id}")]
+    [HttpGet("country/{id}")]
     public async Task<IActionResult> Get(string id)
     {
         var query = new GetCountryById
@@ -60,7 +60,7 @@ public class CountryController : ControllerBase
     /// <response code="201">Created</response>
     /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server error</response>
-    [HttpPost]
+    [HttpPost("country")]
     public async Task<IActionResult> Create([FromBody] CountryData data)
     {
         var query = new CreateCountry
@@ -80,7 +80,7 @@ public class CountryController : ControllerBase
     /// <returns>Country</returns>
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
-    [HttpPut]
+    [HttpPut("country")]
     public async Task<IActionResult> Update([FromBody] CountryData data)
     {
         var query = new UpdateCountry
@@ -98,7 +98,7 @@ public class CountryController : ControllerBase
     /// <param name="id">Id or Code</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
-    [HttpDelete("Disable/{id}")]
+    [HttpDelete("country/disable/{id}")]
     public async Task<IActionResult> Disable(string id)
     {
         var query = new SoftDeleteCountry
@@ -116,7 +116,7 @@ public class CountryController : ControllerBase
     /// <param name="id">Id or Code</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
-    [HttpDelete("{id}")]
+    [HttpDelete("country/{id}")]
     public async Task<IActionResult> Delete(string id)
     {
         var query = new DeleteCountry

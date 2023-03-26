@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LocationService.API.Controllers;
 
 [Produces("application/json")]
-[Route("api/[controller]")]
+[Route("api/")]
 [ApiController]
 public class StateController : ControllerBase
 {
@@ -19,12 +19,12 @@ public class StateController : ControllerBase
     }
                 
     /// <summary>
-    /// Gets all the states in the system.
+    /// Gets all the states in a country.
     /// </summary>
     /// <returns>All States</returns>
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
-    [HttpGet("All/{countryId}")]
+    [HttpGet("states/{countryId}")]
     public async Task<IActionResult> GetAll(string countryId)
     {
         var query = new GetAllStates
@@ -37,14 +37,14 @@ public class StateController : ControllerBase
     }
 
     /// <summary>
-    /// Gets s State by id (number or string).
+    /// Gets s state by id (number or string).
     /// </summary>
     /// <param name="code">State Id or code</param>
     /// <returns>State</returns>
     /// <response code="200">OK</response>
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
-    [HttpGet("{code}")]
+    [HttpGet("state/{code}")]
     public async Task<IActionResult> Get(string code)
     {
         var query = new GetStateById
@@ -67,7 +67,7 @@ public class StateController : ControllerBase
     /// <response code="201">Created</response>
     /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server error</response>
-    [HttpPost]
+    [HttpPost("state")]
     public async Task<IActionResult> Create([FromBody] StateData data)
     {
         var query = new CreateState
@@ -88,7 +88,7 @@ public class StateController : ControllerBase
     /// <returns>Country</returns>
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
-    [HttpPut]
+    [HttpPut("state")]
     public async Task<IActionResult> Update([FromBody] StateData data)
     {
         var query = new UpdateState
@@ -101,12 +101,12 @@ public class StateController : ControllerBase
     }
 
     /// <summary>
-    /// Does a soft delete on the State with the given id.
+    /// Does a soft delete on the state with the given id.
     /// </summary>
     /// <param name="id">Id</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
-    [HttpDelete("Disable/{id}")]
+    [HttpDelete("state/disable/{id}")]
     public async Task<IActionResult> Disable(string id)
     {
         var query = new SoftDeleteState
@@ -119,12 +119,12 @@ public class StateController : ControllerBase
     }
 
     /// <summary>
-    /// Does a physical delete on the location with the given id.
+    /// Does a physical delete on the state with the given id.
     /// </summary>
     /// <param name="id">Id</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
-    [HttpDelete("{id}")]
+    [HttpDelete("state/{id}")]
     public async Task<IActionResult> Delete(string id)
     {
         var query = new DeleteState

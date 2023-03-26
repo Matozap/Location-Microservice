@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LocationService.API.Controllers;
 
 [Produces("application/json")]
-[Route("api/[controller]")]
+[Route("api/")]
 [ApiController]
 public class CityController : ControllerBase
 {
@@ -19,12 +19,12 @@ public class CityController : ControllerBase
     }
                 
     /// <summary>
-    /// Gets all the cities in the system.
+    /// Gets all the cities in a state.
     /// </summary>
     /// <returns>All Cities</returns>
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
-    [HttpGet("All/{stateId}")]
+    [HttpGet("cities/{stateId}")]
     public async Task<IActionResult> GetAll(string stateId)
     {
         var query = new GetAllCities
@@ -37,14 +37,14 @@ public class CityController : ControllerBase
     }
 
     /// <summary>
-    /// Gets s City by id (number or string).
+    /// Gets a city by id (number or string).
     /// </summary>
     /// <param name="id">Id</param>
     /// <returns>Country</returns>
     /// <response code="200">OK</response>
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
-    [HttpGet("{id}")]
+    [HttpGet("city/{id}")]
     public async Task<IActionResult> Get(string id)
     {
         var query = new GetCityById
@@ -66,7 +66,7 @@ public class CityController : ControllerBase
     /// <response code="201">Created</response>
     /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server error</response>
-    [HttpPost]
+    [HttpPost("city")]
     public async Task<IActionResult> Create([FromBody] CityData data)
     {
         var query = new CreateCity
@@ -87,7 +87,7 @@ public class CityController : ControllerBase
     /// <returns>Country</returns>
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
-    [HttpPut]
+    [HttpPut("city")]
     public async Task<IActionResult> Update([FromBody] CityData data)
     {
         var query = new UpdateCity
@@ -100,12 +100,12 @@ public class CityController : ControllerBase
     }
 
     /// <summary>
-    /// Does a soft delete on the City with the given id.
+    /// Does a soft delete on the city with the given id.
     /// </summary>
     /// <param name="id">Id</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
-    [HttpDelete("Disable/{id}")]
+    [HttpDelete("city/disable/{id}")]
     public async Task<IActionResult> Disable(string id)
     {
         var query = new SoftDeleteCity
@@ -118,12 +118,12 @@ public class CityController : ControllerBase
     }
 
     /// <summary>
-    /// Does a physical delete on the location with the given id.
+    /// Does a physical delete on the city with the given id.
     /// </summary>
     /// <param name="id">Id</param>
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
-    [HttpDelete("{id}")]
+    [HttpDelete("city/{id}")]
     public async Task<IActionResult> Delete(string id)
     {
         var query = new DeleteCity

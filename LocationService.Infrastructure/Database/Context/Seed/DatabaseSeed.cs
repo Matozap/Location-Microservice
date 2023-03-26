@@ -12,9 +12,9 @@ namespace LocationService.Infrastructure.Database.Context.Seed;
 
 public static class DatabaseSeed
 {
-    private record RawCity(string Name);
-    private record RawState(string Code, string Name, RawCity[] Cities);
-    private record RawCountry(string Code, string Name, string Currency, string CurrencyName, string Region, string SubRegion, RawState[] States);
+    private record SeedCity(string Name);
+    private record SeedState(string Code, string Name, SeedCity[] Cities);
+    private record SeedCountry(string Code, string Name, string Currency, string CurrencyName, string Region, string SubRegion, SeedState[] States);
 
     public static async Task SeedAllCountriesDataAsync(DatabaseContext context)
     {
@@ -25,7 +25,7 @@ public static class DatabaseSeed
             {
                 var path = Path.Combine(AppContext.BaseDirectory, "Database","Context","Seed", "seed.json");
                 var seedFile = string.Concat(await File.ReadAllLinesAsync(path));
-                var countryList = seedFile.Deserialize<List<RawCountry>>();
+                var countryList = seedFile.Deserialize<List<SeedCountry>>();
 
                 context.ChangeTracker.AutoDetectChangesEnabled = false;
                 var countries = new List<Country>(countryList.Count);
