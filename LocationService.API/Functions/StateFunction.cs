@@ -18,7 +18,7 @@ public class StateFunction
     }
     
     [Function($"State-{nameof(GetAll)}")]
-    public async Task<HttpResponseData> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "states/{countryId}")] HttpRequestData req, string countryId)
+    public async Task<HttpResponseData> GetAll([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "v1/states/{countryId}")] HttpRequestData req, string countryId)
     {
         var query = new GetAllStates
         {
@@ -31,7 +31,7 @@ public class StateFunction
     }
     
     [Function($"State-{nameof(Get)}")]
-    public async Task<HttpResponseData> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "state/{id}")] HttpRequestData req, string id)
+    public async Task<HttpResponseData> Get([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "v1/state/{id}")] HttpRequestData req, string id)
     {
         var query = new GetStateById
         {
@@ -51,7 +51,7 @@ public class StateFunction
     }
     
     [Function($"State-{nameof(Create)}")]
-    public async Task<HttpResponseData> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "state")] HttpRequestData req)
+    public async Task<HttpResponseData> Create([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "v1/state")] HttpRequestData req)
     {
         var data = await req.ReadFromJsonAsync<StateData>();
         
@@ -73,7 +73,7 @@ public class StateFunction
     }
     
     [Function($"State-{nameof(Update)}")]
-    public async Task<HttpResponseData> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "state")] HttpRequestData req)
+    public async Task<HttpResponseData> Update([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "v1/state")] HttpRequestData req)
     {
         var data = await req.ReadFromJsonAsync<StateData>();
         
@@ -90,7 +90,7 @@ public class StateFunction
     }
     
     [Function($"State-{nameof(Disable)}")]
-    public async Task<HttpResponseData> Disable([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "state/disable/{id}" )] HttpRequestData req, string id)
+    public async Task<HttpResponseData> Disable([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "v1/state/disable/{id}" )] HttpRequestData req, string id)
     {
         var query = new SoftDeleteState
         {
@@ -104,7 +104,7 @@ public class StateFunction
     }
     
     [Function($"State-{nameof(Delete)}")]
-    public async Task<HttpResponseData> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "state/{id}")] HttpRequestData req, string id)
+    public async Task<HttpResponseData> Delete([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "v1/state/{id}")] HttpRequestData req, string id)
     {
         var query = new DeleteState
         {

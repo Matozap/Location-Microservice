@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LocationService.API.Controllers;
 
 [Produces("application/json")]
-[Route("api/")]
+[Route("api/v1/")]
 [ApiController]
 public class CountryController : ControllerBase
 {
