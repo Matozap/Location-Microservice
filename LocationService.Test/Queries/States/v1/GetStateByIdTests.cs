@@ -15,33 +15,25 @@ public class GetStateByIdTests
     [Fact]
     public async Task GetStateByIdTestsTest()
     {
-        // Arrange
         var classToHandle = new GetStateById
         {
             Id = StateMockBuilder.GenerateMockState().Id
         };
 
         var handler = (GetStateByIdHandler)StateMockBuilder.CreateHandler<GetStateByIdHandler>();
-        
-        //Act
         var result = (StateData)await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
     public void GetStateByClientIdInvalidRangeTest()
     {
-        // Arrange
         var classToHandle = new GetStateById();
         
         var handler = (GetStateByIdHandler)StateMockBuilder.CreateHandler<GetStateByIdHandler>();
-
-        //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         action.Should().ThrowAsync<ArgumentNullException>();
     }
 }

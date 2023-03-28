@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
 using Mapster;
@@ -43,8 +44,20 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, object>
 
     private async Task<List<CountryData>> GetAllCountries()
     {
-        var allLocations = await _repository.GetAllCountriesAsync();
-        return allLocations.Adapt<List<CountryData>>();
+        var entities = await _repository.GetAsListAsync<Country, string>(
+             predicate: country => !country.Disabled, 
+             orderAscending: country => country.Name, 
+             selectExpression: country => new Country
+                {
+                    Id = country.Id,
+                    Code = country.Code,
+                    Name = country.Name,
+                    Currency = country.Currency,
+                    CurrencyName = country.CurrencyName,
+                    Region = country.Region,
+                    SubRegion = country.SubRegion
+                });
+        return entities.Adapt<List<CountryData>>();
     }
     
     public static string GetCacheKey() => "Countries:All";

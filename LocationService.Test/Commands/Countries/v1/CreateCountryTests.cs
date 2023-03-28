@@ -17,25 +17,20 @@ public class CreateCountryTests
     [Fact]
     public async Task CreateCountryTest()
     {
-        // Arrange
         var classToHandle = new CreateCountry
         {
             LocationDetails = CountryMockBuilder.GenerateMockCountryDtoList(1).First()
         };
 
         var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();
-
-        //Act
         var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull().And.BeOfType<CountryData>();
     }
 
     [Fact]
     public void CreateCountryInvalidNameTest()
     {
-        // Arrange
         var resultDto = CountryMockBuilder.GenerateMockCountryDtoList(1).First();
         resultDto.Name = null;
         
@@ -45,11 +40,8 @@ public class CreateCountryTests
         };
         
         var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();
-
-        //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         action.Should().ThrowAsync<ValidationException>().WithMessage("*Name*");
     }
 }

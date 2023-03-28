@@ -16,36 +16,28 @@ public class UpdateCountryTests
     [Fact]
     public async Task UpdateCountryTest()
     {
-        // Arrange
         var classToHandle = new UpdateCountry
         {
             LocationDetails = CountryMockBuilder.GenerateMockCountryDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();
-        
-        //Act
         var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
     public void UpdateCountryInvalidCountryIdTest()
     {
-        // Arrange
         var classToHandle = new UpdateCountry
         {
             LocationDetails = new CountryData()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();
-
-        //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         action.Should().ThrowAsync<ArgumentNullException>().WithMessage("*Id*");
     }
 }

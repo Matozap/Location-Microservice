@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using AutoFixture;
 using LocationService.Application.Interfaces;
 using LocationService.Application.Logic.Countries.Commands.v1;
@@ -10,7 +9,6 @@ using LocationService.Application.Logic.Countries.Queries.v1;
 using LocationService.Domain;
 using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
-using LocationService.Message.Definition.Countries.Responses.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -32,16 +30,11 @@ public static class CountryMockBuilder
         repository.UpdateAsync(mockCountry).Returns(mockCountry);
         repository.DeleteAsync(mockCountry).Returns(mockCountry);
         
-        repository.GetAllCountriesAsync().Returns(mockCounties);
-        repository.GetCountryAsync(Arg.Any<Expression<Func<Country, bool>>>()).Returns(mockCountry);
+        repository.GetAsSingleAsync(Arg.Any<Expression<Func<Country, bool>>>(), Arg.Any<Expression<Func<Country, string>>>(), 
+            Arg.Any<Expression<Func<Country, string>>>(), Arg.Any<Expression<Func<Country, Country>>>(), Arg.Any<bool>()).Returns(mockCountry);
+        repository.GetAsListAsync(Arg.Any<Expression<Func<Country, bool>>>(), Arg.Any<Expression<Func<Country, string>>>(), 
+            Arg.Any<Expression<Func<Country, string>>>(), Arg.Any<Expression<Func<Country, Country>>>(), Arg.Any<bool>()).Returns(mockCounties);
         return repository;
-    }
-
-    private static IEventBus GenerateMockEventBus()
-    {
-        var eventBus = Substitute.For<IEventBus>();
-        eventBus.Publish(Arg.Any<CountryCreated>()).Returns(Task.CompletedTask);
-        return eventBus;
     }
 
     private static ICache GenerateMockObjectCache()
@@ -88,31 +81,28 @@ public static class CountryMockBuilder
         if (typeof(T) == typeof(UpdateCountryHandler))
         {
             return new UpdateCountryHandler(NullLogger<UpdateCountryHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(SoftDeleteCountryHandler))
         {
             return new SoftDeleteCountryHandler(NullLogger<SoftDeleteCountryHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(DeleteCountryHandler))
         {
             return new DeleteCountryHandler(NullLogger<DeleteCountryHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(CreateCountryHandler))
         {
             var repository = GenerateMockRepository(location);
-            repository.GetCountryAsync(Arg.Any<Expression<Func<Country, bool>>>()).Returns((Country)null);
+            repository.GetAsSingleAsync(Arg.Any<Expression<Func<Country, bool>>>(), Arg.Any<Expression<Func<Country, string>>>(), 
+                Arg.Any<Expression<Func<Country, string>>>(), Arg.Any<Expression<Func<Country, Country>>>(), Arg.Any<bool>()).Returns((Country)null);
             return new CreateCountryHandler(NullLogger<CreateCountryHandler>.Instance,
-                repository,
-                GenerateMockEventBus());
+                repository);
         }
         
         if (typeof(T) == typeof(GetAllCountriesHandler))

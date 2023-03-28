@@ -21,7 +21,7 @@ public static class EnvironmentConfigurationExtension
                 basePath = $"{env.ContentRootPath}/{RootFolderName}";
                 var jsonFile = $"{basePath}/appsettings.json";
                 if (!File.Exists(jsonFile))
-                {                        
+                {
                     throw new Exception($"[ConfigurationBuilder] Original Path and fallback path ({jsonFile}) is not valid or does not exists. {GetFiles(basePath)}");
                 }
             }

@@ -1,9 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Cities.v1;
-using LocationService.Message.Definition;
-using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
 using Mapster;
 using MediatR;
@@ -28,20 +27,19 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
     {
         var result = await UpdateCity(request.LocationDetails);
         _logger.LogInformation("City with id {CityID} updated successfully", request.LocationDetails.Id);
-        _ = _eventBus.Publish(new CityEvent { LocationDetails = request.LocationDetails, Action = EventAction.CityUpdate});
             
         return result;
     }
 
     private async Task<CityData> UpdateCity(CityData cityData)
     {
-        var entity = await _repository.GetCityAsync(c => c.Id == cityData.Id);
+        var entity = await _repository.GetAsSingleAsync<City, string>(city => city.Id == cityData.Id);
         if (entity == null) return null;
         
         cityData.StateId = entity.StateId;
         var changes = cityData.Adapt(entity);
         
         await _repository.UpdateAsync(changes);
-        return changes.Adapt<Domain.City, CityData>();
+        return changes.Adapt<City, CityData>();
     }
 }

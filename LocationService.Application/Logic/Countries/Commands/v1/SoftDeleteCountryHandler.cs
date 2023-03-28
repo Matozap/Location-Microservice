@@ -3,11 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
-using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.Definition;
-using LocationService.Message.Definition.Countries.Events.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
-using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -17,41 +13,29 @@ public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, objec
 {
     private readonly ILogger<SoftDeleteCountryHandler> _logger;
     private readonly IRepository _repository;
-    private readonly IEventBus _eventBus;
 
-    public SoftDeleteCountryHandler(ILogger<SoftDeleteCountryHandler> logger, IRepository repository, IEventBus eventBus)
+    public SoftDeleteCountryHandler(ILogger<SoftDeleteCountryHandler> logger, IRepository repository)
     {
         _logger = logger;
         _repository = repository;
-        _eventBus = eventBus;
     }
 
     public async Task<object> Handle(SoftDeleteCountry request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request.Id);
 
-        var entity = await UpdateCountry(request.Id);
-
-        if (entity != null)
-        {
-            var publishData = entity.Adapt<Country, CountryData>();
-            publishData.States = null;
-            _ = _eventBus.Publish(new CountryEvent { LocationDetails = publishData, Action = EventAction.CountryDelete });
-        }
-
-        return request.Id;
+        var entity = await DisableCountry(request.Id);
+        _logger.LogInformation("Country with id {CountryID} disabled successfully", entity?.Id);
+        return entity?.Id;
     }
 
-    private async Task<Country> UpdateCountry(string countryId)
+    private async Task<Country> DisableCountry(string countryId)
     {
-        var entity = await _repository.GetCountryAsync(c => c.Id == countryId || c.Code == countryId);
-            
-        if(entity != null)
-        {
-            entity.Disabled = true;
-            await _repository.UpdateAsync(entity);
-            _logger.LogInformation("Country with id {CountryId} was soft deleted", countryId);
-        }
+        var entity = await _repository.GetAsSingleAsync<Country, string>(c => c.Id == countryId || c.Code == countryId);
+        if (entity == null) return null;
+        
+        entity.Disabled = true;
+        await _repository.UpdateAsync(entity);
 
         return entity;
     }

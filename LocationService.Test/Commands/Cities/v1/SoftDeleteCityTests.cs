@@ -13,18 +13,14 @@ public class SoftDeleteCityTests
     [Fact]
     public async Task SoftDeleteCityTest()
     {
-        // Arrange
         var classToHandle = new SoftDeleteCity
         {
             Id = CityMockBuilder.GenerateMockCity().Id
         };
         
         var handler = (SoftDeleteCityHandler)CityMockBuilder.CreateHandler<SoftDeleteCityHandler>();
-
-        //Act
         var result = await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 }

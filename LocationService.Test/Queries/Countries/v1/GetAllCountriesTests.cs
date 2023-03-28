@@ -15,14 +15,11 @@ public class GetAllCountriesTests
     [Fact]
     public async Task GetAllCountriesTest()
     {
-        // Arrange
         var classToHandle = new GetAllCountries();
+        
         var handler = (GetAllCountriesHandler)CountryMockBuilder.CreateHandler<GetAllCountriesHandler>();
-
-        //Act
         var result = (List<CountryData>)await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull().And.HaveCountGreaterThan(1);
     }
 }

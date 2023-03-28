@@ -35,7 +35,8 @@ public class StateFunction
     {
         var query = new GetStateById
         {
-            Id = id
+            Id = id,
+            Code = id
         };
         
         var result = await _mediator.Send(query);

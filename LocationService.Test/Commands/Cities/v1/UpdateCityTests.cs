@@ -16,25 +16,20 @@ public class UpdateCityTests
     [Fact]
     public async Task UpdateCityTest()
     {
-        // Arrange
         var classToHandle = new UpdateCity
         {
             LocationDetails = CityMockBuilder.GenerateMockCityDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateCityHandler)CityMockBuilder.CreateHandler<UpdateCityHandler>();
-        
-        //Act
         var result = (CityData)await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
     public void UpdateCityInvalidCityIdTest()
     {
-        // Arrange
         var classToHandle = new UpdateCity
         {
             LocationDetails = new CityData()
@@ -42,10 +37,8 @@ public class UpdateCityTests
 
         var handler = (UpdateCityHandler)CityMockBuilder.CreateHandler<UpdateCityHandler>();
 
-        //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         action.Should().ThrowAsync<ArgumentNullException>().WithMessage("*Id*");
     }
 }

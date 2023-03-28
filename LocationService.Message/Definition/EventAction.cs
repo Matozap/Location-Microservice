@@ -2,6 +2,7 @@
 
 public enum EventAction
 {
+    None,
     CountryCreate,
     CountryUpdate,
     CountryDelete,

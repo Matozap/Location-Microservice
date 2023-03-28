@@ -13,7 +13,6 @@ public class DeleteCityTests
     [Fact]
     public async Task DeleteCityTest()
     {
-        // Arrange
         var classToHandle = new DeleteCity
         {
             Id = CityMockBuilder.GenerateMockCity().Id
@@ -21,7 +20,6 @@ public class DeleteCityTests
 
         var handler = (DeleteCityHandler)CityMockBuilder.CreateHandler<DeleteCityHandler>();
 
-        //Act
         var result = await handler.Handle(classToHandle, new CancellationToken());
 
         //Assert

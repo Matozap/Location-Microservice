@@ -24,7 +24,7 @@ public static class CityMockBuilder
     private static IRepository GenerateMockRepository(City location = null, int rowCount = 100)
     {
         var mockCity = location ?? GenerateMockCity();
-        var mockCounties = GenerateMockDomainCityList(rowCount);
+        var mockCities = GenerateMockDomainCityList(rowCount);
         
         var repository = Substitute.For<IRepository>();
         
@@ -32,8 +32,10 @@ public static class CityMockBuilder
         repository.UpdateAsync(mockCity).Returns(mockCity);
         repository.DeleteAsync(mockCity).Returns(mockCity);
         
-        repository.GetAllCitiesAsync(Arg.Any<string>()).Returns(mockCounties);
-        repository.GetCityAsync(Arg.Any<Expression<Func<City, bool>>>()).Returns(mockCity);
+        repository.GetAsSingleAsync(Arg.Any<Expression<Func<City, bool>>>(), Arg.Any<Expression<Func<City, string>>>(), 
+            Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns(mockCity);
+        repository.GetAsListAsync(Arg.Any<Expression<Func<City, bool>>>(), Arg.Any<Expression<Func<City, string>>>(), 
+            Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns(mockCities);
         return repository;
     }
 
@@ -94,24 +96,22 @@ public static class CityMockBuilder
         if (typeof(T) == typeof(SoftDeleteCityHandler))
         {
             return new SoftDeleteCityHandler(NullLogger<SoftDeleteCityHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(DeleteCityHandler))
         {
             return new DeleteCityHandler(NullLogger<DeleteCityHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(CreateCityHandler))
         {
             var repository = GenerateMockRepository(location);
-            repository.GetCityAsync(Arg.Any<Expression<Func<City, bool>>>()).Returns((City)null);
+            repository.GetAsSingleAsync(Arg.Any<Expression<Func<City, bool>>>(), Arg.Any<Expression<Func<City, string>>>(), 
+                Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns((City)null);
             return new CreateCityHandler(NullLogger<CreateCityHandler>.Instance,
-                repository,
-                GenerateMockEventBus());
+                repository);
         }
         
         if (typeof(T) == typeof(GetAllCitiesHandler))

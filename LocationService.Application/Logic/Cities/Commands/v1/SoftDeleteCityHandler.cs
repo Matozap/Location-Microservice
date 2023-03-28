@@ -1,12 +1,9 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
-using LocationService.Message.DataTransfer.Cities.v1;
-using LocationService.Message.Definition;
-using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
-using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -16,38 +13,29 @@ public class SoftDeleteCityHandler : IRequestHandler<SoftDeleteCity, object>
 {
     private readonly ILogger<SoftDeleteCityHandler> _logger;
     private readonly IRepository _repository;
-    private readonly IEventBus _eventBus;
 
-    public SoftDeleteCityHandler(ILogger<SoftDeleteCityHandler> logger, IRepository repository, IEventBus eventBus)
+    public SoftDeleteCityHandler(ILogger<SoftDeleteCityHandler> logger, IRepository repository)
     {
         _logger = logger;
         _repository = repository;
-        _eventBus = eventBus;
     }
 
     public async Task<object> Handle(SoftDeleteCity request, CancellationToken cancellationToken)
     {
-        var entity = await UpdateCity(request.Id);
-
-        if (entity != null)
-        {
-            var publishData = entity.Adapt<City, CityData>();
-            _ = _eventBus.Publish(new CityEvent { LocationDetails = publishData, Action = EventAction.CityDelete });
-        }
-
-        return request.Id;
+        ArgumentNullException.ThrowIfNull(request.Id);
+        
+        var entity = await DisableCity(request.Id);
+        _logger.LogInformation("City with id {CityId} disabled successfully", entity?.Id);
+        return entity?.Id;
     }
 
-    private async Task<City> UpdateCity(string cityId)
+    private async Task<City> DisableCity(string cityId)
     {
-        var entity = await _repository.GetCityAsync(c => c.Id == cityId);
+        var entity = await _repository.GetAsSingleAsync<City, string>(city => city.Id == cityId);
+        if (entity == null) return null;
         
-        if(entity != null)
-        {
-            entity.Disabled = true;
-            await _repository.UpdateAsync(entity);
-            _logger.LogInformation("City with id {CityId} was soft deleted", cityId);
-        }
+        entity.Disabled = true;
+        await _repository.UpdateAsync(entity);
 
         return entity;
     }

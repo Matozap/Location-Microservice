@@ -2,9 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.States.v1;
-using LocationService.Message.Definition;
-using LocationService.Message.Definition.States.Events.v1;
 using LocationService.Message.Definition.States.Requests.v1;
 using Mapster;
 using MediatR;
@@ -16,13 +15,11 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
 {
     private readonly ILogger<CreateStateHandler> _logger;
     private readonly IRepository _repository;
-    private readonly IEventBus _eventBus;
 
-    public CreateStateHandler(ILogger<CreateStateHandler> logger, IRepository repository, IEventBus eventBus)
+    public CreateStateHandler(ILogger<CreateStateHandler> logger, IRepository repository)
     {
         _logger = logger;
         _repository = repository;
-        _eventBus = eventBus;
     }
 
     public async Task<object> Handle(CreateState request, CancellationToken cancellationToken)
@@ -33,21 +30,19 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
         if (resultEntity == null) return null;
         
         _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id);
-        var resultDto = resultEntity.Adapt<Domain.State, StateData>();
-            
-        _ = _eventBus.Publish(new StateEvent { LocationDetails = request.LocationDetails, Action = EventAction.StateCreate});
+        var resultDto = resultEntity.Adapt<State, StateData>();
 
         return resultDto;
     }
 
-    private async Task<Domain.State> CreateState(StateData state)
+    private async Task<State> CreateState(StateData state)
     {
-        if (await _repository.GetStateAsync(e => e.Code == state.Code && e.CountryId == state.CountryId) != null)
+        if (await _repository.GetAsSingleAsync<State, string>(e => e.Code == state.Code && e.CountryId == state.CountryId) != null)
         {
             return null;
         }
         
-        var entity = state.Adapt<StateData, Domain.State>();
+        var entity = state.Adapt<StateData, State>();
         entity.LastUpdateUserId ??= "system";
         entity.LastUpdateDate = DateTime.Now;
         
