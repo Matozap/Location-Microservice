@@ -2,9 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.Definition;
-using LocationService.Message.Definition.Countries.Events.v1;
 using LocationService.Message.Definition.Countries.Requests.v1;
 using Mapster;
 using MediatR;
@@ -16,13 +15,11 @@ public class CreateCountryHandler : IRequestHandler<CreateCountry, object>
 {
     private readonly ILogger<CreateCountryHandler> _logger;
     private readonly IRepository _repository;
-    private readonly IEventBus _eventBus;
 
-    public CreateCountryHandler(ILogger<CreateCountryHandler> logger, IRepository repository, IEventBus eventBus)
+    public CreateCountryHandler(ILogger<CreateCountryHandler> logger, IRepository repository)
     {
         _logger = logger;
         _repository = repository;
-        _eventBus = eventBus;
     }
 
     public async Task<object> Handle(CreateCountry request, CancellationToken cancellationToken)
@@ -33,21 +30,17 @@ public class CreateCountryHandler : IRequestHandler<CreateCountry, object>
         if (resultEntity == null) return null;
             
         _logger.LogInformation("Country with id {CountryID} created successfully", resultEntity.Id);
-        var resultDto = resultEntity.Adapt<Domain.Country, CountryData>();
-            
-        _ = _eventBus.Publish(new CountryEvent { LocationDetails = request.LocationDetails, Action = EventAction.CountryCreate});
-
-        return resultDto;
+        return resultEntity.Adapt<Country, CountryData>();
     }
 
-    private async Task<Domain.Country> CreateCountry(CountryData country)
+    private async Task<Country> CreateCountry(CountryData country)
     {
-        if (await _repository.GetCountryAsync(e => e.Code == country.Code || e.Name == country.Name) != null)
+        if (await _repository.GetAsSingleAsync<Country,string>(e => e.Code == country.Code || e.Name == country.Name) != null)
         {
             return null;
         }
         
-        var entity = country.Adapt<CountryData, Domain.Country>();
+        var entity = country.Adapt<CountryData, Country>();
         entity.LastUpdateUserId ??= "system";
         entity.LastUpdateDate = DateTime.Now;
         

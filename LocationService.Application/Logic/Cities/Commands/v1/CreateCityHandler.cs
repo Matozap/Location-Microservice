@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Cities.Events.v1;
@@ -16,13 +17,11 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
 {
     private readonly ILogger<CreateCityHandler> _logger;
     private readonly IRepository _repository;
-    private readonly IEventBus _eventBus;
 
-    public CreateCityHandler(ILogger<CreateCityHandler> logger, IRepository repository, IEventBus eventBus)
+    public CreateCityHandler(ILogger<CreateCityHandler> logger, IRepository repository)
     {
         _logger = logger;
         _repository = repository;
-        _eventBus = eventBus;
     }
 
     public async Task<object> Handle(CreateCity request, CancellationToken cancellationToken)
@@ -33,21 +32,19 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
         if (resultEntity == null) return null;
         
         _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id);
-        var resultDto = resultEntity.Adapt<Domain.City, CityData>();
-            
-        _ = _eventBus.Publish(new CityEvent { LocationDetails = request.LocationDetails, Action = EventAction.CityCreate});
+        var resultDto = resultEntity.Adapt<City, CityData>();
 
         return resultDto;
     }
 
-    private async Task<Domain.City> CreateCity(CityData city)
+    private async Task<City> CreateCity(CityData city)
     {
-        if (await _repository.GetCityAsync(e => e.Name == city.Name && e.StateId == city.StateId) != null)
+        if (await _repository.GetAsSingleAsync<City, string>(e => e.Name == city.Name && e.StateId == city.StateId) != null)
         {
             return null;
         }
         
-        var entity = city.Adapt<CityData, Domain.City>();
+        var entity = city.Adapt<CityData, City>();
         entity.LastUpdateUserId ??= "system";
         entity.LastUpdateDate = DateTime.Now;
         

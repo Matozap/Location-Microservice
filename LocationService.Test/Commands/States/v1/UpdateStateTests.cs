@@ -16,36 +16,28 @@ public class UpdateStateTests
     [Fact]
     public async Task UpdateStateTest()
     {
-        // Arrange
         var classToHandle = new UpdateState
         {
             LocationDetails = StateMockBuilder.GenerateMockStateDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateStateHandler)StateMockBuilder.CreateHandler<UpdateStateHandler>();
-        
-        //Act
         var result = (StateData)await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
     public void UpdateStateInvalidStateIdTest()
     {
-        // Arrange
         var classToHandle = new UpdateState
         {
             LocationDetails = new StateData()
         };
 
         var handler = (UpdateStateHandler)StateMockBuilder.CreateHandler<UpdateStateHandler>();
-
-        //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         action.Should().ThrowAsync<ArgumentNullException>().WithMessage("*Id*");
     }
 }

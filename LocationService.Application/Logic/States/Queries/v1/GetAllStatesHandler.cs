@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.States.v1;
 using LocationService.Message.Definition.States.Requests.v1;
 using Mapster;
@@ -43,8 +44,13 @@ public class GetAllStatesHandler : IRequestHandler<GetAllStates, object>
 
     private async Task<List<StateData>> GetAllStates(string countryId)
     {
-        var allLocations = await _repository.GetAllStatesAsync(countryId);
-        return allLocations.Adapt<List<StateData>>();
+        var parentByCode = await _repository.GetAsSingleAsync<Country, string>(predicate: e => e.Code == countryId) ?? new Country();
+        var entities = await _repository.GetAsListAsync<State, string>(
+            predicate: state => (state.CountryId == countryId || state.CountryId == parentByCode.Id) && !state.Disabled,
+            orderAscending: state => state.Name,
+            includeNavigationalProperties: true
+        );
+        return entities.Adapt<List<StateData>>();
     }
     
     public static string GetCacheKey(string id) => $"States:All:{id}";

@@ -1,5 +1,6 @@
 using System;
 using LocationService.Domain;
+using LocationService.Infrastructure.Bus;
 using LocationService.Infrastructure.Database.Context.Seed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,7 @@ public sealed class DatabaseContext : DbContext
     public DbSet<Country> Countries { get; set; }
     public DbSet<State> States { get; set; }
     public DbSet<City> Cities { get; set; }
+    public DbSet<EventBusOutbox> EventBusOutboxes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -40,6 +42,7 @@ public sealed class DatabaseContext : DbContext
         CreateCountryModel(modelBuilder);
         CreateStateModel(modelBuilder);
         CreateCityModel(modelBuilder);
+        CreateEventBusOutboxModel(modelBuilder);
     }
     
     private static void CreateCountryModel(ModelBuilder modelBuilder)
@@ -90,6 +93,21 @@ public sealed class DatabaseContext : DbContext
             entity.HasNoDiscriminator();
             entity.HasPartitionKey(e => e.StateId);
             entity.HasManualThroughput(10000);
+        });
+    }
+    
+    private static void CreateEventBusOutboxModel(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<EventBusOutbox>().ToContainer("EventBusOutbox");
+        modelBuilder.Entity<EventBusOutbox>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ToJsonProperty("id").IsRequired();
+            entity.Property(e => e.JsonObject).IsRequired();
+            entity.Property(e => e.Action).IsRequired();
+            entity.HasIndex(e => e.Action);
+            entity.HasNoDiscriminator();
+            entity.HasPartitionKey(e => e.Id);
         });
     }
 

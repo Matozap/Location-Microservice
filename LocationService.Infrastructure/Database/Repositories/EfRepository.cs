@@ -5,8 +5,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
+using LocationService.Infrastructure.Bus;
 using LocationService.Infrastructure.Database.Context;
+using LocationService.Infrastructure.Extensions;
 using LocationService.Infrastructure.Utils;
+using LocationService.Message.Definition;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocationService.Infrastructure.Database.Repositories;
@@ -22,91 +25,24 @@ public class EfRepository : IRepository
         _databaseOptions = databaseOptions;
     }
 
-    public async Task<List<Country>> GetAllCountriesAsync()
-    {
-        var result = _applicationContext.Set<Country>()
-            .Where(country => !country.Disabled)
-            .OrderBy(country => country.Name)
-            .Select(country => new Country
-            {
-                Id = country.Id,
-                Code = country.Code,
-                Name = country.Name,
-                Currency = country.Currency,
-                CurrencyName = country.CurrencyName,
-                Region = country.Region,
-                SubRegion = country.SubRegion
-            });
-        return await result.ToListAsync();
-    }
-
-    public async Task<List<State>> GetAllStatesAsync(string countryId)
-    {
-        var parentByCode = await _applicationContext.Set<Country>().FirstOrDefaultAsync(e => e.Code == countryId) ?? new Country();
-        var result = _applicationContext.Set<State>()
-            .Where(state => state.CountryId == countryId || state.CountryId == parentByCode.Id)
-            .Where(state => !state.Disabled)
-            .OrderBy(state => state.Name);
-            
-        return await LoadAllNavigationalPropertiesAsync(result);
-    }
-
-    public async Task<List<City>> GetAllCitiesAsync(string stateId)
-    {
-        var parentByCode = await _applicationContext.Set<State>().FirstOrDefaultAsync(e => e.Code == stateId) ?? new State();
-        var result = _applicationContext.Set<City>()
-            .Where(city => city.StateId == stateId || city.StateId == parentByCode.Id)
-            .Where(city => !city.Disabled)
-            .OrderBy(city => city.Name);
-        
-        return await LoadAllNavigationalPropertiesAsync(result);
-    }
-
-    public async Task<Country> GetCountryAsync(Expression<Func<Country, bool>> predicate)
-    {
-        var result = _applicationContext.Set<Country>()
-            .Where(country => !country.Disabled)
-            .Where(predicate)
-            .OrderBy(country => country.Name);
-
-        return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
-    }
-
-    public async Task<State> GetStateAsync(Expression<Func<State, bool>> predicate)
-    {
-        var result = _applicationContext.Set<State>()
-            .Where(state => !state.Disabled)
-            .Where(predicate)
-            .OrderBy(state => state.Name);
-
-        return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
-    }
-
-    public async Task<City> GetCityAsync(Expression<Func<City, bool>> predicate)
-    {
-        var result = _applicationContext.Set<City>()
-            .Where(city => !city.Disabled)
-            .Where(predicate)
-            .OrderBy(city => city.Name);
-
-        return (await LoadAllNavigationalPropertiesAsync(result)).FirstOrDefault();
-    }
-
     public async Task<T> AddAsync<T>(T entity) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
+        
         entity.Id = UniqueIdGenerator.GenerateSequentialId();
+        await CreateOutboxMessage(entity, nameof(AddAsync));
         await _applicationContext.AddAsync(entity);
         await _applicationContext.SaveChangesAsync();
     
         return entity;
     }
-    
+
     public async Task<T> UpdateAsync<T>(T entity) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
-            
+
         _applicationContext.Update(entity);
+        await CreateOutboxMessage(entity, nameof(UpdateAsync));
         await _applicationContext.SaveChangesAsync();
     
         return entity;
@@ -115,11 +51,67 @@ public class EfRepository : IRepository
     public async Task<T> DeleteAsync<T>(T entity) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
-            
+        
         _applicationContext.Remove(entity);
+        await CreateOutboxMessage(entity, nameof(DeleteAsync));
         await _applicationContext.SaveChangesAsync();
     
         return entity;
+    }
+    
+    public async Task<List<T>> GetAsListAsync<T, TKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderAscending = null,
+        Expression<Func<T, TKey>> orderDescending = null, Expression<Func<T, T>> selectExpression = null, bool includeNavigationalProperties = false) where T: EntityBase
+    {
+        var result = ApplySpec(predicate, orderAscending, orderDescending, selectExpression);
+        return includeNavigationalProperties switch
+        {
+            true when typeof(T) == typeof(Country) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<Country>)).ToList() as List<T>,
+            true when typeof(T) == typeof(State) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<State>)).ToList() as List<T>,
+            true when typeof(T) == typeof(City) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<City>)).ToList() as List<T>,
+            _ => await ApplySpec(predicate, orderAscending, orderDescending, selectExpression).ToListAsync()
+        };
+    }
+    
+    public async Task<T> GetAsSingleAsync<T, TKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderAscending = null,
+        Expression<Func<T, TKey>> orderDescending = null, Expression<Func<T, T>> selectExpression = null, bool includeNavigationalProperties = false) where T: EntityBase
+    {
+        var result = ApplySpec(predicate, orderAscending, orderDescending, selectExpression);
+
+        return includeNavigationalProperties switch
+        {
+            true when typeof(T) == typeof(Country) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<Country>)).FirstOrDefault() as T,
+            true when typeof(T) == typeof(State) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<State>)).FirstOrDefault() as T,
+            true when typeof(T) == typeof(City) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<City>)).FirstOrDefault() as T,
+            _ => await ApplySpec(predicate, orderAscending, orderDescending, selectExpression).FirstOrDefaultAsync()
+        };
+    }
+    
+    private IQueryable<T> ApplySpec<T, TKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TKey>> orderAscending,
+        Expression<Func<T, TKey>> orderDescending, Expression<Func<T, T>> selectExpression) where T: EntityBase
+    {
+        var result = _applicationContext.Set<T>().AsQueryable();
+
+        if (predicate != null)
+        {
+            result = result.Where(predicate);
+        }
+
+        if (orderAscending != null)
+        {
+            result = result.OrderBy(orderAscending);
+        }
+        
+        if (orderDescending != null)
+        {
+            result = result.OrderBy(orderDescending);
+        }
+        
+        if (orderDescending != null)
+        {
+            result = result.Select(selectExpression);
+        }
+
+        return result;
     }
     
     private async Task<List<Country>> LoadAllNavigationalPropertiesAsync(IQueryable<Country> source)
@@ -190,5 +182,27 @@ public class EfRepository : IRepository
             default:
                 return source.AsSplitQuery().Include(city => city.State).AsNoTracking().ToList();
         }
+    }
+    
+    private async Task CreateOutboxMessage<T>(T entity, string sourceMethod) where T: EntityBase
+    {
+        if(typeof(T) == typeof(EventBusOutbox)) return;
+        
+        var outbox = new EventBusOutbox
+        {
+            Id = UniqueIdGenerator.GenerateSequentialId(),
+            JsonObject = entity.Serialize(),
+            LastUpdateDate = entity.LastUpdateDate,
+            LastUpdateUserId = entity.LastUpdateUserId,
+            Action = sourceMethod switch
+            {
+                nameof(AddAsync) => typeof(T) == typeof(Country) ? EventAction.CountryCreate : typeof(T) == typeof(State) ? EventAction.StateCreate : EventAction.CityCreate,
+                nameof(UpdateAsync) => typeof(T) == typeof(Country) ? EventAction.CountryUpdate : typeof(T) == typeof(State) ? EventAction.StateUpdate : EventAction.CityUpdate,
+                nameof(DeleteAsync) => typeof(T) == typeof(Country) ? EventAction.CountryDelete : typeof(T) == typeof(State) ? EventAction.StateDelete : EventAction.CityDelete,
+                _ => EventAction.None
+            }
+        };
+
+        await _applicationContext.AddAsync(outbox);
     }
 }

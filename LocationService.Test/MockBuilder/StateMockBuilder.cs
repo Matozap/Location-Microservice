@@ -24,7 +24,7 @@ public static class StateMockBuilder
     private static IRepository GenerateMockRepository(State location = null, int rowCount = 100)
     {
         var mockState = location ?? GenerateMockState();
-        var mockCounties = GenerateMockDomainStateList(rowCount);
+        var mockStates = GenerateMockDomainStateList(rowCount);
         
         var repository = Substitute.For<IRepository>();
         
@@ -32,8 +32,10 @@ public static class StateMockBuilder
         repository.UpdateAsync(mockState).Returns(mockState);
         repository.DeleteAsync(mockState).Returns(mockState);
         
-        repository.GetAllStatesAsync(Arg.Any<string>()).Returns(mockCounties);
-        repository.GetStateAsync(Arg.Any<Expression<Func<State, bool>>>()).Returns(mockState);
+        repository.GetAsSingleAsync(Arg.Any<Expression<Func<State, bool>>>(), Arg.Any<Expression<Func<State, string>>>(), 
+            Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns(mockState);
+        repository.GetAsListAsync(Arg.Any<Expression<Func<State, bool>>>(), Arg.Any<Expression<Func<State, string>>>(), 
+            Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns(mockStates);
         return repository;
     }
 
@@ -90,31 +92,28 @@ public static class StateMockBuilder
         if (typeof(T) == typeof(UpdateStateHandler))
         {
             return new UpdateStateHandler(NullLogger<UpdateStateHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(SoftDeleteStateHandler))
         {
             return new SoftDeleteStateHandler(NullLogger<SoftDeleteStateHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(DeleteStateHandler))
         {
             return new DeleteStateHandler(NullLogger<DeleteStateHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(CreateStateHandler))
         {
             var repository = GenerateMockRepository(location);
-            repository.GetStateAsync(Arg.Any<Expression<Func<State, bool>>>()).Returns((State)null);
+            repository.GetAsSingleAsync(Arg.Any<Expression<Func<State, bool>>>(), Arg.Any<Expression<Func<State, string>>>(), 
+                Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns((State)null);
             return new CreateStateHandler(NullLogger<CreateStateHandler>.Instance,
-                repository,
-                GenerateMockEventBus());
+                repository);
         }
         
         if (typeof(T) == typeof(GetAllStatesHandler))

@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Countries.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Countries.Requests.v1;
@@ -51,8 +52,9 @@ public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
 
     private async Task<CountryData> GetCountryById(string id)
     {
-        var entity = await _repository.GetCountryAsync(e => e.Id == id || e.Code == id);
-        var resultDto = entity.Adapt<Domain.Country, CountryData>();
+        var entity = await _repository.GetAsSingleAsync<Country, string>(predicate: e => e.Id == id || e.Code == id,
+        includeNavigationalProperties: true);
+        var resultDto = entity.Adapt<Country, CountryData>();
         return resultDto;
     }
 

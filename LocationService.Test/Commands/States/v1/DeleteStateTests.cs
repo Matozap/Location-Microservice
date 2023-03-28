@@ -13,18 +13,14 @@ public class DeleteStateTests
     [Fact]
     public async Task DeleteStateTest()
     {
-        // Arrange
         var classToHandle = new DeleteState
         {
             Id = StateMockBuilder.GenerateMockState().Id
         };
 
         var handler = (DeleteStateHandler)StateMockBuilder.CreateHandler<DeleteStateHandler>();
-
-        //Act
         var result = await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 }

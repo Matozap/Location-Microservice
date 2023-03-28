@@ -13,18 +13,14 @@ public class SoftDeleteStateTests
     [Fact]
     public async Task SoftDeleteStateTest()
     {
-        // Arrange
         var classToHandle = new SoftDeleteState
         {
             Id = StateMockBuilder.GenerateMockState().Id
         };
         
         var handler = (SoftDeleteStateHandler)StateMockBuilder.CreateHandler<SoftDeleteStateHandler>();
-
-        //Act
         var result = await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 }

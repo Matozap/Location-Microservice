@@ -8,7 +8,8 @@ using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Countries.Events.v1;
 using LocationService.Message.Definition.States.Events.v1;
 using MassTransit;
-using Microsoft.Extensions.Configuration;
+ using MediatR;
+ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LocationService.API.Helpers;
@@ -64,6 +65,7 @@ public static class EventBusConfigurationExtension
         
         services.AddSingleton(eventBusOptions);
         services.AddScoped<IEventBus, EventBus>();
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(EventBusBehaviour<,>));
         return services;
     }
 

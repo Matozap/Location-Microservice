@@ -17,25 +17,20 @@ public class CreateCityTests
     [Fact]
     public async Task CreateCityTest()
     {
-        // Arrange
         var classToHandle = new CreateCity
         {
             LocationDetails = CityMockBuilder.GenerateMockCityDtoList(1).First()
         };
 
         var handler = (CreateCityHandler)CityMockBuilder.CreateHandler<CreateCityHandler>();
-
-        //Act
         var result = (CityData)await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull().And.BeOfType<CityData>();
     }
 
     [Fact]
     public void CreateCityInvalidNameTest()
     {
-        // Arrange
         var resultDto = CityMockBuilder.GenerateMockCityDtoList(1).First();
         resultDto.Name = null;
         
@@ -45,11 +40,8 @@ public class CreateCityTests
         };
         
         var handler = (CreateCityHandler)CityMockBuilder.CreateHandler<CreateCityHandler>();
-
-        //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         action.Should().ThrowAsync<ValidationException>().WithMessage("*Name*");
     }
 }

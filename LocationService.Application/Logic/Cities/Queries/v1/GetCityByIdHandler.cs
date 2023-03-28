@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
+using LocationService.Domain;
 using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition;
 using LocationService.Message.Definition.Cities.Requests.v1;
@@ -49,7 +50,10 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
 
     private async Task<CityData> GetStateById(string id)
     {
-        var entity = await _repository.GetCityAsync(e => e.Id == id);
+        var entity = await _repository.GetAsSingleAsync<City, string>(
+            predicate: city => city.Id == id && !city.Disabled,
+            orderAscending: city => city.Name,
+            includeNavigationalProperties: true);
         var resultDto = entity.Adapt<Domain.City, CityData>();
         return resultDto;
     }

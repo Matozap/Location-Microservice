@@ -15,7 +15,6 @@ public class DeleteCountryTests
     [Fact]
     public async Task DeleteCountryTest()
     {
-        // Arrange
         var classToHandle = new DeleteCountry
         {
             Id = CountryMockBuilder.GenerateMockCountry().Id
@@ -23,29 +22,22 @@ public class DeleteCountryTests
 
         
         var handler = (DeleteCountryHandler)CountryMockBuilder.CreateHandler<DeleteCountryHandler>();
-
-        //Act
         var result = await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
     public void DeleteCountryInvalidCountryIdTest()
     {
-        // Arrange
         var classToHandle = new DeleteCountry
         {
             Id = null
         };
 
         var handler = (DeleteCountryHandler)CountryMockBuilder.CreateHandler<DeleteCountryHandler>();
-
-        //Act
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
 
-        //Assert
         action.Should().ThrowAsync<ValidationException>().WithMessage("*Country Id*");
     }
 }
