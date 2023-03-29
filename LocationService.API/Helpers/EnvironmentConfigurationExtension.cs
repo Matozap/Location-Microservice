@@ -1,7 +1,7 @@
 using System;
+using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
@@ -10,7 +10,6 @@ namespace LocationService.API.Helpers;
 [ExcludeFromCodeCoverage]
 public static class EnvironmentConfigurationExtension
 {
-    private const string RootFolderName = "bootstrap";
     public static IConfiguration GetEnvironmentConfiguration(this IConfiguration configuration, IWebHostEnvironment env)
     {
         try
@@ -18,12 +17,7 @@ public static class EnvironmentConfigurationExtension
             var basePath = env.ContentRootPath;
             if (!File.Exists($"{basePath}/appsettings.json"))
             {
-                basePath = $"{env.ContentRootPath}/{RootFolderName}";
-                var jsonFile = $"{basePath}/appsettings.json";
-                if (!File.Exists(jsonFile))
-                {
-                    throw new Exception($"[ConfigurationBuilder] Original Path and fallback path ({jsonFile}) is not valid or does not exists. {GetFiles(basePath)}");
-                }
+                throw new ConfigurationErrorsException("appsettings.json file is missing from the project output and it is required for it to work");
             }
 
             Console.WriteLine($"[ConfigurationBuilder] Environment: {env.EnvironmentName}");
@@ -40,15 +34,5 @@ public static class EnvironmentConfigurationExtension
             Console.WriteLine($"[ConfigurationBuilder] Error: {ex.Message} - {ex.StackTrace}");
             return configuration;
         }
-    }
-
-    private static string GetFiles(string path)
-    {
-        var filePaths = Directory.GetFiles(path, "*.*",
-            SearchOption.TopDirectoryOnly);
-        var files = "";
-        files = filePaths.Aggregate(files, (current, item) => current + item);
-
-        return files;
     }
 }
