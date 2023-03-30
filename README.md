@@ -7,8 +7,8 @@
 
 
 
-A microservice that provides information about geographical locations. The microservice is responsible for handling requests for location information, such as country, state and city, 
-and maintaining a database of location information and it should not be updated by external systems.
+A microservice that is responsible for handling requests for location information, such as country, state and city, 
+and maintaining a database of location information which should not be updated by external systems.
 
 Exposes an API in 2 flavors: controllers and Azure functions and it allows other services or applications to query the location information. 
 The API starts with the basic types of queries, such as:
@@ -26,11 +26,11 @@ Overall, this microservice provides a scalable and flexible solution for handlin
 ----------------------------------
 
 
-#### Architecture
+### Architecture
 
 - Uses Onion Architecture project structure
 
-#### Design Patterns
+### Design Patterns
 
 - CQRS
 - Mediator
@@ -40,7 +40,7 @@ Overall, this microservice provides a scalable and flexible solution for handlin
 - Outbox
 - Pub-Sub
 
-#### Development
+### Development
 
 - Uses latest .Net version .Net 7 
 - Uses Docker and Docker Compose to load all external components required
