@@ -1,8 +1,8 @@
 # Location Microservice
 
 ![Build](https://img.shields.io/github/actions/workflow/status/Matozap/Location-Microservice/main-build.yml?style=for-the-badge&logo=github&color=0D7EBF)
-![Build](https://img.shields.io/github/issues/Matozap/Location-Microservice?style=for-the-badge&logo=github&color=0D7EBF)
-![Build](https://img.shields.io/github/last-commit/Matozap/Location-Microservice?style=for-the-badge&logo=github&color=0D7EBF)
+![Issues](https://img.shields.io/github/issues/Matozap/Location-Microservice?style=for-the-badge&logo=github&color=0D7EBF)
+![Commits](https://img.shields.io/github/last-commit/Matozap/Location-Microservice?style=for-the-badge&logo=github&color=0D7EBF)
 
 
 
@@ -28,17 +28,18 @@ Overall, this microservice provides a scalable and flexible solution for handlin
 
 ### Architecture
 
-- Uses Onion Architecture project structure
+- Onion Architecture structure
+- CQRS architectural pattern
 
 ### Design Patterns
 
-- CQRS
+
 - Mediator
 - Dependency Injection
 - Options
 - Repository
 - Outbox
-- Pub-Sub
+- Pub/Sub
 
 ### Development
 
