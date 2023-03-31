@@ -20,7 +20,7 @@ public static class EnvironmentConfigurationExtension
                 throw new ConfigurationErrorsException("appsettings.json file is missing from the project output and it is required for it to work");
             }
 
-            Console.WriteLine($"[ConfigurationBuilder] Environment: {env.EnvironmentName}");
+            Console.WriteLine($"Environment: {env.EnvironmentName}");
             var builder = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -31,7 +31,7 @@ public static class EnvironmentConfigurationExtension
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ConfigurationBuilder] Error: {ex.Message} - {ex.StackTrace}");
+            Console.WriteLine($"[Configuration] Error: {ex.Message} - {ex.StackTrace}");
             return configuration;
         }
     }

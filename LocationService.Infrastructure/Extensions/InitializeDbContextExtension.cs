@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using LocationService.Infrastructure.Database.Context;
+using Microsoft.Extensions.Logging;
 
 namespace LocationService.Infrastructure.Extensions;
 
@@ -10,21 +11,28 @@ public static class InitializeDbContextExtension
 {
     public static void EnsureDatabaseIsSeeded(this IServiceCollection services)
     {
+        var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+        var databaseOptions = serviceProvider.GetService<DatabaseOptions>();
+        var logger = serviceProvider.GetService<ILogger<DatabaseContext>>();
+        using var serviceScope = serviceProvider.GetService<DatabaseContext>();
+        
         try
         {
-            var serviceProvider = services.BuildServiceProvider();
-            using var scope = serviceProvider.CreateScope();
-            var databaseOptions = serviceProvider.GetService<DatabaseOptions>();
+            if (!serviceScope.Database.CanConnect() || !serviceScope.Database.EnsureCreated())
+            {
+                logger.LogWarning("[Database Initializer] Cannot connect to database {Database}", databaseOptions.DatabaseType);
+                return;
+            }
+
             if (!databaseOptions.SeedData) return;
-            
-            Console.WriteLine("[Database] Seeding starting");
-            using var serviceScope = serviceProvider.GetService<DatabaseContext>();
+            logger.LogInformation("[Database Initializer] Seeding starting");
             serviceScope.SeedData();
-            Console.WriteLine("[Database] Seeding completed successfully");
+            logger.LogInformation("[Database Initializer] Seeding completed successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine("[EnsureDatabaseIsSeeded] - " + ex.Message + " - " + ex.StackTrace);
+            logger.LogError(ex, "[Database Initializer] Error Seeding database - {Error}", ex.Message);
             throw;
         }
     }

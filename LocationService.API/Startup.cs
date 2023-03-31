@@ -26,9 +26,9 @@ public class Startup
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Startup] ERROR at ConfigureServices {ex}");
+            Console.WriteLine($"[Startup] Error at ConfigureServices {ex}");
         }
-        Console.WriteLine("[Startup] ConfigureServices [DONE]");
+        Console.WriteLine("[Startup] Services Configuration [DONE]");
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -57,9 +57,9 @@ public class Startup
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Startup] ERROR at Configure - {ex}");
+            Console.WriteLine($"[Startup] Error at Configure - {ex}");
         }
 
-        Console.WriteLine("[Startup] Configure [DONE]");
+        Console.WriteLine("[Startup] Application Configuration [DONE]");
     }
 }

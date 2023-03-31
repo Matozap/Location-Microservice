@@ -68,7 +68,7 @@ public class EfRepository : IRepository
             true when typeof(T) == typeof(Country) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<Country>)).ToList() as List<T>,
             true when typeof(T) == typeof(State) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<State>)).ToList() as List<T>,
             true when typeof(T) == typeof(City) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<City>)).ToList() as List<T>,
-            _ => await ApplySpec(predicate, orderAscending, orderDescending, selectExpression).ToListAsync()
+            _ => await result.ToListAsync()
         };
     }
     
@@ -82,7 +82,7 @@ public class EfRepository : IRepository
             true when typeof(T) == typeof(Country) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<Country>)).FirstOrDefault() as T,
             true when typeof(T) == typeof(State) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<State>)).FirstOrDefault() as T,
             true when typeof(T) == typeof(City) => (await LoadAllNavigationalPropertiesAsync(result as IQueryable<City>)).FirstOrDefault() as T,
-            _ => await ApplySpec(predicate, orderAscending, orderDescending, selectExpression).FirstOrDefaultAsync()
+            _ => await result.FirstOrDefaultAsync()
         };
     }
     
