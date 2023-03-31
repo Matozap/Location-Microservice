@@ -4,7 +4,7 @@ using LocationService.Message.Definition.States.Requests.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LocationService.API.Controllers;
+namespace LocationService.API.Output.Controllers;
 
 [Produces("application/json")]
 [Route("api/v1/")]

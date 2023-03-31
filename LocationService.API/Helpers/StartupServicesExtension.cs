@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Net;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using LocationService.Application;
 using LocationService.Infrastructure;
@@ -29,6 +30,11 @@ public static class StartupServicesExtension
     public static void AddStartupServicesForFunctions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddApplicationInsightsTelemetryWorkerService();
+        services.Configure<JsonSerializerOptions>(options =>
+        {
+            options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.PropertyNameCaseInsensitive = true;
+        });
         AddSharedStartupServices(services, configuration);
     }
 

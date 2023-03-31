@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.DataTransfer.Cities.v1;
-using LocationService.Message.Definition;
-using LocationService.Message.Definition.Cities.Events.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
 using Mapster;
 using MediatR;
