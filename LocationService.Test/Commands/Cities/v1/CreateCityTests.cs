@@ -19,7 +19,7 @@ public class CreateCityTests
     {
         var classToHandle = new CreateCity
         {
-            LocationDetails = CityMockBuilder.GenerateMockCityDtoList(1).First()
+            Details = CityMockBuilder.GenerateMockCityDtoList(1).First()
         };
 
         var handler = (CreateCityHandler)CityMockBuilder.CreateHandler<CreateCityHandler>();
@@ -36,7 +36,7 @@ public class CreateCityTests
         
         var classToHandle = new CreateCity
         {
-            LocationDetails = resultDto
+            Details = resultDto
         };
         
         var handler = (CreateCityHandler)CityMockBuilder.CreateHandler<CreateCityHandler>();

@@ -24,10 +24,10 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
 
     public async Task<object> Handle(UpdateCountry request, CancellationToken cancellationToken)
     {
-        ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Id);
+        ArgumentException.ThrowIfNullOrEmpty(request.Details?.Id);
         
-        var result = await UpdateCountry(request.LocationDetails);
-        _logger.LogInformation("Country with id {CountryID} updated successfully", request.LocationDetails.Id);
+        var result = await UpdateCountry(request.Details);
+        _logger.LogInformation("Country with id {CountryID} updated successfully", request.Details.Id);
             
         return result;
     }

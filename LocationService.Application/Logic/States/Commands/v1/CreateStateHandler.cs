@@ -24,9 +24,9 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
 
     public async Task<object> Handle(CreateState request, CancellationToken cancellationToken)
     {
-        ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Name);
+        ArgumentException.ThrowIfNullOrEmpty(request.Details?.Name);
         
-        var resultEntity = await CreateState(request.LocationDetails);
+        var resultEntity = await CreateState(request.Details);
         if (resultEntity == null) return null;
         
         _logger.LogInformation("State with id {StateID} created successfully", resultEntity.Id);

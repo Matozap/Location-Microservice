@@ -5,5 +5,5 @@ namespace LocationService.Message.Definition.Cities.Responses.v1;
 
 public class CityCreated : IRequest<object>
 {
-    public CityData LocationDetails { get; init; }
+    public CityData Details { get; init; }
 }

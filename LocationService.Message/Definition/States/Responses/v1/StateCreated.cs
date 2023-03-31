@@ -5,5 +5,5 @@ namespace LocationService.Message.Definition.States.Responses.v1;
 
 public class StateCreated : IRequest<object>
 {
-    public StateData LocationDetails { get; init; }
+    public StateData Details { get; init; }
 }

@@ -19,7 +19,7 @@ public class CreateCountryTests
     {
         var classToHandle = new CreateCountry
         {
-            LocationDetails = CountryMockBuilder.GenerateMockCountryDtoList(1).First()
+            Details = CountryMockBuilder.GenerateMockCountryDtoList(1).First()
         };
 
         var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();
@@ -36,7 +36,7 @@ public class CreateCountryTests
         
         var classToHandle = new CreateCountry
         {
-            LocationDetails = resultDto
+            Details = resultDto
         };
         
         var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();

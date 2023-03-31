@@ -43,7 +43,7 @@ public class EventBusBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest
                 case EventAction.CountryDelete:
                     var country = outboxMessage.JsonObject.Deserialize<Country>();
                     var countryData = country.Adapt<Country, CountryData>();
-                    await _eventBus.Publish(new CountryEvent { LocationDetails = countryData, Action = outboxMessage.Action});
+                    await _eventBus.Publish(new CountryEvent { Details = countryData, Action = outboxMessage.Action});
                     break;
                     
                 case EventAction.StateCreate:
@@ -51,7 +51,7 @@ public class EventBusBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest
                 case EventAction.StateDelete:
                     var state = outboxMessage.JsonObject.Deserialize<State>();
                     var stateData = state.Adapt<State, StateData>();
-                    await _eventBus.Publish(new StateEvent { LocationDetails = stateData, Action = outboxMessage.Action});
+                    await _eventBus.Publish(new StateEvent { Details = stateData, Action = outboxMessage.Action});
                     break;
                     
                 case EventAction.CityCreate:
@@ -59,7 +59,7 @@ public class EventBusBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest
                 case EventAction.CityDelete:
                     var city = outboxMessage.JsonObject.Deserialize<City>();
                     var cityData = city.Adapt<City, CityData>();
-                    await _eventBus.Publish(new CityEvent { LocationDetails = cityData, Action = outboxMessage.Action});
+                    await _eventBus.Publish(new CityEvent { Details = cityData, Action = outboxMessage.Action});
                     break;
                 case EventAction.None:
                 default:

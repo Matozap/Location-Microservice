@@ -19,7 +19,7 @@ public class CreateStateTests
     {
         var classToHandle = new CreateState
         {
-            LocationDetails = StateMockBuilder.GenerateMockStateDtoList(1).First()
+            Details = StateMockBuilder.GenerateMockStateDtoList(1).First()
         };
 
         var handler = (CreateStateHandler)StateMockBuilder.CreateHandler<CreateStateHandler>();
@@ -36,7 +36,7 @@ public class CreateStateTests
         
         var classToHandle = new CreateState
         {
-            LocationDetails = resultDto
+            Details = resultDto
         };
         
         var handler = (CreateStateHandler)StateMockBuilder.CreateHandler<CreateStateHandler>();

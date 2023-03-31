@@ -41,7 +41,7 @@ public class CountryOutput : OutputBase
     {
         var query = new CreateCountry
         {
-            LocationDetails = data
+            Details = data
         };
         
         var result = await _mediator.Send(query);
@@ -53,7 +53,7 @@ public class CountryOutput : OutputBase
     {
         var query = new UpdateCountry
         {
-            LocationDetails = data
+            Details = data
         };
         
         var result = await _mediator.Send(query);

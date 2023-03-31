@@ -30,10 +30,10 @@ public class CountryEventConsumer : IConsumer<CountryEvent>
                 case EventAction.CountryCreate:
                 case EventAction.CountryUpdate: 
                 case EventAction.CountryDelete: 
-                    _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(CountryEvent), locationEvent.LocationDetails.Id);
+                    _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(CountryEvent), locationEvent.Details.Id);
                     _ = _mediator.Send(new ClearCache
                     {
-                        CountryId = locationEvent.LocationDetails.Id
+                        CountryId = locationEvent.Details.Id
                     });
                     break;
 

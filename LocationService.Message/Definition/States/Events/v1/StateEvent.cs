@@ -4,7 +4,7 @@ namespace LocationService.Message.Definition.States.Events.v1;
 
 public class StateEvent
 {
-    public StateData LocationDetails { get; init; }
+    public StateData Details { get; init; }
     public EventAction Action { get; init; }
     protected string GetVersion() => "v1";
 }

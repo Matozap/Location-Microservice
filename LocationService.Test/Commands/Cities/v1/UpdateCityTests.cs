@@ -18,7 +18,7 @@ public class UpdateCityTests
     {
         var classToHandle = new UpdateCity
         {
-            LocationDetails = CityMockBuilder.GenerateMockCityDtoList(1).FirstOrDefault()
+            Details = CityMockBuilder.GenerateMockCityDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateCityHandler)CityMockBuilder.CreateHandler<UpdateCityHandler>();
@@ -32,7 +32,7 @@ public class UpdateCityTests
     {
         var classToHandle = new UpdateCity
         {
-            LocationDetails = new CityData()
+            Details = new CityData()
         };
 
         var handler = (UpdateCityHandler)CityMockBuilder.CreateHandler<UpdateCityHandler>();

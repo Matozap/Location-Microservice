@@ -1,39 +1,38 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using LocationService.Message.DataTransfer.States.v1;
-using LocationService.Message.Definition.States.Requests.v1;
+using LocationService.Message.DataTransfer.Cities.v1;
+using LocationService.Message.Definition.Cities.Requests.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Http;
 
 namespace LocationService.API.Output.Base;
 
-public class StateOutput : OutputBase
+public class CityOutput : OutputBase
 {
     private readonly IMediator _mediator;
     
-    public StateOutput(IMediator mediator, OutputType outputType) : base(outputType)
+    public CityOutput(IMediator mediator, OutputType outputType) : base(outputType)
     {
         _mediator = mediator;
     }
 
     [NonAction]
-    protected async Task<object> GetAllAsync(string countryId, HttpRequestData httpRequestData = null)
+    protected async Task<object> GetAllAsync(string stateId, HttpRequestData httpRequestData = null)
     {
-        var result = await _mediator.Send(new GetAllStates
+        var result = await _mediator.Send(new GetAllCities
         {
-            CountryId = countryId
+            StateId = stateId
         });
         return await TransformToOutputAsync(result, HttpStatusCode.OK, httpRequestData);
     }
     
     [NonAction]
-    protected async Task<object> GetAsync(string code, HttpRequestData httpRequestData = null)
+    protected async Task<object> GetAsync(string id, HttpRequestData httpRequestData = null)
     {
-        var query = new GetStateById
+        var query = new GetCityById
         {
-            Id = code,
-            Code = code
+            Id = id
         };
         
         var result = await _mediator.Send(query);
@@ -41,9 +40,9 @@ public class StateOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<object> CreateAsync(StateData data, HttpRequestData httpRequestData = null)
+    protected async Task<object> CreateAsync(CityData data, HttpRequestData httpRequestData = null)
     {
-        var query = new CreateState
+        var query = new CreateCity
         {
             Details = data
         };
@@ -53,9 +52,9 @@ public class StateOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<object> UpdateAsync(StateData data, HttpRequestData httpRequestData = null)
+    protected async Task<object> UpdateAsync(CityData data, HttpRequestData httpRequestData = null)
     {
-        var query = new UpdateState
+        var query = new UpdateCity
         {
             Details = data
         };
@@ -67,7 +66,7 @@ public class StateOutput : OutputBase
     [NonAction]
     protected async Task<object> DisableAsync(string id, HttpRequestData httpRequestData = null)
     {
-        var query = new SoftDeleteState
+        var query = new SoftDeleteCity
         {
             Id = id
         };
@@ -79,7 +78,7 @@ public class StateOutput : OutputBase
     [NonAction]
     protected async Task<object> DeleteAsync(string id, HttpRequestData httpRequestData = null)
     {
-        var query = new DeleteState
+        var query = new DeleteCity
         {
             Id = id
         };

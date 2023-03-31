@@ -4,7 +4,7 @@ namespace LocationService.Message.Definition.Countries.Events.v1;
 
 public class CountryEvent
 {
-    public CountryData LocationDetails { get; init; }
+    public CountryData Details { get; init; }
     public EventAction Action { get; init; }
     protected string GetVersion() => "v1";
 }

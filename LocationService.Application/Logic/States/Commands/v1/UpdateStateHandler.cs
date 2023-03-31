@@ -23,8 +23,8 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
 
     public async Task<object> Handle(UpdateState request, CancellationToken cancellationToken)
     {
-        var result = await UpdateState(request.LocationDetails);
-        _logger.LogInformation("State with id {StateID} updated successfully", request.LocationDetails.Id);
+        var result = await UpdateState(request.Details);
+        _logger.LogInformation("State with id {StateID} updated successfully", request.Details.Id);
             
         return result;
     }

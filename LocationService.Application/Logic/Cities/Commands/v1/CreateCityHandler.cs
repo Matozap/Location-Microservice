@@ -24,9 +24,9 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
 
     public async Task<object> Handle(CreateCity request, CancellationToken cancellationToken)
     {
-        ArgumentException.ThrowIfNullOrEmpty(request.LocationDetails?.Name);
+        ArgumentException.ThrowIfNullOrEmpty(request.Details?.Name);
         
-        var resultEntity = await CreateCity(request.LocationDetails);
+        var resultEntity = await CreateCity(request.Details);
         if (resultEntity == null) return null;
         
         _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id);

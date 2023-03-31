@@ -18,7 +18,7 @@ public class UpdateCountryTests
     {
         var classToHandle = new UpdateCountry
         {
-            LocationDetails = CountryMockBuilder.GenerateMockCountryDtoList(1).FirstOrDefault()
+            Details = CountryMockBuilder.GenerateMockCountryDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();
@@ -32,7 +32,7 @@ public class UpdateCountryTests
     {
         var classToHandle = new UpdateCountry
         {
-            LocationDetails = new CountryData()
+            Details = new CountryData()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();

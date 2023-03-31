@@ -4,7 +4,7 @@ namespace LocationService.Message.Definition.Cities.Events.v1;
 
 public class CityEvent
 {
-    public CityData LocationDetails { get; init; }
+    public CityData Details { get; init; }
     public EventAction Action { get; init; }
     protected string GetVersion() => "v1";
 }

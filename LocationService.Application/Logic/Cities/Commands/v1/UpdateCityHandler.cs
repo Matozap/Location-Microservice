@@ -25,8 +25,8 @@ public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
 
     public async Task<object> Handle(UpdateCity request, CancellationToken cancellationToken)
     {
-        var result = await UpdateCity(request.LocationDetails);
-        _logger.LogInformation("City with id {CityID} updated successfully", request.LocationDetails.Id);
+        var result = await UpdateCity(request.Details);
+        _logger.LogInformation("City with id {CityID} updated successfully", request.Details.Id);
             
         return result;
     }

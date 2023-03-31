@@ -18,7 +18,7 @@ public class UpdateStateTests
     {
         var classToHandle = new UpdateState
         {
-            LocationDetails = StateMockBuilder.GenerateMockStateDtoList(1).FirstOrDefault()
+            Details = StateMockBuilder.GenerateMockStateDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateStateHandler)StateMockBuilder.CreateHandler<UpdateStateHandler>();
@@ -32,7 +32,7 @@ public class UpdateStateTests
     {
         var classToHandle = new UpdateState
         {
-            LocationDetails = new StateData()
+            Details = new StateData()
         };
 
         var handler = (UpdateStateHandler)StateMockBuilder.CreateHandler<UpdateStateHandler>();
