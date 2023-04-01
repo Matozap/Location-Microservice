@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
-using LocationService.API.Output.Base;
+using LocationService.API.Outputs;
+using LocationService.API.Outputs.Base;
 using LocationService.Message.DataTransfer.Countries.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LocationService.API.Output.Controllers;
+namespace LocationService.API.Inputs.Controllers;
 
 [Produces("application/json")]
 [Route("api/v1/")]
@@ -23,7 +24,7 @@ public class CountryController : CountryOutput
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("countries")]
-    public async Task<IActionResult> GetAll() => await GetAllAsync() as IActionResult;
+    public async Task<IActionResult> GetAll() => await GetAllAsync<ActionResult>();
 
     /// <summary>
     /// Gets a country by id (string).
@@ -34,7 +35,7 @@ public class CountryController : CountryOutput
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("country/{id}")]
-    public async Task<IActionResult> Get(string id) => await GetAsync(id) as IActionResult;
+    public async Task<IActionResult> Get(string id) => await GetAsync<ActionResult>(id);
 
     /// <summary>
     /// Creates an country based in the given object. 
@@ -45,7 +46,7 @@ public class CountryController : CountryOutput
     /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server error</response>
     [HttpPost("country")]
-    public async Task<IActionResult> Create([FromBody] CountryData data) => await CreateAsync(data) as IActionResult;
+    public async Task<IActionResult> Create([FromBody] CountryData data) => await CreateAsync<ActionResult>(data);
 
     /// <summary>
     /// Updates an country based in the given object.
@@ -55,7 +56,7 @@ public class CountryController : CountryOutput
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
     [HttpPut("country")]
-    public async Task<IActionResult> Update([FromBody] CountryData data) => await UpdateAsync(data) as IActionResult;
+    public async Task<IActionResult> Update([FromBody] CountryData data) => await UpdateAsync<ActionResult>(data);
 
     /// <summary>
     /// Does a soft delete on the country with the given id.
@@ -64,7 +65,7 @@ public class CountryController : CountryOutput
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("country/disable/{id}")]
-    public async Task<IActionResult> Disable(string id) => await DisableAsync(id) as IActionResult;
+    public async Task<IActionResult> Disable(string id) => await DisableAsync<ActionResult>(id);
 
     /// <summary>
     /// Does a physical delete on the country with the given id.
@@ -73,5 +74,5 @@ public class CountryController : CountryOutput
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("country/{id}")]
-    public async Task<IActionResult> Delete(string id) => await DeleteAsync(id) as IActionResult;
+    public async Task<IActionResult> Delete(string id) => await DeleteAsync<ActionResult>(id);
 }

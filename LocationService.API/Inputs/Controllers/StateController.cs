@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
-using LocationService.API.Output.Base;
+using LocationService.API.Outputs;
+using LocationService.API.Outputs.Base;
 using LocationService.Message.DataTransfer.States.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LocationService.API.Output.Controllers;
+namespace LocationService.API.Inputs.Controllers;
 
 [Produces("application/json")]
 [Route("api/v1/")]
@@ -22,7 +23,7 @@ public class StateController : StateOutput
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("states/{countryId}")]
-    public async Task<IActionResult> GetAll(string countryId) => await GetAllAsync(countryId) as IActionResult;
+    public async Task<IActionResult> GetAll(string countryId) => await GetAllAsync<ActionResult>(countryId);
 
     /// <summary>
     /// Gets s state by id (number or string).
@@ -33,7 +34,7 @@ public class StateController : StateOutput
     /// <response code="404">Not Found</response>
     /// <response code="500">Internal Server error</response>
     [HttpGet("state/{code}")]
-    public async Task<IActionResult> Get(string code) => await GetAsync(code) as IActionResult;
+    public async Task<IActionResult> Get(string code) => await GetAsync<ActionResult>(code);
     
     /// <summary>
     /// Creates an state based in the given object. 
@@ -44,7 +45,7 @@ public class StateController : StateOutput
     /// <response code="409">Conflict</response>
     /// <response code="500">Internal Server error</response>
     [HttpPost("state")]
-    public async Task<IActionResult> Create([FromBody] StateData data) => await CreateAsync(data) as IActionResult;
+    public async Task<IActionResult> Create([FromBody] StateData data) => await CreateAsync<ActionResult>(data);
 
     /// <summary>
     /// Updates an state based in the given object.
@@ -54,7 +55,7 @@ public class StateController : StateOutput
     /// <response code="200">OK</response>
     /// <response code="500">Internal Server error</response>
     [HttpPut("state")]
-    public async Task<IActionResult> Update([FromBody] StateData data) => await UpdateAsync(data) as IActionResult;
+    public async Task<IActionResult> Update([FromBody] StateData data) => await UpdateAsync<ActionResult>(data);
 
     /// <summary>
     /// Does a soft delete on the state with the given id.
@@ -63,7 +64,7 @@ public class StateController : StateOutput
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("state/disable/{id}")]
-    public async Task<IActionResult> Disable(string id) => await DisableAsync(id) as IActionResult;
+    public async Task<IActionResult> Disable(string id) => await DisableAsync<ActionResult>(id);
 
     /// <summary>
     /// Does a physical delete on the state with the given id.
@@ -72,5 +73,5 @@ public class StateController : StateOutput
     /// <response code="204">No Content</response>
     /// <response code="500">Internal Server error</response>
     [HttpDelete("state/{id}")]
-    public async Task<IActionResult> Delete(string id) => await DeleteAsync(id) as IActionResult;
+    public async Task<IActionResult> Delete(string id) => await DeleteAsync<ActionResult>(id);
 }

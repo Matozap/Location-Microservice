@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Http;
 
-namespace LocationService.API.Output.Base;
+namespace LocationService.API.Outputs.Base;
 
 public class OutputBase : ControllerBase
 {

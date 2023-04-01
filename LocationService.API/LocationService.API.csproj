@@ -53,4 +53,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Inputs" />
+  </ItemGroup>
 </Project>

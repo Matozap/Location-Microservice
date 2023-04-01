@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using LocationService.API.Outputs.Base;
 using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Http;
 
-namespace LocationService.API.Output.Base;
+namespace LocationService.API.Outputs;
 
 public class CityOutput : OutputBase
 {
@@ -18,17 +19,17 @@ public class CityOutput : OutputBase
     }
 
     [NonAction]
-    protected async Task<object> GetAllAsync(string stateId, HttpRequestData httpRequestData = null)
+    protected async Task<T> GetAllAsync<T>(string stateId, HttpRequestData httpRequestData = null) where T: class
     {
         var result = await _mediator.Send(new GetAllCities
         {
             StateId = stateId
         });
-        return await TransformToOutputAsync(result, HttpStatusCode.OK, httpRequestData);
+        return await TransformToOutputAsync(result, HttpStatusCode.OK, httpRequestData) as T;
     }
     
     [NonAction]
-    protected async Task<object> GetAsync(string id, HttpRequestData httpRequestData = null)
+    protected async Task<T> GetAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new GetCityById
         {
@@ -36,11 +37,11 @@ public class CityOutput : OutputBase
         };
         
         var result = await _mediator.Send(query);
-        return await TransformToOutputAsync(result, result == null ? HttpStatusCode.NotFound : HttpStatusCode.OK, httpRequestData);
+        return await TransformToOutputAsync(result, result == null ? HttpStatusCode.NotFound : HttpStatusCode.OK, httpRequestData) as T;
     }
     
     [NonAction]
-    protected async Task<object> CreateAsync(CityData data, HttpRequestData httpRequestData = null)
+    protected async Task<T> CreateAsync<T>(CityData data, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new CreateCity
         {
@@ -48,11 +49,11 @@ public class CityOutput : OutputBase
         };
         
         var result = await _mediator.Send(query);
-        return await TransformToOutputAsync(result, result == null ? HttpStatusCode.Conflict : HttpStatusCode.OK, httpRequestData);
+        return await TransformToOutputAsync(result, result == null ? HttpStatusCode.Conflict : HttpStatusCode.OK, httpRequestData) as T;
     }
     
     [NonAction]
-    protected async Task<object> UpdateAsync(CityData data, HttpRequestData httpRequestData = null)
+    protected async Task<T> UpdateAsync<T>(CityData data, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new UpdateCity
         {
@@ -60,11 +61,11 @@ public class CityOutput : OutputBase
         };
         
         var result = await _mediator.Send(query);
-        return await TransformToOutputAsync(result, HttpStatusCode.OK, httpRequestData);
+        return await TransformToOutputAsync(result, HttpStatusCode.OK, httpRequestData) as T;
     }
     
     [NonAction]
-    protected async Task<object> DisableAsync(string id, HttpRequestData httpRequestData = null)
+    protected async Task<T> DisableAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new SoftDeleteCity
         {
@@ -72,11 +73,11 @@ public class CityOutput : OutputBase
         };
         
         await _mediator.Send(query);
-        return await TransformToOutputAsync(null, HttpStatusCode.NoContent, httpRequestData);
+        return await TransformToOutputAsync(null, HttpStatusCode.NoContent, httpRequestData) as T;
     }
     
     [NonAction]
-    protected async Task<object> DeleteAsync(string id, HttpRequestData httpRequestData = null)
+    protected async Task<T> DeleteAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new DeleteCity
         {
@@ -84,6 +85,6 @@ public class CityOutput : OutputBase
         };
         
         await _mediator.Send(query);
-        return await TransformToOutputAsync(null, HttpStatusCode.NoContent, httpRequestData);
+        return await TransformToOutputAsync(null, HttpStatusCode.NoContent, httpRequestData) as T;
     }
 }
