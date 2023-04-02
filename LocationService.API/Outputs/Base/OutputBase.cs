@@ -6,7 +6,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 
 namespace LocationService.API.Outputs.Base;
 
-public class OutputBase : ControllerBase
+public class OutputBase
 {
     private readonly OutputType _outputType;
 
@@ -35,11 +35,11 @@ public class OutputBase : ControllerBase
         await Task.CompletedTask;
         return httpStatusCode switch
         {
-            HttpStatusCode.Created => Created("", value),
-            HttpStatusCode.NotFound => NotFound(),
-            HttpStatusCode.Conflict => Conflict(),
-            HttpStatusCode.NoContent => NoContent(),
-            _ => Ok(value)
+            HttpStatusCode.Created => new CreatedResult( "", value),
+            HttpStatusCode.NotFound => new NotFoundResult(),
+            HttpStatusCode.Conflict => new ConflictResult(),
+            HttpStatusCode.NoContent => new NoContentResult(),
+            _ => new OkObjectResult(value)
         };
     }
     

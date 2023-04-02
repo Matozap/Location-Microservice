@@ -19,7 +19,7 @@ public class CityOutput : OutputBase
     }
 
     [NonAction]
-    protected async Task<T> GetAllAsync<T>(string stateId, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> GetAllAsync<T>(string stateId, HttpRequestData httpRequestData = null) where T: class
     {
         var result = await _mediator.Send(new GetAllCities
         {
@@ -29,7 +29,7 @@ public class CityOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> GetAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> GetAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new GetCityById
         {
@@ -41,7 +41,7 @@ public class CityOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> CreateAsync<T>(CityData data, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> CreateAsync<T>(CityData data, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new CreateCity
         {
@@ -53,7 +53,7 @@ public class CityOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> UpdateAsync<T>(CityData data, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> UpdateAsync<T>(CityData data, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new UpdateCity
         {
@@ -65,7 +65,7 @@ public class CityOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> DisableAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> DisableAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new SoftDeleteCity
         {
@@ -77,7 +77,7 @@ public class CityOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> DeleteAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> DeleteAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new DeleteCity
         {

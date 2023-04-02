@@ -19,14 +19,14 @@ public class CountryOutput : OutputBase
     }
 
     [NonAction]
-    protected async Task<T> GetAllAsync<T>(HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> GetAllAsync<T>(HttpRequestData httpRequestData = null) where T: class
     {
         var result = await _mediator.Send(new GetAllCountries());
         return await TransformToOutputAsync(result, HttpStatusCode.OK, httpRequestData) as T;
     }
     
     [NonAction]
-    protected async Task<T> GetAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> GetAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new GetCountryById
         {
@@ -38,7 +38,7 @@ public class CountryOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> CreateAsync<T>(CountryData data, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> CreateAsync<T>(CountryData data, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new CreateCountry
         {
@@ -50,7 +50,7 @@ public class CountryOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> UpdateAsync<T>(CountryData data, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> UpdateAsync<T>(CountryData data, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new UpdateCountry
         {
@@ -62,7 +62,7 @@ public class CountryOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> DisableAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> DisableAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new SoftDeleteCountry
         {
@@ -74,7 +74,7 @@ public class CountryOutput : OutputBase
     }
     
     [NonAction]
-    protected async Task<T> DeleteAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
+    public async Task<T> DeleteAsync<T>(string id, HttpRequestData httpRequestData = null) where T: class
     {
         var query = new DeleteCountry
         {
