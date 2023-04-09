@@ -1,11 +1,12 @@
 using System;
 using LocationService.API.Helpers;
+using LocationService.API.Inputs.Grpc;
+using LocationService.Application;
+using LocationService.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using LocationService.Application;
-using LocationService.Infrastructure;
 
 namespace LocationService.API;
 
@@ -53,6 +54,10 @@ public class Startup
             {
                 endpoints.MapHealthChecks("/heartbeat");
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<CityService>();
+                endpoints.MapGrpcService<StateService>();
+                endpoints.MapGrpcService<CountryService>();
+                endpoints.MapGrpcReflectionService();
             });
         }
         catch (Exception ex)

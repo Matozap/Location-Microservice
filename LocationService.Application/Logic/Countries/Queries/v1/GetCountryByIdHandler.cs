@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Countries.Queries.v1;
 
-public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
+public class GetCountryByIdHandler : IRequestHandler<GetCountryById, CountryData>
 {
     private readonly ILogger<GetCountryByIdHandler> _logger;
     private readonly IRepository _repository;
@@ -25,7 +25,7 @@ public class GetCountryByIdHandler : IRequestHandler<GetCountryById, object>
         _logger = logger;
     }
 
-    public async Task<object> Handle(GetCountryById request, CancellationToken cancellationToken)
+    public async Task<CountryData> Handle(GetCountryById request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request.Id);
         var cacheKey = GetCacheKey(request.Id);

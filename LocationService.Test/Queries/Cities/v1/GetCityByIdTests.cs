@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LocationService.Application.Logic.Cities.Queries.v1;
-using LocationService.Message.DataTransfer.Cities.v1;
 using LocationService.Message.Definition.Cities.Requests.v1;
 using LocationService.Test.MockBuilder;
 using Xunit;
@@ -21,7 +20,7 @@ public class GetCityByIdTests
         };
 
         var handler = (GetCityByIdHandler)CityMockBuilder.CreateHandler<GetCityByIdHandler>();
-        var result = (CityData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull();
     }

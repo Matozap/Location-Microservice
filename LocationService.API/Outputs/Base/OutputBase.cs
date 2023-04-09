@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Http;
 
@@ -10,7 +11,7 @@ public class OutputBase
 {
     private readonly OutputType _outputType;
 
-    public OutputBase(OutputType outputType)
+    protected OutputBase(OutputType outputType)
     {
         _outputType = outputType;
     }
@@ -57,8 +58,13 @@ public class OutputBase
     
     private async Task<object> TransformToGrpcOutputAsync(object value, HttpStatusCode httpStatusCode)
     {
-        await Task.CompletedTask;
-        return value;
+        return httpStatusCode switch
+        {
+            HttpStatusCode.Conflict => throw new RpcException(new Status(StatusCode.AlreadyExists, "")),
+            HttpStatusCode.NotFound => throw new RpcException(new Status(StatusCode.NotFound, "")),
+            HttpStatusCode.NoContent => throw new RpcException(new Status(StatusCode.OK, "")),
+            _ => await Task.FromResult(value)
+        };
     }
 }
 

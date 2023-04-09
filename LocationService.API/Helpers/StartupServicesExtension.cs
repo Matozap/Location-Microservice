@@ -24,7 +24,9 @@ public static class StartupServicesExtension
         services.AddMvc();
         services.ConfigureSwagger();
         services.AddApplicationInsightsTelemetry();
+        
         AddSharedStartupServices(services, configuration);
+        AddStartupServicesForGrpc(services, configuration);
     }
     
     public static void AddStartupServicesForFunctions(this IServiceCollection services, IConfiguration configuration)
@@ -35,7 +37,36 @@ public static class StartupServicesExtension
             options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.PropertyNameCaseInsensitive = true;
         });
+        
         AddSharedStartupServices(services, configuration);
+    }
+    
+    private static void AddStartupServicesForGrpc(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddGrpc(options =>
+        {
+            options.EnableDetailedErrors = true;
+            options.IgnoreUnknownServices = true;
+            options.ResponseCompressionLevel = CompressionLevel.Optimal;
+        }).AddJsonTranscoding();
+        services.AddGrpcReflection();
+    }
+    
+    private static void AddSharedStartupServices(IServiceCollection services, IConfiguration configuration)
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+        ServicePointManager.DefaultConnectionLimit = 10000;
+
+        services.AddCors();
+        services.AddApplication()
+            .AddInfrastructure(configuration)
+            .AddEventBus(configuration);
+        services.AddResponseCompression();
+        services.Configure<GzipCompressionProviderOptions>
+        (options => 
+        { 
+            options.Level = CompressionLevel.Fastest; 
+        }); 
     }
 
     public static IHostBuilder CreateLogger(this IHostBuilder webHostBuilder)
@@ -48,23 +79,5 @@ public static class StartupServicesExtension
                 .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name ?? "Application")
                 .Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
         });
-    }
-
-    private static void AddSharedStartupServices(IServiceCollection services, IConfiguration configuration)
-    {
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-        ServicePointManager.DefaultConnectionLimit = 10000;
-
-        services.AddCors();
-        services.AddApplication()
-            .AddInfrastructure(configuration)
-            .AddEventBus(configuration);
-        services.AddResponseCompression();
-
-        services.Configure<GzipCompressionProviderOptions>
-        (options => 
-        { 
-            options.Level = CompressionLevel.Fastest; 
-        }); 
     }
 }

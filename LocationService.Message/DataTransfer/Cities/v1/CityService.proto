@@ -1,0 +1,33 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "LocationService.Message.DataTransfer.Cities.v1";
+import "google/protobuf/empty.proto";
+
+package City;
+
+service CityService {
+  rpc GetAll (AllCitiesRequest) returns (CityCollection);
+  rpc Get (CityIdRequest) returns (CityData);
+  rpc Create (CityData) returns (CityData);
+  rpc Update (CityData) returns (CityData);
+  rpc Disable (CityIdRequest) returns (google.protobuf.Empty);
+  rpc Delete (CityIdRequest) returns (google.protobuf.Empty);
+}
+
+message AllCitiesRequest {
+  string StateId = 1;
+}
+
+message CityIdRequest {
+  string Id = 1;
+}
+
+message CityCollection {
+  repeated CityData Cities = 1;
+}
+
+message CityData {
+  string Id = 1;
+  string Name = 2;
+  string StateId = 3;
+}

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.States.Commands.v1;
 
-public class DeleteStateHandler : IRequestHandler<DeleteState, object>
+public class DeleteStateHandler : IRequestHandler<DeleteState, string>
 {
     private readonly ILogger<DeleteStateHandler> _logger;
     private readonly IRepository _repository;
@@ -19,7 +19,7 @@ public class DeleteStateHandler : IRequestHandler<DeleteState, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(DeleteState request, CancellationToken cancellationToken)
+    public async Task<string> Handle(DeleteState request, CancellationToken cancellationToken)
     {
         var entity = await DeleteStateAsync(request.Id);
         _logger.LogInformation("State with id {StateId} deleted successfully", entity?.Id);

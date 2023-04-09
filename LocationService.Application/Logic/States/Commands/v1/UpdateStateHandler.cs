@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.States.Commands.v1;
 
-public class UpdateStateHandler : IRequestHandler<UpdateState, object>
+public class UpdateStateHandler : IRequestHandler<UpdateState, StateData>
 {
     private readonly ILogger<UpdateStateHandler> _logger;
     private readonly IRepository _repository;
@@ -21,7 +21,7 @@ public class UpdateStateHandler : IRequestHandler<UpdateState, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(UpdateState request, CancellationToken cancellationToken)
+    public async Task<StateData> Handle(UpdateState request, CancellationToken cancellationToken)
     {
         var result = await UpdateState(request.Details);
         _logger.LogInformation("State with id {StateID} updated successfully", request.Details.Id);

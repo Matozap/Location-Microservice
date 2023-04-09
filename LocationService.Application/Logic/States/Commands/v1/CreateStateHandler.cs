@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.States.Commands.v1;
 
-public class CreateStateHandler : IRequestHandler<CreateState, object>
+public class CreateStateHandler : IRequestHandler<CreateState, StateData>
 {
     private readonly ILogger<CreateStateHandler> _logger;
     private readonly IRepository _repository;
@@ -22,7 +22,7 @@ public class CreateStateHandler : IRequestHandler<CreateState, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(CreateState request, CancellationToken cancellationToken)
+    public async Task<StateData> Handle(CreateState request, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(request.Details?.Name);
         

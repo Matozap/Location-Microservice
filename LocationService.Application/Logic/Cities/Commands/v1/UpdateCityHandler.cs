@@ -10,20 +10,18 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Cities.Commands.v1;
 
-public class UpdateCityHandler : IRequestHandler<UpdateCity, object>
+public class UpdateCityHandler : IRequestHandler<UpdateCity, CityData>
 {
     private readonly ILogger<UpdateCityHandler> _logger;
     private readonly IRepository _repository;
-    private readonly IEventBus _eventBus;
 
-    public UpdateCityHandler(ILogger<UpdateCityHandler> logger, IRepository repository, IEventBus eventBus)
+    public UpdateCityHandler(ILogger<UpdateCityHandler> logger, IRepository repository)
     {
         _logger = logger;
         _repository = repository;
-        _eventBus = eventBus;
     }
 
-    public async Task<object> Handle(UpdateCity request, CancellationToken cancellationToken)
+    public async Task<CityData> Handle(UpdateCity request, CancellationToken cancellationToken)
     {
         var result = await UpdateCity(request.Details);
         _logger.LogInformation("City with id {CityID} updated successfully", request.Details.Id);

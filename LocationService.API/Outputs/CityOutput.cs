@@ -61,7 +61,7 @@ public class CityOutput : OutputBase
         };
         
         var result = await _mediator.Send(query);
-        return await TransformToOutputAsync(result, HttpStatusCode.OK, httpRequestData) as T;
+        return await TransformToOutputAsync(result, result == null ? HttpStatusCode.NotFound : HttpStatusCode.OK, httpRequestData) as T;
     }
     
     [NonAction]

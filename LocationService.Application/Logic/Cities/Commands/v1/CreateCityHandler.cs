@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Cities.Commands.v1;
 
-public class CreateCityHandler : IRequestHandler<CreateCity, object>
+public class CreateCityHandler : IRequestHandler<CreateCity, CityData>
 {
     private readonly ILogger<CreateCityHandler> _logger;
     private readonly IRepository _repository;
@@ -22,7 +22,7 @@ public class CreateCityHandler : IRequestHandler<CreateCity, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(CreateCity request, CancellationToken cancellationToken)
+    public async Task<CityData> Handle(CreateCity request, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(request.Details?.Name);
         

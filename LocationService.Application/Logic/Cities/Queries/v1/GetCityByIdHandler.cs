@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Cities.Queries.v1;
 
-public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
+public class GetCityByIdHandler : IRequestHandler<GetCityById, CityData>
 {
     private readonly ILogger<GetCityByIdHandler> _logger;
     private readonly IRepository _repository;
@@ -24,7 +24,7 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
         _logger = logger;
     }
 
-    public async Task<object> Handle(GetCityById request, CancellationToken cancellationToken)
+    public async Task<CityData> Handle(GetCityById request, CancellationToken cancellationToken)
     {
         var cacheKey = GetCacheKey(request.Id);
 
@@ -54,7 +54,7 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, object>
             predicate: city => city.Id == id && !city.Disabled,
             orderAscending: city => city.Name,
             includeNavigationalProperties: true);
-        var resultDto = entity.Adapt<Domain.City, CityData>();
+        var resultDto = entity.Adapt<City, CityData>();
         return resultDto;
     }
 

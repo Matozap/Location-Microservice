@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Serilog;
 using System;
 using System.Threading.Tasks;
 using LocationService.API.Helpers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace LocationService.API;
 
@@ -21,8 +20,7 @@ public class Program
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateBootstrapLogger(); 
-        Log.Information("[Program] Starting Main");
-
+        
         try
         {
             Log.Information("[Program] Host starting...");
@@ -41,7 +39,7 @@ public class Program
                     await Task.Delay(delay);
                 }
 
-                await CreateHostBuilder(null).Build().RunAsync();
+                await CreateHostBuilder(null).RunAsync();
             }
 
             Log.Information("[Program] Host Stopped Successfully");
@@ -56,15 +54,16 @@ public class Program
         }
     }
 
-    private static IHostBuilder CreateHostBuilder(string[] args) =>
+    private static IHost CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>()
                     .CaptureStartupErrors(true);
             })
-            .CreateLogger();
-    
+            .CreateLogger()
+            .Build();
+
     private static IHost CreateFunctionHost() =>
         new HostBuilder()
             .ConfigureFunctionsWorkerDefaults()
@@ -72,7 +71,7 @@ public class Program
             {
                 var env = hostingContext.HostingEnvironment;
                 configBuilder
-                    .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
             })
             .ConfigureServices((appBuilder, services) =>

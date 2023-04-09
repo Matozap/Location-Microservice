@@ -3,7 +3,7 @@ using MediatR;
 
 namespace LocationService.Message.Definition.States.Requests.v1;
 
-public class UpdateState : BaseMessage, IRequest<object>
+public class UpdateState : BaseMessage, IRequest<StateData>
 {
     public StateData Details { get; init; }
 }

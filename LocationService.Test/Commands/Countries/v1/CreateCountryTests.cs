@@ -23,7 +23,7 @@ public class CreateCountryTests
         };
 
         var handler = (CreateCountryHandler)CountryMockBuilder.CreateHandler<CreateCountryHandler>();
-        var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull().And.BeOfType<CountryData>();
     }
@@ -32,7 +32,7 @@ public class CreateCountryTests
     public void CreateCountryInvalidNameTest()
     {
         var resultDto = CountryMockBuilder.GenerateMockCountryDtoList(1).First();
-        resultDto.Name = null;
+        resultDto.Name = "";
         
         var classToHandle = new CreateCountry
         {

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Cities.Queries.v1;
 
-public class GetAllCitiesHandler : IRequestHandler<GetAllCities, object>
+public class GetAllCitiesHandler : IRequestHandler<GetAllCities, List<CityData>>
 {
     private readonly ILogger<GetAllCitiesHandler> _logger;
     private readonly ICache _cache;
@@ -24,7 +24,7 @@ public class GetAllCitiesHandler : IRequestHandler<GetAllCities, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(GetAllCities request, CancellationToken cancellationToken)
+    public async Task<List<CityData>> Handle(GetAllCities request, CancellationToken cancellationToken)
     {
         var cacheKey = GetCacheKey(request.StateId);
 

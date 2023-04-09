@@ -23,7 +23,7 @@ public class CreateCityTests
         };
 
         var handler = (CreateCityHandler)CityMockBuilder.CreateHandler<CreateCityHandler>();
-        var result = (CityData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull().And.BeOfType<CityData>();
     }
@@ -32,7 +32,7 @@ public class CreateCityTests
     public void CreateCityInvalidNameTest()
     {
         var resultDto = CityMockBuilder.GenerateMockCityDtoList(1).First();
-        resultDto.Name = null;
+        resultDto.Name = "";
         
         var classToHandle = new CreateCity
         {
@@ -41,7 +41,7 @@ public class CreateCityTests
         
         var handler = (CreateCityHandler)CityMockBuilder.CreateHandler<CreateCityHandler>();
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
-
+    
         action.Should().ThrowAsync<ValidationException>().WithMessage("*Name*");
     }
 }

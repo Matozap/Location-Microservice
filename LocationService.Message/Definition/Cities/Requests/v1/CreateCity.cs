@@ -3,7 +3,7 @@ using MediatR;
 
 namespace LocationService.Message.Definition.Cities.Requests.v1;
 
-public class CreateCity : BaseMessage, IRequest<object>
+public class CreateCity : BaseMessage, IRequest<CityData>
 {
     public CityData Details { get; init; }
 }

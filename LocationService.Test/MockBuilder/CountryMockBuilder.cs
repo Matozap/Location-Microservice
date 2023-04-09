@@ -56,7 +56,7 @@ public static class CountryMockBuilder
     public static List<CountryData> GenerateMockCountryDtoList(int count)
     {
         return Fixture.Build<CountryData>()
-            .Without(s => s.States)
+            .Without(s => s.Details)
             .CreateMany(count).ToList();
     }
 

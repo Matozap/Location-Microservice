@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Countries.Commands.v1;
 
-public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
+public class UpdateCountryHandler : IRequestHandler<UpdateCountry, CountryData>
 {
     private readonly ILogger<UpdateCountryHandler> _logger;
     private readonly IRepository _repository;
@@ -22,7 +22,7 @@ public class UpdateCountryHandler : IRequestHandler<UpdateCountry, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(UpdateCountry request, CancellationToken cancellationToken)
+    public async Task<CountryData> Handle(UpdateCountry request, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(request.Details?.Id);
         

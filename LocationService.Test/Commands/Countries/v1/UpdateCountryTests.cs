@@ -22,7 +22,7 @@ public class UpdateCountryTests
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();
-        var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull();
     }

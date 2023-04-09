@@ -22,7 +22,7 @@ public class UpdateStateTests
         };
 
         var handler = (UpdateStateHandler)StateMockBuilder.CreateHandler<UpdateStateHandler>();
-        var result = (StateData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull();
     }

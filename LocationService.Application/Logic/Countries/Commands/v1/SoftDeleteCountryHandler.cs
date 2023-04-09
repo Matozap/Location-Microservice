@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Countries.Commands.v1;
 
-public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, object>
+public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, string>
 {
     private readonly ILogger<SoftDeleteCountryHandler> _logger;
     private readonly IRepository _repository;
@@ -20,7 +20,7 @@ public class SoftDeleteCountryHandler : IRequestHandler<SoftDeleteCountry, objec
         _repository = repository;
     }
 
-    public async Task<object> Handle(SoftDeleteCountry request, CancellationToken cancellationToken)
+    public async Task<string> Handle(SoftDeleteCountry request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request.Id);
 

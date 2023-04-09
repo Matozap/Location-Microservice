@@ -22,7 +22,7 @@ public class UpdateCityTests
         };
 
         var handler = (UpdateCityHandler)CityMockBuilder.CreateHandler<UpdateCityHandler>();
-        var result = (CityData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull();
     }

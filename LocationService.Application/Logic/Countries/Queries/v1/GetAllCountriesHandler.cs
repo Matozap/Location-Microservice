@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Countries.Queries.v1;
 
-public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, object>
+public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, List<CountryData>>
 {
     private readonly ILogger<GetAllCountriesHandler> _logger;
     private readonly ICache _cache;
@@ -24,7 +24,7 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(GetAllCountries request, CancellationToken cancellationToken)
+    public async Task<List<CountryData>> Handle(GetAllCountries request, CancellationToken cancellationToken)
     {
         var cacheKey = GetCacheKey();
 

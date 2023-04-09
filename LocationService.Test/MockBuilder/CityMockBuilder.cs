@@ -89,8 +89,7 @@ public static class CityMockBuilder
         if (typeof(T) == typeof(UpdateCityHandler))
         {
             return new UpdateCityHandler(NullLogger<UpdateCityHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(SoftDeleteCityHandler))

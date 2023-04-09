@@ -23,7 +23,7 @@ public class CreateStateTests
         };
 
         var handler = (CreateStateHandler)StateMockBuilder.CreateHandler<CreateStateHandler>();
-        var result = (StateData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull().And.BeOfType<StateData>();
     }
@@ -32,7 +32,7 @@ public class CreateStateTests
     public void CreateStateInvalidNameTest()
     {
         var resultDto = StateMockBuilder.GenerateMockStateDtoList(1).First();
-        resultDto.Name = null;
+        resultDto.Name = "";
         
         var classToHandle = new CreateState
         {
@@ -41,7 +41,7 @@ public class CreateStateTests
         
         var handler = (CreateStateHandler)StateMockBuilder.CreateHandler<CreateStateHandler>();
         Func<Task> action = async () => await handler.Handle(classToHandle, new CancellationToken());
-
+    
         action.Should().ThrowAsync<ValidationException>().WithMessage("*Name*");
     }
 }

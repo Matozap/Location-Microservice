@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.Cities.Commands.v1;
 
-public class DeleteCityHandler : IRequestHandler<DeleteCity, object>
+public class DeleteCityHandler : IRequestHandler<DeleteCity, string>
 {
     private readonly ILogger<DeleteCityHandler> _logger;
     private readonly IRepository _repository;
@@ -19,7 +19,7 @@ public class DeleteCityHandler : IRequestHandler<DeleteCity, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(DeleteCity request, CancellationToken cancellationToken)
+    public async Task<string> Handle(DeleteCity request, CancellationToken cancellationToken)
     {
         var entity = await DeleteCityAsync(request.Id);
         _logger.LogInformation("City with id {CityId} deleted successfully", entity?.Id);

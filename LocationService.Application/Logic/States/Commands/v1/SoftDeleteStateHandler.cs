@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Logic.States.Commands.v1;
 
-public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
+public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, string>
 {
     private readonly ILogger<SoftDeleteStateHandler> _logger;
     private readonly IRepository _repository;
@@ -20,7 +20,7 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(SoftDeleteState request, CancellationToken cancellationToken)
+    public async Task<string> Handle(SoftDeleteState request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request.Id);
         

@@ -66,7 +66,7 @@ public static class StateMockBuilder
     public static List<StateData> GenerateMockStateDtoList(int count)
     {
         return Fixture.Build<StateData>()
-            .Without(s => s.Cities)
+            .Without(s => s.Details)
             .CreateMany(count).ToList();
     }
 
