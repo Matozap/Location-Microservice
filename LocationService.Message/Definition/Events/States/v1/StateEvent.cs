@@ -6,6 +6,5 @@ public class StateEvent
 {
     public StateData Details { get; init; }
     public EventAction Action { get; init; }
-    protected string GetVersion() => "v1";
 }
 

@@ -2,14 +2,10 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using LocationService.API.Helpers;
-using LocationService.API.Inputs.Grpc;
-using LocationService.Application;
-using LocationService.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using ProtoBuf.Grpc.Server;
 using Serilog;
 
 namespace LocationService.API;
@@ -56,9 +52,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder();
         var environment = builder.Environment;
-        var configuration = builder.Configuration.GetEnvironmentConfiguration(environment);
+        var configuration = environment.GetEnvironmentConfiguration();
         
-        builder.Services.AddStartupServicesForControllers(configuration);
+        builder.Services.AddWebApplicationServices(configuration);
         builder.Host.CreateLogger();
         builder.WebHost.UseKestrel(options =>
         {
@@ -68,21 +64,7 @@ public class Program
         builder.WebHost.UseKestrel();
 
         var app = builder.Build();
-        app.UseSwaggerApi();
-        app.UseApplication()
-            .UseInfrastructure(environment)
-            .UseRouting();
-        app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-        app.MapHealthChecks("/heartbeat");
-        app.MapControllers();
-        app.UseGrpcWeb();
-        app.MapGrpcService<CityService>().EnableGrpcWeb();
-        app.MapGrpcService<StateService>().EnableGrpcWeb();
-        app.MapGrpcService<CountryService>().EnableGrpcWeb();
-        app.MapCodeFirstGrpcReflectionService().EnableGrpcWeb();
+        app.AddHostMiddleware(environment, configuration);
         Log.Information("[Program] Host created successfully");
             
         return app;
@@ -103,13 +85,13 @@ public class Program
                 try
                 {
                     var configuration = appBuilder.Configuration;
-                    services.AddStartupServicesForFunctions(configuration);
+                    services.AddFunctionServices(configuration);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[Startup] ERROR at ConfigureServices {ex}");
+                    Log.Fatal(ex, "[Program] Error creating function host - {Error}", ex.Message);
                 }
-                Console.WriteLine("[Startup] ConfigureServices [DONE]");
+                Log.Information("[Program] ConfigureServices [DONE]");
             })
             .CreateLogger()
             .Build();

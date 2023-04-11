@@ -1,10 +1,14 @@
-﻿using System.IO.Compression;
-using System.Net;
+﻿using System;
+using System.Configuration;
+using System.IO;
+using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using LocationService.API.Inputs.Grpc;
 using LocationService.Application;
 using LocationService.Infrastructure;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,20 +20,28 @@ namespace LocationService.API.Helpers;
 
 public static class StartupServicesExtension
 {
-    public static void AddStartupServicesForControllers(this IServiceCollection services, IConfiguration configuration)
+    private record GrpcOptions(bool Disabled, bool ReflectionDisabled);
+    public static void AddWebApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddCors();
         services.AddHealthChecks();
         services.AddControllers()
             .AddJsonOptions(x => x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
         services.AddMvc();
         services.ConfigureSwagger();
         services.AddApplicationInsightsTelemetry();
+        services.AddResponseCompression();
+        services.Configure<GzipCompressionProviderOptions>
+        (options => 
+        { 
+            options.Level = CompressionLevel.Fastest; 
+        }); 
         
-        AddSharedStartupServices(services, configuration);
-        AddStartupServicesForGrpc(services, configuration);
+        AddDependencies(services, configuration);
+        AddOptionalServices(services, configuration);
     }
     
-    public static void AddStartupServicesForFunctions(this IServiceCollection services, IConfiguration configuration)
+    public static void AddFunctionServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.Configure<JsonSerializerOptions>(options =>
@@ -38,36 +50,47 @@ public static class StartupServicesExtension
             options.PropertyNameCaseInsensitive = true;
         });
         
-        AddSharedStartupServices(services, configuration);
+        AddDependencies(services, configuration);
     }
     
-    private static void AddStartupServicesForGrpc(this IServiceCollection services, IConfiguration configuration)
+    private static void AddOptionalServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddGrpc(options =>
-        {
-            options.ResponseCompressionLevel = CompressionLevel.Optimal;
-        });
+        if(GrpcSettings(configuration).Disabled) return;
         services.AddCodeFirstGrpc(
             config => { config.ResponseCompressionLevel = CompressionLevel.Optimal; }
         );
+        if(GrpcSettings(configuration).ReflectionDisabled) return;
         services.AddCodeFirstGrpcReflection();
     }
     
-    private static void AddSharedStartupServices(IServiceCollection services, IConfiguration configuration)
+    private static void AddDependencies(IServiceCollection services, IConfiguration configuration)
     {
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-        ServicePointManager.DefaultConnectionLimit = 10000;
-
-        services.AddCors();
         services.AddApplication()
             .AddInfrastructure(configuration)
             .AddEventBus(configuration);
-        services.AddResponseCompression();
-        services.Configure<GzipCompressionProviderOptions>
-        (options => 
-        { 
-            options.Level = CompressionLevel.Fastest; 
-        }); 
+    }
+    
+    public static void AddHostMiddleware(this WebApplication app, IWebHostEnvironment environment, IConfiguration configuration)
+    {
+        app.UseSwaggerApi();
+        app.UseApplication()
+            .UseInfrastructure(environment)
+            .UseRouting();
+        app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+        app.MapHealthChecks("/heartbeat");
+        app.MapControllers();
+        
+        if(GrpcSettings(configuration).Disabled) return;
+        app.UseGrpcWeb();
+        app.MapGrpcService<CityService>().EnableGrpcWeb();
+        app.MapGrpcService<StateService>().EnableGrpcWeb();
+        app.MapGrpcService<CountryService>().EnableGrpcWeb();
+        
+        if(GrpcSettings(configuration).ReflectionDisabled) return;
+        app.MapCodeFirstGrpcReflectionService().EnableGrpcWeb();
     }
 
     public static IHostBuilder CreateLogger(this IHostBuilder webHostBuilder)
@@ -80,5 +103,30 @@ public static class StartupServicesExtension
                 .Enrich.WithProperty("ApplicationName", typeof(Program).Assembly.GetName().Name ?? "Application")
                 .Enrich.WithProperty("Environment", hostingContext.HostingEnvironment);
         });
+    }
+    
+    public static IConfiguration GetEnvironmentConfiguration(this IWebHostEnvironment env)
+    {
+        var basePath = env.ContentRootPath;
+        if (!File.Exists($"{basePath}/appsettings.json"))
+        {
+            throw new ConfigurationErrorsException("appsettings.json file is missing from the project output and it is required");
+        }
+
+        Console.WriteLine($"Environment: {env.EnvironmentName}");
+        var builder = new ConfigurationBuilder()
+            .SetBasePath(basePath)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+        builder.AddEnvironmentVariables();
+        return builder.Build();
+    }
+
+    private static GrpcOptions GrpcSettings(IConfiguration configuration)
+    {
+        var settings = new GrpcOptions(false, false);
+        configuration.GetSection("Grpc").Bind(settings);
+        return settings;
     }
 }

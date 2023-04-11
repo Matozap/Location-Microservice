@@ -6,6 +6,5 @@ public class CountryEvent
 {
     public CountryData Details { get; init; }
     public EventAction Action { get; init; }
-    protected string GetVersion() => "v1";
 }
 

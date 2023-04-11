@@ -6,6 +6,5 @@ public class CityEvent
 {
     public CityData Details { get; init; }
     public EventAction Action { get; init; }
-    protected string GetVersion() => "v1";
 }
 
