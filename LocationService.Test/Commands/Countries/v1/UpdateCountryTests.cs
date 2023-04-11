@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Logic.Countries.Commands.v1;
-using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.Definition.Countries.Requests.v1;
+using LocationService.Application.Logic.Countries.v1.Commands;
+using LocationService.Application.Logic.Countries.v1.Requests;
+using LocationService.Message.Definition.Protos.Countries.v1;
 using LocationService.Test.MockBuilder;
 using Xunit;
 

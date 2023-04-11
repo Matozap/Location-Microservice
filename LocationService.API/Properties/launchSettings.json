@@ -21,14 +21,13 @@
     },
     "LocationService.API": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
       "environmentVariables": {
         "SERVICE_NAME": "LocationService",
         "ENDPOINT_NAME": "LocationService.API",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+      }      
     },
     "Docker": {
       "commandName": "Docker",

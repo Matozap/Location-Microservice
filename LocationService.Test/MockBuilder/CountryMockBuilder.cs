@@ -4,11 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using AutoFixture;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Logic.Countries.Commands.v1;
-using LocationService.Application.Logic.Countries.Queries.v1;
+using LocationService.Application.Logic.Countries.v1.Commands;
+using LocationService.Application.Logic.Countries.v1.Queries;
+using LocationService.Application.Logic.Countries.v1.Requests;
 using LocationService.Domain;
-using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.Definition.Countries.Requests.v1;
+using LocationService.Message.Definition.Protos.Countries.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -56,7 +56,7 @@ public static class CountryMockBuilder
     public static List<CountryData> GenerateMockCountryDtoList(int count)
     {
         return Fixture.Build<CountryData>()
-            .Without(s => s.Details)
+            .Without(s => s.States)
             .CreateMany(count).ToList();
     }
 

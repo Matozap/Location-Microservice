@@ -9,7 +9,7 @@ using LocationService.Infrastructure.Bus;
 using LocationService.Infrastructure.Database.Context;
 using LocationService.Infrastructure.Extensions;
 using LocationService.Infrastructure.Utils;
-using LocationService.Message.Definition;
+using LocationService.Message.Definition.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocationService.Infrastructure.Database.Repositories;

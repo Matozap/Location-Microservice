@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProtoBuf.Grpc.Server;
 using Serilog;
 
 namespace LocationService.API.Helpers;
@@ -17,7 +18,6 @@ public static class StartupServicesExtension
 {
     public static void AddStartupServicesForControllers(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAuthorization();
         services.AddHealthChecks();
         services.AddControllers()
             .AddJsonOptions(x => x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
@@ -45,11 +45,12 @@ public static class StartupServicesExtension
     {
         services.AddGrpc(options =>
         {
-            options.EnableDetailedErrors = true;
-            options.IgnoreUnknownServices = true;
             options.ResponseCompressionLevel = CompressionLevel.Optimal;
-        }).AddJsonTranscoding();
-        services.AddGrpcReflection();
+        });
+        services.AddCodeFirstGrpc(
+            config => { config.ResponseCompressionLevel = CompressionLevel.Optimal; }
+        );
+        services.AddCodeFirstGrpcReflection();
     }
     
     private static void AddSharedStartupServices(IServiceCollection services, IConfiguration configuration)

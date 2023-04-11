@@ -22,6 +22,8 @@
   <ItemGroup>
     <Folder Include="Events" />
     <Folder Include="Logic" />
+    <Folder Include="Logic\Countries\v1" />
+    <Folder Include="Logic\States\v1" />
   </ItemGroup>
 
 </Project>

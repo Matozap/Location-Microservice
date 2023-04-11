@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using LocationService.API.Outputs;
 using LocationService.API.Outputs.Base;
-using LocationService.Message.DataTransfer.Cities.v1;
+using LocationService.Message.Definition.Protos.Cities.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

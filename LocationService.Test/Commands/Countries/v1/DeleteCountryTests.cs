@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Logic.Countries.Commands.v1;
-using LocationService.Message.Definition.Countries.Requests.v1;
+using LocationService.Application.Logic.Countries.v1.Commands;
+using LocationService.Application.Logic.Countries.v1.Requests;
 using LocationService.Test.MockBuilder;
 using Xunit;
 

@@ -5,12 +5,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoFixture;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Logic.States.Commands.v1;
-using LocationService.Application.Logic.States.Queries.v1;
+using LocationService.Application.Logic.States.v1.Commands;
+using LocationService.Application.Logic.States.v1.Queries;
+using LocationService.Application.Logic.States.v1.Requests;
+using LocationService.Application.Logic.States.v1.Responses;
 using LocationService.Domain;
-using LocationService.Message.DataTransfer.States.v1;
-using LocationService.Message.Definition.States.Requests.v1;
-using LocationService.Message.Definition.States.Responses.v1;
+using LocationService.Message.Definition.Protos.States.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -66,7 +66,7 @@ public static class StateMockBuilder
     public static List<StateData> GenerateMockStateDtoList(int count)
     {
         return Fixture.Build<StateData>()
-            .Without(s => s.Details)
+            .Without(s => s.Cities)
             .CreateMany(count).ToList();
     }
 

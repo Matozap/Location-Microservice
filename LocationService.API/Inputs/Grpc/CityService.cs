@@ -1,38 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
 using LocationService.API.Outputs;
 using LocationService.API.Outputs.Base;
-using LocationService.Message.DataTransfer.Cities.v1;
+using LocationService.Message.Definition.Protos.Cities.v1;
+using LocationService.Message.Definition.Protos.Common;
 using MediatR;
 
 namespace LocationService.API.Inputs.Grpc;
 
-public class CityService : Message.DataTransfer.Cities.v1.CityService.CityServiceBase
+public class CityService : ICityService
 {
     private readonly CityOutput _cityOutput;
+     
+     public CityService(IMediator mediator)
+     {
+         _cityOutput = new CityOutput(mediator, OutputType.Grpc);
+     }
     
-    public CityService(IMediator mediator)
-    {
-        _cityOutput = new CityOutput(mediator, OutputType.Grpc);
-    }
+    public async Task<List<CityData>> GetAll(StringWrapper stateId) => await _cityOutput.GetAllAsync<List<CityData>>(stateId.Value);
+    
+    public async Task<CityData> Get(StringWrapper id) => await _cityOutput.GetAsync<CityData>(id.Value);
+    
+    public async Task<CityData> Create(CityData data) => await _cityOutput.CreateAsync<CityData>(data);
+    
+    public async Task<CityData> Update(CityData data) => await _cityOutput.UpdateAsync<CityData>(data);
+    
+    public async Task Disable(StringWrapper id) => await _cityOutput.DisableAsync<CityData>(id.Value);
 
-    public override async Task<CityCollection> GetAll(AllCitiesRequest request, ServerCallContext context) 
-        => new() { Cities = { await _cityOutput.GetAllAsync<List<CityData>>(request.StateId) }};
-    
-    public override async Task<CityData> Get(CityIdRequest request, ServerCallContext context) 
-        => await _cityOutput.GetAsync<CityData>(request.Id);
-
-    public override async Task<CityData> Create(CityData request, ServerCallContext context) 
-        => await _cityOutput.CreateAsync<CityData>(request);
-    
-    public override async Task<CityData> Update(CityData request, ServerCallContext context) 
-        => await _cityOutput.UpdateAsync<CityData>(request);
-    
-    public override async Task<Empty> Disable(CityIdRequest request, ServerCallContext context)
-    {
-        await _cityOutput.DeleteAsync<CityData>(request.Id);
-        return new Empty();
-    }
+    public async Task Delete(StringWrapper id) => await _cityOutput.DeleteAsync<CityData>(id.Value);
 }

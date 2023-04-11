@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using LocationService.Domain;
-using LocationService.Message.DataTransfer.Cities.v1;
-using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.DataTransfer.States.v1;
+using LocationService.Message.Definition.Protos.Cities.v1;
+using LocationService.Message.Definition.Protos.Countries.v1;
+using LocationService.Message.Definition.Protos.States.v1;
 using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,18 +18,12 @@ public static class DependencyInjection
     {
         TypeAdapterConfig<Country, CountryData>
             .NewConfig()
-            .Map(dest => dest.Details, src => new StateCollection { States = 
-            {
-                MapToStateData(src)
-            }}, src => src.States != null)
+            .Map(dest => dest.States, src => MapToStateData(src), src => src.States != null)
             .TwoWays()
             .IgnoreNullValues(true);
         TypeAdapterConfig<State, StateData>
             .NewConfig()
-            .Map(dest => dest.Details, src => new CityCollection { Cities =
-            {
-                MapToCityData(src)
-            }})
+            .Map(dest => dest.Cities, src => MapToCityData(src))
             .IgnoreNullValues(true);
         TypeAdapterConfig<StateData, State>
             .NewConfig()
@@ -54,10 +48,7 @@ public static class DependencyInjection
             Code = state.Code,
             Name = state.Name,
             CountryId = state.CountryId,
-            Details = state.Cities != null ? new CityCollection { Cities =
-            {
-                MapToCityData(state)
-            }} : new CityCollection()
+            Cities =  MapToCityData(state).ToList() 
         });
     }
 

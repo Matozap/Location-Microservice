@@ -1,9 +1,15 @@
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using LocationService.API.Helpers;
+using LocationService.API.Inputs.Grpc;
+using LocationService.Application;
+using LocationService.Infrastructure;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using ProtoBuf.Grpc.Server;
 using Serilog;
 
 namespace LocationService.API;
@@ -17,32 +23,24 @@ public class Program
 
     private static async Task RunServer()
     {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateBootstrapLogger(); 
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+        ServicePointManager.DefaultConnectionLimit = 10000;
+        
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger(); 
         
         try
         {
             Log.Information("[Program] Host starting...");
-
             var isFunctionRuntime = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("FUNCTIONS_WORKER_RUNTIME"));
+            
+            var delay = int.Parse(Environment.GetEnvironmentVariable("DELAYED_START") ?? "0");
+            Log.Information("[Program] Starting delay: {Delay} ms", delay);
+            await Task.Delay(delay);
+            
+            var host = isFunctionRuntime ? CreateFunctionHost() : CreateKestrelHostBuilder();
+            await host.RunAsync();
 
-            if (isFunctionRuntime)
-            {
-                await CreateFunctionHost().RunAsync();
-            }
-            else
-            {
-                if (int.TryParse(Environment.GetEnvironmentVariable("DELAYED_START"), out var delay))
-                {
-                    Log.Information("[Program] Starting delay: {Delay}", delay);
-                    await Task.Delay(delay);
-                }
-
-                await CreateHostBuilder(null).RunAsync();
-            }
-
-            Log.Information("[Program] Host Stopped Successfully");
+            Log.Information("[Program] Host stopped successfully");
         }
         catch (Exception ex)
         {
@@ -54,15 +52,41 @@ public class Program
         }
     }
 
-    private static IHost CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>()
-                    .CaptureStartupErrors(true);
-            })
-            .CreateLogger()
-            .Build();
+    private static WebApplication CreateKestrelHostBuilder()
+    {
+        var builder = WebApplication.CreateBuilder();
+        var environment = builder.Environment;
+        var configuration = builder.Configuration.GetEnvironmentConfiguration(environment);
+        
+        builder.Services.AddStartupServicesForControllers(configuration);
+        builder.Host.CreateLogger();
+        builder.WebHost.UseKestrel(options =>
+        {
+            options.ListenAnyIP(5000);
+            options.ListenAnyIP(5001, configure => configure.UseHttps());
+        });
+        builder.WebHost.UseKestrel();
+
+        var app = builder.Build();
+        app.UseSwaggerApi();
+        app.UseApplication()
+            .UseInfrastructure(environment)
+            .UseRouting();
+        app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+        app.MapHealthChecks("/heartbeat");
+        app.MapControllers();
+        app.UseGrpcWeb();
+        app.MapGrpcService<CityService>().EnableGrpcWeb();
+        app.MapGrpcService<StateService>().EnableGrpcWeb();
+        app.MapGrpcService<CountryService>().EnableGrpcWeb();
+        app.MapCodeFirstGrpcReflectionService().EnableGrpcWeb();
+        Log.Information("[Program] Host created successfully");
+            
+        return app;
+    }
 
     private static IHost CreateFunctionHost() =>
         new HostBuilder()

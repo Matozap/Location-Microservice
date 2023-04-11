@@ -30,15 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="DataTransfer\Cities\v1\CityService.proto" GrpcServices="Server" />
-    <Protobuf Include="DataTransfer\States\v1\StateService.proto" GrpcServices="Server" />
-    <Protobuf Include="DataTransfer\Countries\v1\CountryService.proto" GrpcServices="Server" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.52.0" />
     <PackageReference Include="MediatR" Version="12.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Grpc.JsonTranscoding" Version="7.0.4" />
+    <PackageReference Include="protobuf-net.Grpc" Version="1.1.1" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.2" />
   </ItemGroup>
 
 </Project>
