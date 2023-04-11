@@ -5,12 +5,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoFixture;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Logic.Cities.Commands.v1;
-using LocationService.Application.Logic.Cities.Queries.v1;
+using LocationService.Application.Logic.Cities.v1.Commands;
+using LocationService.Application.Logic.Cities.v1.Queries;
+using LocationService.Application.Logic.Cities.v1.Requests;
+using LocationService.Application.Logic.Cities.v1.Responses;
 using LocationService.Domain;
-using LocationService.Message.DataTransfer.Cities.v1;
-using LocationService.Message.Definition.Cities.Requests.v1;
-using LocationService.Message.Definition.Cities.Responses.v1;
+using LocationService.Message.Contracts.Cities.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -89,8 +89,7 @@ public static class CityMockBuilder
         if (typeof(T) == typeof(UpdateCityHandler))
         {
             return new UpdateCityHandler(NullLogger<UpdateCityHandler>.Instance,
-                GenerateMockRepository(location),
-                GenerateMockEventBus());
+                GenerateMockRepository(location));
         }
         
         if (typeof(T) == typeof(SoftDeleteCityHandler))

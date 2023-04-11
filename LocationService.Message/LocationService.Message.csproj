@@ -20,18 +20,23 @@
   <ItemGroup>
     <None Update="logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </None>    
   </ItemGroup>
   <PropertyGroup>
     <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include=".\logo.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="protobuf-net.Grpc" Version="1.1.1" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Contracts" />
   </ItemGroup>
 
 </Project>

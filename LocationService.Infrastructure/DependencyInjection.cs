@@ -29,7 +29,7 @@ public static class DependencyInjection
         services.AddDataContext(databaseOptions)
             .AddCache(cacheOptions)
             .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), 
-                typeof(DependencyInjection).Assembly, typeof(LocationService.Application.DependencyInjection).Assembly, typeof(IMapper).Assembly))
+                typeof(DependencyInjection).Assembly, typeof(Application.DependencyInjection).Assembly, typeof(IMapper).Assembly))
             .EnsureDatabaseIsSeeded();
 
         return services;

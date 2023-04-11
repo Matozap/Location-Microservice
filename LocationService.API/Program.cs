@@ -1,11 +1,12 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Serilog;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using LocationService.API.Helpers;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-
+using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace LocationService.API;
 
@@ -18,33 +19,24 @@ public class Program
 
     private static async Task RunServer()
     {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateBootstrapLogger(); 
-        Log.Information("[Program] Starting Main");
-
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+        ServicePointManager.DefaultConnectionLimit = 10000;
+        
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger(); 
+        
         try
         {
             Log.Information("[Program] Host starting...");
-
             var isFunctionRuntime = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("FUNCTIONS_WORKER_RUNTIME"));
+            
+            var delay = int.Parse(Environment.GetEnvironmentVariable("DELAYED_START") ?? "0");
+            Log.Information("[Program] Starting delay: {Delay} ms", delay);
+            await Task.Delay(delay);
+            
+            var host = isFunctionRuntime ? CreateFunctionHost() : CreateKestrelHostBuilder();
+            await host.RunAsync();
 
-            if (isFunctionRuntime)
-            {
-                await CreateFunctionHost().RunAsync();
-            }
-            else
-            {
-                if (int.TryParse(Environment.GetEnvironmentVariable("DELAYED_START"), out var delay))
-                {
-                    Log.Information("[Program] Starting delay: {Delay}", delay);
-                    await Task.Delay(delay);
-                }
-
-                await CreateHostBuilder(null).Build().RunAsync();
-            }
-
-            Log.Information("[Program] Host Stopped Successfully");
+            Log.Information("[Program] Host stopped successfully");
         }
         catch (Exception ex)
         {
@@ -56,15 +48,28 @@ public class Program
         }
     }
 
-    private static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>()
-                    .CaptureStartupErrors(true);
-            })
-            .CreateLogger();
-    
+    private static WebApplication CreateKestrelHostBuilder()
+    {
+        var builder = WebApplication.CreateBuilder();
+        var environment = builder.Environment;
+        var configuration = environment.GetEnvironmentConfiguration();
+        
+        builder.Services.AddWebApplicationServices(configuration);
+        builder.Host.CreateLogger();
+        builder.WebHost.UseKestrel(options =>
+        {
+            options.ListenAnyIP(5000);
+            options.ListenAnyIP(5001, configure => configure.UseHttps());
+        });
+        builder.WebHost.UseKestrel();
+
+        var app = builder.Build();
+        app.AddHostMiddleware(environment, configuration);
+        Log.Information("[Program] Host created successfully");
+            
+        return app;
+    }
+
     private static IHost CreateFunctionHost() =>
         new HostBuilder()
             .ConfigureFunctionsWorkerDefaults()
@@ -72,7 +77,7 @@ public class Program
             {
                 var env = hostingContext.HostingEnvironment;
                 configBuilder
-                    .AddJsonFile($"appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
             })
             .ConfigureServices((appBuilder, services) =>
@@ -80,13 +85,13 @@ public class Program
                 try
                 {
                     var configuration = appBuilder.Configuration;
-                    services.AddStartupServicesForFunctions(configuration);
+                    services.AddFunctionServices(configuration);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[Startup] ERROR at ConfigureServices {ex}");
+                    Log.Fatal(ex, "[Program] Error creating function host - {Error}", ex.Message);
                 }
-                Console.WriteLine("[Startup] ConfigureServices [DONE]");
+                Log.Information("[Program] ConfigureServices [DONE]");
             })
             .CreateLogger()
             .Build();

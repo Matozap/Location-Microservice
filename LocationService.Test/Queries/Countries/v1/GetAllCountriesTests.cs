@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Logic.Countries.Queries.v1;
-using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.Definition.Countries.Requests.v1;
+using LocationService.Application.Logic.Countries.v1.Queries;
+using LocationService.Application.Logic.Countries.v1.Requests;
 using LocationService.Test.MockBuilder;
 using Xunit;
 
@@ -18,7 +16,7 @@ public class GetAllCountriesTests
         var classToHandle = new GetAllCountries();
         
         var handler = (GetAllCountriesHandler)CountryMockBuilder.CreateHandler<GetAllCountriesHandler>();
-        var result = (List<CountryData>)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull().And.HaveCountGreaterThan(1);
     }

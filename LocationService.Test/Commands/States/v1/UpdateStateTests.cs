@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Logic.States.Commands.v1;
-using LocationService.Message.DataTransfer.States.v1;
-using LocationService.Message.Definition.States.Requests.v1;
+using LocationService.Application.Logic.States.v1.Commands;
+using LocationService.Application.Logic.States.v1.Requests;
+using LocationService.Message.Contracts.States.v1;
 using LocationService.Test.MockBuilder;
 using Xunit;
 
@@ -18,11 +18,11 @@ public class UpdateStateTests
     {
         var classToHandle = new UpdateState
         {
-            LocationDetails = StateMockBuilder.GenerateMockStateDtoList(1).FirstOrDefault()
+            Details = StateMockBuilder.GenerateMockStateDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateStateHandler)StateMockBuilder.CreateHandler<UpdateStateHandler>();
-        var result = (StateData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull();
     }
@@ -32,7 +32,7 @@ public class UpdateStateTests
     {
         var classToHandle = new UpdateState
         {
-            LocationDetails = new StateData()
+            Details = new StateData()
         };
 
         var handler = (UpdateStateHandler)StateMockBuilder.CreateHandler<UpdateStateHandler>();

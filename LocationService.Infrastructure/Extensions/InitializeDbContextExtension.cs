@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using LocationService.Infrastructure.Database.Context;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace LocationService.Infrastructure.Extensions;
@@ -19,10 +19,13 @@ public static class InitializeDbContextExtension
         
         try
         {
-            if (!serviceScope.Database.CanConnect() || !serviceScope.Database.EnsureCreated())
+            if (databaseOptions.EngineType != EngineType.NonRelational)
             {
-                logger.LogWarning("[Database Initializer] Cannot connect to database {Database}", databaseOptions.DatabaseType);
-                return;
+                if (!serviceScope.Database.CanConnect() || !serviceScope.Database.EnsureCreated())
+                {
+                    logger.LogWarning("[Database Initializer] Cannot connect to database {Database}", databaseOptions.DatabaseType);
+                    return;
+                }
             }
 
             if (!databaseOptions.SeedData) return;

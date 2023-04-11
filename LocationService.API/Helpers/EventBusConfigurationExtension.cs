@@ -1,18 +1,18 @@
  using System;
-using System.Collections.Generic;
+ using System.Collections.Generic;
  using System.Linq;
  using System.Reflection;
  using LocationService.Application.Interfaces;
-using LocationService.Infrastructure.Bus;
-using LocationService.Message.Definition.Cities.Events.v1;
-using LocationService.Message.Definition.Countries.Events.v1;
-using LocationService.Message.Definition.States.Events.v1;
-using MassTransit;
+ using LocationService.Infrastructure.Bus;
+ using LocationService.Message.Events.Cities.v1;
+ using LocationService.Message.Events.Countries.v1;
+ using LocationService.Message.Events.States.v1;
+ using MassTransit;
  using MediatR;
  using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+ using Microsoft.Extensions.DependencyInjection;
 
-namespace LocationService.API.Helpers;
+ namespace LocationService.API.Helpers;
 
 public static class EventBusConfigurationExtension
 {

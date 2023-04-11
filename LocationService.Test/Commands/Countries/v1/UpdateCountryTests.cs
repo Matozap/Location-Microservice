@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Logic.Countries.Commands.v1;
-using LocationService.Message.DataTransfer.Countries.v1;
-using LocationService.Message.Definition.Countries.Requests.v1;
+using LocationService.Application.Logic.Countries.v1.Commands;
+using LocationService.Application.Logic.Countries.v1.Requests;
+using LocationService.Message.Contracts.Countries.v1;
 using LocationService.Test.MockBuilder;
 using Xunit;
 
@@ -18,11 +18,11 @@ public class UpdateCountryTests
     {
         var classToHandle = new UpdateCountry
         {
-            LocationDetails = CountryMockBuilder.GenerateMockCountryDtoList(1).FirstOrDefault()
+            Details = CountryMockBuilder.GenerateMockCountryDtoList(1).FirstOrDefault()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();
-        var result = (CountryData)await handler.Handle(classToHandle, new CancellationToken());
+        var result = await handler.Handle(classToHandle, new CancellationToken());
 
         result.Should().NotBeNull();
     }
@@ -32,7 +32,7 @@ public class UpdateCountryTests
     {
         var classToHandle = new UpdateCountry
         {
-            LocationDetails = new CountryData()
+            Details = new CountryData()
         };
 
         var handler = (UpdateCountryHandler)CountryMockBuilder.CreateHandler<UpdateCountryHandler>();
