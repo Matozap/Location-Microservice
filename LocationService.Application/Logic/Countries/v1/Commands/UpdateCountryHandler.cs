@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Application.Logic.Countries.v1.Requests;
 using LocationService.Domain;
-using LocationService.Message.Definition.Protos.Countries.v1;
+using LocationService.Message.Contracts.Countries.v1;
 using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;

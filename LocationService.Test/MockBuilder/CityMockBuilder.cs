@@ -10,7 +10,7 @@ using LocationService.Application.Logic.Cities.v1.Queries;
 using LocationService.Application.Logic.Cities.v1.Requests;
 using LocationService.Application.Logic.Cities.v1.Responses;
 using LocationService.Domain;
-using LocationService.Message.Definition.Protos.Cities.v1;
+using LocationService.Message.Contracts.Cities.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;

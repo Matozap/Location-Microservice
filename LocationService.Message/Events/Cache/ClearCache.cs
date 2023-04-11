@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace LocationService.Message.Definition.Events.Cache;
+namespace LocationService.Message.Events.Cache;
 
 public class ClearCache : IRequest<bool>
 {

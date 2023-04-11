@@ -8,7 +8,7 @@ using LocationService.Application.Logic.Countries.v1.Commands;
 using LocationService.Application.Logic.Countries.v1.Queries;
 using LocationService.Application.Logic.Countries.v1.Requests;
 using LocationService.Domain;
-using LocationService.Message.Definition.Protos.Countries.v1;
+using LocationService.Message.Contracts.Countries.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;

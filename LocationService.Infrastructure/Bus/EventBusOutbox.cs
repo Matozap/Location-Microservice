@@ -1,5 +1,5 @@
 ﻿using LocationService.Domain;
-using LocationService.Message.Definition.Events;
+using LocationService.Message.Events;
 
 namespace LocationService.Infrastructure.Bus;
 

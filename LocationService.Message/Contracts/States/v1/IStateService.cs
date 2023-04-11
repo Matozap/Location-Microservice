@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using LocationService.Message.Definition.Protos.Common;
+using LocationService.Message.Contracts.Common;
 
-namespace LocationService.Message.Definition.Protos.States.v1;
+namespace LocationService.Message.Contracts.States.v1;
 
 [ServiceContract]
 public interface IStateService

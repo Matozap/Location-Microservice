@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using LocationService.Message.Definition.Events;
-using LocationService.Message.Definition.Events.Cache;
-using LocationService.Message.Definition.Events.Cities.v1;
+using LocationService.Message.Events;
+using LocationService.Message.Events.Cache;
+using LocationService.Message.Events.Cities.v1;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;

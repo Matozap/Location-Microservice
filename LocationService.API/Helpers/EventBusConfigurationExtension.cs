@@ -4,9 +4,9 @@
  using System.Reflection;
  using LocationService.Application.Interfaces;
  using LocationService.Infrastructure.Bus;
- using LocationService.Message.Definition.Events.Cities.v1;
- using LocationService.Message.Definition.Events.Countries.v1;
- using LocationService.Message.Definition.Events.States.v1;
+ using LocationService.Message.Events.Cities.v1;
+ using LocationService.Message.Events.Countries.v1;
+ using LocationService.Message.Events.States.v1;
  using MassTransit;
  using MediatR;
  using Microsoft.Extensions.Configuration;

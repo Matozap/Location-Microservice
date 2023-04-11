@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using LocationService.API.Outputs.Base;
 using LocationService.Application.Logic.Cities.v1.Requests;
-using LocationService.Message.Definition.Protos.Cities.v1;
+using LocationService.Message.Contracts.Cities.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Http;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LocationService.Application.Logic.Cities.v1.Commands;
 using LocationService.Application.Logic.Cities.v1.Requests;
-using LocationService.Message.Definition.Protos.Cities.v1;
+using LocationService.Message.Contracts.Cities.v1;
 using LocationService.Test.MockBuilder;
 using Xunit;
 

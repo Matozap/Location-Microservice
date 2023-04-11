@@ -5,7 +5,7 @@ using LocationService.Application.Interfaces;
 using LocationService.Application.Logic.Cities.v1.Queries;
 using LocationService.Application.Logic.Countries.v1.Queries;
 using LocationService.Application.Logic.States.v1.Queries;
-using LocationService.Message.Definition.Events.Cache;
+using LocationService.Message.Events.Cache;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

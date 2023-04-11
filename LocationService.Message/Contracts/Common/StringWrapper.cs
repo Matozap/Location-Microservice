@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using ProtoBuf;
 
-namespace LocationService.Message.Definition.Protos.Common;
+namespace LocationService.Message.Contracts.Common;
 
 [ExcludeFromCodeCoverage]
 [ProtoContract]

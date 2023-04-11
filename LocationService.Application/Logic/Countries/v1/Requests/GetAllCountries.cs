@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using LocationService.Message.Definition.Protos.Countries.v1;
+using LocationService.Message.Contracts.Countries.v1;
 using MediatR;
 
 namespace LocationService.Application.Logic.Countries.v1.Requests;

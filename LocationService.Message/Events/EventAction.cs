@@ -1,4 +1,4 @@
-﻿namespace LocationService.Message.Definition.Events;
+﻿namespace LocationService.Message.Events;
 
 public enum EventAction
 {

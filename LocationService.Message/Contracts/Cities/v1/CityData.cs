@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace LocationService.Message.Definition.Protos.Cities.v1;
+namespace LocationService.Message.Contracts.Cities.v1;
 
 [ProtoContract]
 public class CityData

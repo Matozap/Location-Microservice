@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using LocationService.Message.Definition.Protos.States.v1;
+using LocationService.Message.Contracts.States.v1;
 
-namespace LocationService.Message.Definition.Protos.Countries.v1;
+namespace LocationService.Message.Contracts.Countries.v1;
 
 [DataContract]
 public class CountryData

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using LocationService.Message.Definition.Protos.Cities.v1;
+using LocationService.Message.Contracts.Cities.v1;
 
-namespace LocationService.Message.Definition.Protos.States.v1;
+namespace LocationService.Message.Contracts.States.v1;
 
 [DataContract]
 public class StateData
