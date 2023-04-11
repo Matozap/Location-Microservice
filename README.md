@@ -10,7 +10,7 @@
 A microservice that is responsible for handling requests for location information, such as country, state and city, 
 and maintaining a database of location information which should not be updated by external systems.
 
-Exposes an API in 2 flavors: controllers and Azure functions and it allows other services or applications to query the location information. 
+Exposes an API in 3 flavors: Web API, GRPC and Azure Functions and it allows other services or applications to query the location information. 
 The API starts with the basic types of queries, such as:
 - GetAll
 - Get
