@@ -57,7 +57,12 @@ public static class StartupServicesExtension
     {
         if(GrpcSettings(configuration).Disabled) return;
         services.AddCodeFirstGrpc(
-            config => { config.ResponseCompressionLevel = CompressionLevel.Optimal; }
+            config =>
+            {
+                config.ResponseCompressionLevel = CompressionLevel.Optimal;
+                config.EnableDetailedErrors = true;
+                config.IgnoreUnknownServices = true;
+            }
         );
         if(GrpcSettings(configuration).ReflectionDisabled) return;
         services.AddCodeFirstGrpcReflection();

@@ -16,5 +16,5 @@ public class StateData
     [DataMember(Order = 4)]
     public string CountryId { get; set; }
     [DataMember(Order = 5)]
-    public List<CityData> Cities { get; set; }
+    public IReadOnlyCollection<CityData> Cities { get; set; }
 }

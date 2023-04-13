@@ -48,7 +48,7 @@ public static class DependencyInjection
             Code = state.Code,
             Name = state.Name,
             CountryId = state.CountryId,
-            Cities =  MapToCityData(state).ToList() 
+            Cities =  MapToCityData(state).ToList()
         });
     }
 

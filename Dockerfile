@@ -7,14 +7,10 @@ COPY ./ /src
 RUN ls -l
 
 WORKDIR /src/LocationService.API
-# Restore as distinct layers
-RUN dotnet restore "LocationService.API.csproj"
-RUN dotnet build "LocationService.API.csproj" -c Release -o /app/build
 # Build and publish a release
 RUN dotnet publish "LocationService.API.csproj" -c Release -o /app/publish
 
 # Build runtime image
-#FROM mcr.microsoft.com/dotnet/aspnet:7.0.2-alpine3.17-amd64 as final
 FROM mcr.microsoft.com/dotnet/aspnet:7.0.4-jammy as final
 
 ENV ASPNETCORE_URLS="https://*:5001;http://*:5000"

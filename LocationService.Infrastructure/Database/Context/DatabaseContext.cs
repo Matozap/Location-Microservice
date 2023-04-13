@@ -30,10 +30,6 @@ public sealed class DatabaseContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.ToLower() == "development")
-        {
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

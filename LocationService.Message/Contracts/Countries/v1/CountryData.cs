@@ -22,5 +22,5 @@ public class CountryData
     [DataMember(Order = 7)]
     public string SubRegion { get; set; }
     [DataMember(Order = 8)]
-    public List<StateData> States { get; set; }
+    public IReadOnlyCollection<StateData> States { get; set; }
 }

@@ -19,12 +19,12 @@ public static class InitializeDbContextExtension
         
         try
         {
+            logger.LogInformation("Database Type: {DatabaseType}", databaseOptions.DatabaseType);
             if (databaseOptions.EngineType != EngineType.NonRelational)
             {
                 if (!serviceScope.Database.CanConnect() || !serviceScope.Database.EnsureCreated())
                 {
-                    logger.LogWarning("[Database Initializer] Cannot connect to database {Database}", databaseOptions.DatabaseType);
-                    return;
+                    logger.LogInformation("[Database Initializer] Connection test to database {Database} was inconclusive", databaseOptions.DatabaseType);
                 }
             }
 

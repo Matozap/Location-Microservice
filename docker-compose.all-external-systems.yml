@@ -1,10 +1,9 @@
 version: "3.9"
-name: "location-service"
+name: "external-services"
 
-# This docker-compose file will create and run the application and all external systems
+# This docker-compose file will load all external systems but not the application itself
 # Service List:
-#
-# - Microservice (.NET Application from dockerfile)
+# 
 # - Redis (Cache)
 # - Sql server (Database)
 # - MySQL (Database)
@@ -13,12 +12,10 @@ name: "location-service"
 #
 # --------------------------
 # Usage
-# Start: docker compose -f docker-compose.yml up -d
-# Stop: docker compose -f docker-compose.yml down -v
-# Clean: docker rmi image:tag (I.E. docker rmi location.service:1.0)
+# Start: docker compose -f docker-compose.all-external-systems.yml up -d
+# Stop: docker compose -f docker-compose.all-external-systems.yml down -v
 
 volumes:
-  local_location_code: {}
   local_redis_data: {}
   local_sqlserver_data: {}
   local_mysql_data: {}
@@ -26,24 +23,6 @@ volumes:
   local_rabbitmq_data: {}
   
 services:
-  location.service:
-    image: "location.service:1.0"
-    container_name: "location.api"
-    build: .
-    ports:
-      - "7000:5000"
-      - "7001:5001"
-    volumes:
-      - "local_location_code:/code"
-    environment:
-      DELAYED_START: 20000
-    restart: "on-failure"
-    depends_on:
-      - "redis"
-      - "sqlserver"
-      - "mysql"
-      - "postgres"
-  
   redis:
     container_name: "location.redis"
     hostname: "location.redis"
