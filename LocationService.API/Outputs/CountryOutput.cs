@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using LocationService.API.Outputs.Base;
-using LocationService.Application.Logic.Countries.v1.Requests;
+using LocationService.Application.Handlers.Countries.v1.Requests;
 using LocationService.Message.Contracts.Countries.v1;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

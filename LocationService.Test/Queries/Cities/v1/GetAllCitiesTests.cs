@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Logic.Cities.v1.Queries;
-using LocationService.Application.Logic.Cities.v1.Requests;
+using LocationService.Application.Handlers.Cities.v1.Queries;
+using LocationService.Application.Handlers.Cities.v1.Requests;
 using LocationService.Test.MockBuilder;
 using Xunit;
 

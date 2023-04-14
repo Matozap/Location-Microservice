@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using LocationService.Application.Handlers.Cities.v1.Queries;
+using LocationService.Application.Handlers.Countries.v1.Queries;
+using LocationService.Application.Handlers.States.v1.Queries;
 using LocationService.Application.Interfaces;
-using LocationService.Application.Logic.Cities.v1.Queries;
-using LocationService.Application.Logic.Countries.v1.Queries;
-using LocationService.Application.Logic.States.v1.Queries;
 using LocationService.Message.Events.Cache;
 using MediatR;
 using Microsoft.Extensions.Logging;
