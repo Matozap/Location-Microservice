@@ -28,9 +28,9 @@ public class CityEventConsumer : IConsumer<CityEvent>
             var locationEvent = context.Message;
             switch (locationEvent.Action)
             {
-                case EventAction.CityCreate:
-                case EventAction.CityUpdate: 
-                case EventAction.CityDelete: 
+                case EventAction.Created:
+                case EventAction.Updated: 
+                case EventAction.Deleted: 
                     _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(CityEvent), locationEvent.Details.Id);
                     _ = _mediator.Send(new ClearCache
                     {
@@ -39,6 +39,7 @@ public class CityEventConsumer : IConsumer<CityEvent>
                     });
                     break;
 
+                case EventAction.None:
                 default:
                     await Task.CompletedTask;
                     break;

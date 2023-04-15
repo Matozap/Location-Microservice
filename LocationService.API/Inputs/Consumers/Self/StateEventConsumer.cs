@@ -28,9 +28,9 @@ public class StateEventConsumer : IConsumer<StateEvent>
             var locationEvent = context.Message;
             switch (locationEvent.Action)
             {
-                case EventAction.StateCreate:
-                case EventAction.StateUpdate: 
-                case EventAction.StateDelete:
+                case EventAction.Created:
+                case EventAction.Updated: 
+                case EventAction.Deleted:
                     _logger.LogDebug("Cache key removal triggered by {Event} for id {Id}", nameof(StateEvent), locationEvent.Details.Id);
                     _ = _mediator.Send(new ClearCache
                     {
@@ -40,6 +40,7 @@ public class StateEventConsumer : IConsumer<StateEvent>
                     });
                     break;
 
+                case EventAction.None:
                 default:
                     await Task.CompletedTask;
                     break;

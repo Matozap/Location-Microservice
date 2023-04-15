@@ -2,6 +2,7 @@
  using System.Collections.Generic;
  using System.Linq;
  using System.Reflection;
+ using LocationService.Application.Events.Publishers;
  using LocationService.Application.Interfaces;
  using LocationService.Infrastructure.Bus;
  using LocationService.Message.Events.Cities.v1;
@@ -65,7 +66,7 @@ public static class EventBusConfigurationExtension
         
         services.AddSingleton(eventBusOptions);
         services.AddScoped<IEventBus, EventBus>();
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(EventBusBehaviour<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PublishBehaviour<,>));
         return services;
     }
 

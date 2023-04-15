@@ -186,20 +186,21 @@ public class EfRepository : IRepository
     
     private async Task CreateOutboxMessage<T>(T entity, string sourceMethod) where T: EntityBase
     {
-        if(typeof(T) == typeof(EventBusOutbox)) return;
+        if(typeof(T) == typeof(Outbox)) return;
         
-        var outbox = new EventBusOutbox
+        var outbox = new Outbox
         {
             Id = UniqueIdGenerator.GenerateSequentialId(),
             JsonObject = entity.Serialize(),
             LastUpdateDate = entity.LastUpdateDate,
             LastUpdateUserId = entity.LastUpdateUserId,
-            Action = sourceMethod switch
+            ObjectType = typeof(T).Name,
+            Operation = sourceMethod switch
             {
-                nameof(AddAsync) => typeof(T) == typeof(Country) ? EventAction.CountryCreate : typeof(T) == typeof(State) ? EventAction.StateCreate : EventAction.CityCreate,
-                nameof(UpdateAsync) => typeof(T) == typeof(Country) ? EventAction.CountryUpdate : typeof(T) == typeof(State) ? EventAction.StateUpdate : EventAction.CityUpdate,
-                nameof(DeleteAsync) => typeof(T) == typeof(Country) ? EventAction.CountryDelete : typeof(T) == typeof(State) ? EventAction.StateDelete : EventAction.CityDelete,
-                _ => EventAction.None
+                nameof(AddAsync) => Operation.Create,
+                nameof(UpdateAsync) => Operation.Update,
+                nameof(DeleteAsync) => Operation.Delete,
+                _ => Operation.None
             }
         };
 
