@@ -26,7 +26,7 @@ public sealed class DatabaseContext : DbContext
     public DbSet<Country> Countries { get; set; }
     public DbSet<State> States { get; set; }
     public DbSet<City> Cities { get; set; }
-    public DbSet<EventBusOutbox> EventBusOutboxes { get; set; }
+    public DbSet<Outbox> EventBusOutboxes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -94,14 +94,14 @@ public sealed class DatabaseContext : DbContext
     
     private static void CreateEventBusOutboxModel(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<EventBusOutbox>().ToContainer("EventBusOutbox");
-        modelBuilder.Entity<EventBusOutbox>(entity =>
+        modelBuilder.Entity<Outbox>().ToContainer("EventBusOutbox");
+        modelBuilder.Entity<Outbox>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ToJsonProperty("id").IsRequired();
             entity.Property(e => e.JsonObject).IsRequired();
-            entity.Property(e => e.Action).IsRequired();
-            entity.HasIndex(e => e.Action);
+            entity.Property(e => e.Operation).IsRequired();
+            entity.HasIndex(e => e.Operation);
             entity.HasNoDiscriminator();
             entity.HasPartitionKey(e => e.Id);
         });

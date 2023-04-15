@@ -9,7 +9,7 @@ using LocationService.Message.Events.Cache;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace LocationService.Application.Events.Location;
+namespace LocationService.Application.Events.Subscriptions.Location;
 
 [ExcludeFromCodeCoverage]
 public class ClearCacheHandler : IRequestHandler<ClearCache, bool>

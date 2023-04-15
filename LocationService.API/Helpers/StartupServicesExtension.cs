@@ -89,13 +89,13 @@ public static class StartupServicesExtension
         app.MapControllers();
         
         if(GrpcSettings(configuration).Disabled) return;
-        app.UseGrpcWeb();
-        app.MapGrpcService<CityService>().EnableGrpcWeb();
-        app.MapGrpcService<StateService>().EnableGrpcWeb();
-        app.MapGrpcService<CountryService>().EnableGrpcWeb();
+        app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true});
+        app.MapGrpcService<CityService>();
+        app.MapGrpcService<StateService>();
+        app.MapGrpcService<CountryService>();
         
         if(GrpcSettings(configuration).ReflectionDisabled) return;
-        app.MapCodeFirstGrpcReflectionService().EnableGrpcWeb();
+        app.MapCodeFirstGrpcReflectionService();
     }
 
     public static IHostBuilder CreateLogger(this IHostBuilder webHostBuilder)
