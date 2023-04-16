@@ -10,7 +10,7 @@
 A microservice that is responsible for handling requests for location information, such as country, state and city, 
 and maintaining a database of location information which should not be updated by external systems.
 
-Exposes an API in 3 flavors: Web API, GRPC and Azure Functions and it allows other services or applications to query the location information. 
+Exposes an API in 3 flavors: Web API, GRPC* and Azure Functions and it allows other services or applications to query the location information. 
 The API starts with the basic types of queries, such as:
 - GetAll
 - Get
@@ -22,6 +22,8 @@ The API starts with the basic types of queries, such as:
 It can be integrated with other services via message brokers, such as RabbitMQ or Azure Service Bus, to provide eventual consistency about a specific location.
 
 Overall, this microservice provides a scalable and flexible solution for handling location information in a distributed system, allowing other services or applications to easily and reliably retrieve location information as needed.
+
+<sup><sup>* Using GRPC code-first approach </sup></sup>
 
 ----------------------------------
 
