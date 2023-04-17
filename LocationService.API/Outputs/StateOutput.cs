@@ -33,8 +33,7 @@ public class StateOutput : OutputBase
     {
         var query = new GetStateById
         {
-            Id = code,
-            Code = code
+            Id = code
         };
         
         var result = await _mediator.Send(query);
