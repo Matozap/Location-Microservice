@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using AutoFixture;
 using LocationService.Application.Handlers.States.v1.Commands;
 using LocationService.Application.Handlers.States.v1.Queries;
 using LocationService.Application.Handlers.States.v1.Requests;
-using LocationService.Application.Handlers.States.v1.Responses;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.States.v1;
@@ -37,13 +35,6 @@ public static class StateMockBuilder
         repository.GetAsListAsync(Arg.Any<Expression<Func<State, bool>>>(), Arg.Any<Expression<Func<State, string>>>(), 
             Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns(mockStates);
         return repository;
-    }
-
-    private static IEventBus GenerateMockEventBus()
-    {
-        var eventBus = Substitute.For<IEventBus>();
-        eventBus.Publish(Arg.Any<StateCreated>()).Returns(Task.CompletedTask);
-        return eventBus;
     }
 
     private static ICache GenerateMockObjectCache()

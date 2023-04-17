@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
@@ -12,31 +11,28 @@ using LocationService.Message.Events.Cities.v1;
 using LocationService.Message.Events.Countries.v1;
 using LocationService.Message.Events.States.v1;
 using Mapster;
-using MediatR;
 using Microsoft.Extensions.Logging;
-using State = LocationService.Domain.State;
 
 namespace LocationService.Application.Events.Publishers;
 
-public class PublishBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class OutboxPublisher : IOutboxPublisher
 {
     private readonly IEventBus _eventBus;
     private readonly IRepository _repository;
-    private readonly ILogger<PublishBehaviour<TRequest, TResponse>> _logger;
+    private readonly ILogger<OutboxPublisher> _logger;
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new() { PropertyNameCaseInsensitive = true };
 
-    public PublishBehaviour(IEventBus eventBus, IRepository repository, ILogger<PublishBehaviour<TRequest, TResponse>> logger)
+    public OutboxPublisher(IEventBus eventBus, IRepository repository, ILogger<OutboxPublisher> logger)
     {
         _eventBus = eventBus;
         _repository = repository;
         _logger = logger;
     }
-    
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-    {
-        var response = await next();
 
+    public async Task PublishOutboxAsync()
+    {
         var outboxMessages = await _repository.GetAsListAsync<Outbox, DateTime>(outbox => outbox.Id != "", outbox => outbox.LastUpdateDate);
-        if (!(outboxMessages?.Count > 0)) return response;
+        if (!(outboxMessages?.Count > 0)) return;
         
         _logger.LogInformation("Publishing events from outbox - Count: {MessageCount}", outboxMessages.Count.ToString());
         foreach (var outboxMessage in outboxMessages)
@@ -59,15 +55,13 @@ public class PublishBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
                     break;
             }
 
-            await _repository.DeleteAsync(outboxMessage);
+            await _repository.DeleteAsync(outboxMessage, skipOutbox: true);
         }
-
-        return response;
-    }
-
+    } 
+    
     private async Task PublishCountryEvent(Outbox outboxMessage)
     {
-        var country =  JsonSerializer.Deserialize<Country>(outboxMessage.JsonObject, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var country =  JsonSerializer.Deserialize<Country>(outboxMessage.JsonObject, _jsonSerializerOptions);
         var countryData = country.Adapt<Country, CountryData>();
         
         switch (outboxMessage.Operation)
@@ -90,7 +84,7 @@ public class PublishBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
     
     private async Task PublishStateEvent(Outbox outboxMessage)
     {
-        var state = JsonSerializer.Deserialize<State>(outboxMessage.JsonObject, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var state = JsonSerializer.Deserialize<State>(outboxMessage.JsonObject, _jsonSerializerOptions);
         var stateData = state.Adapt<State, StateData>();
         
         switch (outboxMessage.Operation)
@@ -113,7 +107,7 @@ public class PublishBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
     
     private async Task PublishCityEvent(Outbox outboxMessage)
     {
-        var city = JsonSerializer.Deserialize<City>(outboxMessage.JsonObject, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var city = JsonSerializer.Deserialize<City>(outboxMessage.JsonObject, _jsonSerializerOptions);
         var cityData = city.Adapt<City, CityData>();
         
         switch (outboxMessage.Operation)

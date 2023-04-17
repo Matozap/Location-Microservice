@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using LocationService.Application.Events.Publishers;
+using LocationService.Application.Pipeline;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Cities.v1;
 using LocationService.Message.Contracts.Countries.v1;
 using LocationService.Message.Contracts.States.v1;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,7 +39,9 @@ public static class DependencyInjection
             .NewConfig()
             .Map(dest => dest.State, src => (State)null)
             .IgnoreNullValues(true);
-            
+
+        services.AddScoped<IOutboxPublisher, OutboxPublisher>();
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ApplicationPipelineBehaviour<,>));
         return services;
     }
 
