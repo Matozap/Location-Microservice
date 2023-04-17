@@ -47,7 +47,7 @@ public class ClearCacheHandler : IRequestHandler<ClearCache, bool>
             {
                 const string message = "Clearing location by state cache";
                 _logger.LogDebug(message);
-                var cacheKey = GetStateByIdHandler.GetCacheKey(request.StateId, request.StateCode);
+                var cacheKey = GetStateByIdHandler.GetCacheKey(request.StateId);
                 await _cache.RemoveValueAsync(cacheKey, cancellationToken);
                 
                 cacheKey = GetAllStatesHandler.GetCacheKey(request.CountryId);

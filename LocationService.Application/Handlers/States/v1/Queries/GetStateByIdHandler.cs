@@ -25,7 +25,7 @@ public class GetStateByIdHandler : IRequestHandler<GetStateById, object>
 
     public async Task<object> Handle(GetStateById request, CancellationToken cancellationToken)
     {
-        var cacheKey = GetCacheKey(request.Id, request.Code);
+        var cacheKey = GetCacheKey(request.Id);
 
         var cachedValue = await _cache.GetCacheValueAsync<StateData>(cacheKey, cancellationToken);
         if (cachedValue != null)
@@ -34,7 +34,7 @@ public class GetStateByIdHandler : IRequestHandler<GetStateById, object>
             return cachedValue;
         }
 
-        var dataValue = await GetStateById(request.Id, request.Code);
+        var dataValue = await GetStateById(request.Id);
 
         if(dataValue != null)
         {
@@ -44,19 +44,15 @@ public class GetStateByIdHandler : IRequestHandler<GetStateById, object>
         return dataValue;
     }
 
-    private async Task<StateData> GetStateById(string id, string code)
+    private async Task<StateData> GetStateById(string id)
     {
         var entity = await _repository.GetAsSingleAsync<State, string>(
-            predicate: state => (state.Id == id || state.Code == code) && !state.Disabled,
+            predicate: state => (state.Id == id || state.Code == id) && !state.Disabled,
             orderAscending: state => state.Name,
             includeNavigationalProperties: true);
         var resultDto = entity.Adapt<State, StateData>();
         return resultDto;
     }
 
-    public static string GetCacheKey(string id, string code)
-    {
-        var key = !string.IsNullOrEmpty(id) ? id : code;
-        return $"State:id:{key}";
-    }
+    public static string GetCacheKey(string id) => $"State:id:{id}";
 }

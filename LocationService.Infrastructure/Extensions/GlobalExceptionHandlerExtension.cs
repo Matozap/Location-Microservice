@@ -49,6 +49,7 @@ public static class GlobalExceptionHandlerExtension
                     {
                         if (exceptionHandlerFeature.Error is ValidationException)
                         {
+                            context.Response.StatusCode = 400;
                             result = new
                             {
                                 Error = $"Validation Error - Detail: {exceptionHandlerFeature.Error.Message}"

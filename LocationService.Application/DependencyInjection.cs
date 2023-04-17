@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using FluentValidation;
 using LocationService.Application.Events.Publishers;
 using LocationService.Application.Pipeline;
 using LocationService.Domain;
@@ -40,6 +41,7 @@ public static class DependencyInjection
             .Map(dest => dest.State, src => (State)null)
             .IgnoreNullValues(true);
 
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         services.AddScoped<IOutboxPublisher, OutboxPublisher>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ApplicationPipelineBehaviour<,>));
         return services;
