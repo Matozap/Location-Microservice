@@ -14,5 +14,5 @@ public interface IRepository
         Expression<Func<T, TKey>> orderDescending = null, Expression<Func<T, T>> selectExpression = null, bool includeNavigationalProperties = false) where T: EntityBase;
     Task<T> AddAsync<T>(T entity) where T : EntityBase;
     Task<T> UpdateAsync<T>(T entity) where T : EntityBase;
-    Task<T> DeleteAsync<T>(T entity) where T : EntityBase;
+    Task<T> DeleteAsync<T>(T entity, bool skipOutbox = false) where T : EntityBase;
 }

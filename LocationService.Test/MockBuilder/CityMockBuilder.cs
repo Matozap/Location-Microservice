@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using AutoFixture;
 using LocationService.Application.Handlers.Cities.v1.Commands;
 using LocationService.Application.Handlers.Cities.v1.Queries;
 using LocationService.Application.Handlers.Cities.v1.Requests;
-using LocationService.Application.Handlers.Cities.v1.Responses;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Cities.v1;
@@ -37,13 +35,6 @@ public static class CityMockBuilder
         repository.GetAsListAsync(Arg.Any<Expression<Func<City, bool>>>(), Arg.Any<Expression<Func<City, string>>>(), 
             Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns(mockCities);
         return repository;
-    }
-
-    private static IEventBus GenerateMockEventBus()
-    {
-        var eventBus = Substitute.For<IEventBus>();
-        eventBus.Publish(Arg.Any<CityCreated>()).Returns(Task.CompletedTask);
-        return eventBus;
     }
 
     private static ICache GenerateMockObjectCache()

@@ -5,11 +5,9 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
-using LocationService.Infrastructure.Bus;
 using LocationService.Infrastructure.Database.Context;
 using LocationService.Infrastructure.Extensions;
 using LocationService.Infrastructure.Utils;
-using LocationService.Message.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace LocationService.Infrastructure.Database.Repositories;
@@ -48,12 +46,17 @@ public class EfRepository : IRepository
         return entity;
     }
     
-    public async Task<T> DeleteAsync<T>(T entity) where T: EntityBase
+    public async Task<T> DeleteAsync<T>(T entity, bool skipOutbox = false) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
         
         _applicationContext.Remove(entity);
-        await CreateOutboxMessage(entity, nameof(DeleteAsync));
+
+        if (!skipOutbox)
+        {
+            await CreateOutboxMessage(entity, nameof(DeleteAsync));
+        }
+
         await _applicationContext.SaveChangesAsync();
     
         return entity;

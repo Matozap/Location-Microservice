@@ -1,6 +1,5 @@
 using System;
 using LocationService.Domain;
-using LocationService.Infrastructure.Bus;
 using LocationService.Infrastructure.Database.Context.Seed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

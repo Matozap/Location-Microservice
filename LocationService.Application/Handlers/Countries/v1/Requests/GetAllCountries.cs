@@ -1,10 +1,10 @@
 using System.Collections.Generic;
+using LocationService.Application.Interfaces;
 using LocationService.Message.Contracts.Countries.v1;
-using MediatR;
 
 namespace LocationService.Application.Handlers.Countries.v1.Requests;
 
-public class GetAllCountries : IRequest<List<CountryData>>
+public class GetAllCountries : IQuery<List<CountryData>>
 {
     
 }

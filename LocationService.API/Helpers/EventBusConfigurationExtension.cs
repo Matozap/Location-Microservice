@@ -2,14 +2,12 @@
  using System.Collections.Generic;
  using System.Linq;
  using System.Reflection;
- using LocationService.Application.Events.Publishers;
  using LocationService.Application.Interfaces;
  using LocationService.Infrastructure.Bus;
  using LocationService.Message.Events.Cities.v1;
  using LocationService.Message.Events.Countries.v1;
  using LocationService.Message.Events.States.v1;
  using MassTransit;
- using MediatR;
  using Microsoft.Extensions.Configuration;
  using Microsoft.Extensions.DependencyInjection;
 
@@ -66,7 +64,7 @@ public static class EventBusConfigurationExtension
         
         services.AddSingleton(eventBusOptions);
         services.AddScoped<IEventBus, EventBus>();
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PublishBehaviour<,>));
+        
         return services;
     }
 
