@@ -37,7 +37,6 @@ public static class DependencyInjection
 
     public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app, IWebHostEnvironment env)
     {
-        app.UseWebApiExceptionHandler(env);            
         return app;
     }
 
