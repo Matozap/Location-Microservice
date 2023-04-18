@@ -39,6 +39,7 @@ public static class StartupServicesExtension
         
         AddDependencies(services, configuration);
         AddOptionalServices(services, configuration);
+        services.AddTransient<GlobalExceptionMiddleware>();
     }
     
     public static void AddFunctionServices(this IServiceCollection services, IConfiguration configuration)
@@ -62,6 +63,7 @@ public static class StartupServicesExtension
                 config.ResponseCompressionLevel = CompressionLevel.Optimal;
                 config.EnableDetailedErrors = true;
                 config.IgnoreUnknownServices = true;
+                config.Interceptors.Add<GlobalExceptionMiddleware>();
             }
         );
         if(GrpcSettings(configuration).ReflectionDisabled) return;
@@ -87,6 +89,7 @@ public static class StartupServicesExtension
             .AllowAnyHeader());
         app.MapHealthChecks("/heartbeat");
         app.MapControllers();
+        app.UseMiddleware<GlobalExceptionMiddleware>();
         
         if(GrpcSettings(configuration).Disabled) return;
         app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true});

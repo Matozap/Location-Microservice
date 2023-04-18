@@ -6,7 +6,6 @@ using FluentValidation;
 using LocationService.Application.Events.Publishers;
 using LocationService.Application.Interfaces;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Pipeline;
 
@@ -14,11 +13,9 @@ public sealed class ApplicationPipelineBehaviour<TRequest, TResponse> : IPipelin
 {
     private readonly IOutboxPublisher _outboxPublisher;
     private readonly IEnumerable<IValidator<TRequest>> _validators;
-    private readonly ILogger<ApplicationPipelineBehaviour<TRequest, TResponse>> _logger;
 
-    public ApplicationPipelineBehaviour(IOutboxPublisher outboxPublisher, IEnumerable<IValidator<TRequest>> validators, ILogger<ApplicationPipelineBehaviour<TRequest, TResponse>> logger)
+    public ApplicationPipelineBehaviour(IOutboxPublisher outboxPublisher, IEnumerable<IValidator<TRequest>> validators)
     {
-        _logger = logger;
         _validators = validators;
         _outboxPublisher = outboxPublisher;
     }
@@ -26,7 +23,6 @@ public sealed class ApplicationPipelineBehaviour<TRequest, TResponse> : IPipelin
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         ApplyValidators(request);
-        
         var response = await next();
         
         if (request is ICommand<TResponse>)
@@ -48,7 +44,6 @@ public sealed class ApplicationPipelineBehaviour<TRequest, TResponse> : IPipelin
 
         if (!failures.Any()) return;
         
-        var failureMessage = string.Join(", ", failures.Select(failure => failure.ErrorMessage).ToArray());
-        throw new System.ComponentModel.DataAnnotations.ValidationException(failureMessage);
+        throw new ValidationException(failures);
     }
 }

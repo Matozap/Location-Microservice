@@ -72,7 +72,12 @@ public class Program
 
     private static IHost CreateFunctionHost() =>
         new HostBuilder()
-            .ConfigureFunctionsWorkerDefaults()
+            .ConfigureFunctionsWorkerDefaults(
+                builder =>
+                {
+                    builder.UseMiddleware<GlobalExceptionMiddleware>();
+                }
+            )
             .ConfigureAppConfiguration((hostingContext, configBuilder) =>
             {
                 var env = hostingContext.HostingEnvironment;
