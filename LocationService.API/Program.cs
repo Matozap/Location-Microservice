@@ -82,7 +82,7 @@ public class Program
             {
                 var env = hostingContext.HostingEnvironment;
                 configBuilder
-                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
             })
             .ConfigureServices((appBuilder, services) =>
@@ -96,7 +96,7 @@ public class Program
                 {
                     Log.Fatal(ex, "[Program] Error creating function host - {Error}", ex.Message);
                 }
-                Log.Information("[Program] ConfigureServices [DONE]");
+                Log.Information("[Program] Configure services completed successfully");
             })
             .CreateLogger()
             .Build();
