@@ -20,12 +20,20 @@ public sealed class Cache : ICache
     private readonly IDistributedCache _distributedCache;
     private readonly CacheOptions _cacheOptions;
     private readonly ILogger<Cache> _logger;
+    private readonly DistributedCacheEntryOptions _distributedCacheEntryOptions;
     
+    private const string AllKeys = "ICacheAllKeys";
+
     public Cache(IDistributedCache cache, CacheOptions cacheOptions, ILogger<Cache> logger)
     {
         _distributedCache = cache;
         _cacheOptions = cacheOptions;
         _logger = logger;
+        _distributedCacheEntryOptions = new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60),
+            SlidingExpiration = TimeSpan.FromSeconds(30)
+        };
         _errorMessages = new List<string>();
     }
 
@@ -67,14 +75,10 @@ public sealed class Cache : ICache
                 return;
 
             var cacheKey = $"{Prefix}:{key}";
-            var cacheEntryOptions = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(60),
-                SlidingExpiration = TimeSpan.FromSeconds(30)
-            };
 
             var result = value.Serialize();
-            await _distributedCache.SetStringAsync(cacheKey, result, cacheEntryOptions, token);
+            await _distributedCache.SetStringAsync(cacheKey, result, _distributedCacheEntryOptions, token);
+            _ = AddToKeyListAsync(cacheKey, token);
             SetHealthyStatus();
         }
         catch (Exception ex)
@@ -106,6 +110,19 @@ public sealed class Cache : ICache
         }
     }
 
+    public async Task ClearCacheAsync(CancellationToken token = default)
+    {
+        var result = await _distributedCache.GetStringAsync(AllKeys, token);
+        if (result != null)
+        {
+            var keys = result.Deserialize<List<string>>();
+            foreach (var key in keys)
+            {
+                await RemoveValueAsync(key, token);
+            }
+        }
+    }
+
     private void CheckHealthStatus()
     {
         if (_automaticallyDisabled && _automaticallyDisabledTime.AddMinutes(_cacheOptions.HealthCheck.ResetIntervalMinutes) < DateTime.UtcNow)
@@ -134,5 +151,21 @@ public sealed class Cache : ICache
         _currentErrorCount = 0;
         _cacheOptions.Disabled = false;
         _automaticallyDisabled = false;
+    }
+
+    private async Task AddToKeyListAsync(string key, CancellationToken token = default)
+    {
+        var keys = new List<string>();
+        var result = await _distributedCache.GetStringAsync(AllKeys, token);
+        if (result != null)
+        {
+            keys = result.Deserialize<List<string>>();
+        }
+
+        if (!keys.Contains(key))
+        {
+            keys.Add(key);
+            await _distributedCache.SetStringAsync(AllKeys, keys.Serialize(), new DistributedCacheEntryOptions(), token);
+        }
     }
 }

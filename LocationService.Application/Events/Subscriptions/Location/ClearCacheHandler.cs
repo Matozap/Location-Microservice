@@ -27,7 +27,7 @@ public class ClearCacheHandler : IRequestHandler<ClearCache, bool>
     {            
         if(request.ClearAll)
         {
-            // No method to clear the complete cache as of now - https://github.com/dotnet/runtime/issues/36547
+            await _cache.ClearCacheAsync(cancellationToken);
         }
         else
         {
