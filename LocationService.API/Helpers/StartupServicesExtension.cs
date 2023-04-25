@@ -56,7 +56,8 @@ public static class StartupServicesExtension
     
     private static void AddOptionalServices(this IServiceCollection services, IConfiguration configuration)
     {
-        if(GrpcSettings(configuration).Disabled) return;
+        var grpcSettings = GrpcSettings(configuration);
+        if(grpcSettings.Disabled) return;
         services.AddCodeFirstGrpc(
             config =>
             {
@@ -66,7 +67,7 @@ public static class StartupServicesExtension
                 config.Interceptors.Add<GlobalExceptionMiddleware>();
             }
         );
-        if(GrpcSettings(configuration).ReflectionDisabled) return;
+        if(grpcSettings.ReflectionDisabled) return;
         services.AddCodeFirstGrpcReflection();
     }
     
