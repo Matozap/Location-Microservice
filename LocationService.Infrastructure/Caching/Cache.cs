@@ -46,7 +46,7 @@ public sealed class Cache : ICache
             if (_cacheOptions.Disabled)
                 return null;
             
-            var cacheKey = $"{Prefix}:{key}";
+            var cacheKey = GenerateKey(key);
             var result = await _distributedCache.GetStringAsync(cacheKey, token);
             if (string.IsNullOrEmpty(result))
             {
@@ -74,7 +74,7 @@ public sealed class Cache : ICache
             if (_cacheOptions.Disabled)
                 return;
 
-            var cacheKey = $"{Prefix}:{key}";
+            var cacheKey = GenerateKey(key);
 
             var result = value.Serialize();
             await _distributedCache.SetStringAsync(cacheKey, result, _distributedCacheEntryOptions, token);
@@ -98,7 +98,7 @@ public sealed class Cache : ICache
             if (_cacheOptions.Disabled)
                 return;
             
-            var cacheKey = $"{Prefix}:{key}";
+            var cacheKey = GenerateKey(key);
             await _distributedCache.RemoveAsync(cacheKey, token);
             SetHealthyStatus();
         }
@@ -118,8 +118,10 @@ public sealed class Cache : ICache
             var keys = result.Deserialize<List<string>>();
             foreach (var key in keys)
             {
-                await RemoveValueAsync(key, token);
+                await _distributedCache.RemoveAsync(key, token);
             }
+            
+            _logger.LogInformation("Cache cleared successfully");
         }
     }
 
@@ -168,4 +170,6 @@ public sealed class Cache : ICache
             await _distributedCache.SetStringAsync(AllKeys, keys.Serialize(), new DistributedCacheEntryOptions(), token);
         }
     }
+
+    private static string GenerateKey(string key) => $"{Prefix}:{key}";
 }
