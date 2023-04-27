@@ -78,4 +78,4 @@ services:
       - "7006:5672"
       - "7007:15672"
     volumes:
-      - "local_rabbitmq_data:/var/lib/postgres"
+      - "local_rabbitmq_data:/var/lib/rabbitmq"
