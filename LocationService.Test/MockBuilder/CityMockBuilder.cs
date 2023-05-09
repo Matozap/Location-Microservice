@@ -22,7 +22,7 @@ public static class CityMockBuilder
     private static IRepository GenerateMockRepository(City location = null, int rowCount = 100)
     {
         var mockCity = location ?? GenerateMockCity();
-        var mockCities = GenerateMockDomainCityList(rowCount);
+        var mockCitiesList = GenerateMockDomainCityList(rowCount);
         
         var repository = Substitute.For<IRepository>();
         
@@ -33,7 +33,7 @@ public static class CityMockBuilder
         repository.GetAsSingleAsync(Arg.Any<Expression<Func<City, bool>>>(), Arg.Any<Expression<Func<City, string>>>(), 
             Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns(mockCity);
         repository.GetAsListAsync(Arg.Any<Expression<Func<City, bool>>>(), Arg.Any<Expression<Func<City, string>>>(), 
-            Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns(mockCities);
+            Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns(mockCitiesList);
         return repository;
     }
 

@@ -22,7 +22,7 @@ public static class StateMockBuilder
     private static IRepository GenerateMockRepository(State location = null, int rowCount = 100)
     {
         var mockState = location ?? GenerateMockState();
-        var mockStates = GenerateMockDomainStateList(rowCount);
+        var mockStatesList = GenerateMockDomainStateList(rowCount);
         
         var repository = Substitute.For<IRepository>();
         
@@ -33,7 +33,7 @@ public static class StateMockBuilder
         repository.GetAsSingleAsync(Arg.Any<Expression<Func<State, bool>>>(), Arg.Any<Expression<Func<State, string>>>(), 
             Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns(mockState);
         repository.GetAsListAsync(Arg.Any<Expression<Func<State, bool>>>(), Arg.Any<Expression<Func<State, string>>>(), 
-            Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns(mockStates);
+            Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns(mockStatesList);
         return repository;
     }
 
