@@ -109,7 +109,7 @@ public class EfRepository : IRepository
             result = result.OrderBy(orderDescending);
         }
         
-        if (orderDescending != null)
+        if (selectExpression != null)
         {
             result = result.Select(selectExpression);
         }
