@@ -12,7 +12,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
 using Microsoft.Extensions.Logging;
 
-namespace LocationService.API.Helpers;
+namespace LocationService.API.Helpers.Middleware;
 
 internal sealed class GlobalExceptionMiddleware : Interceptor, IFunctionsWorkerMiddleware, IMiddleware
 {

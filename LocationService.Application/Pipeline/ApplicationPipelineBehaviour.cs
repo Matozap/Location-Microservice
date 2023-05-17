@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using LocationService.Application.Events.Publishers;
-using LocationService.Application.Interfaces;
+using LocationService.Message.Contracts.Common.Interfaces;
 using MediatR;
 
 namespace LocationService.Application.Pipeline;

@@ -4,9 +4,17 @@ using System.IO;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Bustr;
+using DistributedCache.Core;
+using LocationService.API.Helpers.Configuration;
+using LocationService.API.Helpers.Middleware;
+using LocationService.API.Inputs.Consumers.Self;
 using LocationService.API.Inputs.Grpc;
 using LocationService.Application;
 using LocationService.Infrastructure;
+using LocationService.Message.Events.Cities.v1;
+using LocationService.Message.Events.Countries.v1;
+using LocationService.Message.Events.States.v1;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -37,7 +45,7 @@ public static class StartupServicesExtension
             options.Level = CompressionLevel.Fastest; 
         }); 
         
-        AddDependencies(services, configuration);
+        AddRequiredServices(services, configuration);
         AddOptionalServices(services, configuration);
         services.AddTransient<GlobalExceptionMiddleware>();
     }
@@ -51,7 +59,7 @@ public static class StartupServicesExtension
             options.PropertyNameCaseInsensitive = true;
         });
         
-        AddDependencies(services, configuration);
+        AddRequiredServices(services, configuration);
     }
     
     private static void AddOptionalServices(this IServiceCollection services, IConfiguration configuration)
@@ -71,11 +79,29 @@ public static class StartupServicesExtension
         services.AddCodeFirstGrpcReflection();
     }
     
-    private static void AddDependencies(IServiceCollection services, IConfiguration configuration)
+    private static void AddRequiredServices(IServiceCollection services, IConfiguration configuration)
     {
+        var busSettings = ConfigurationHelper.BusSettings(configuration);
+        var cacheSettings = ConfigurationHelper.CacheSettings(configuration);
+        
         services.AddApplication()
             .AddInfrastructure(configuration)
-            .AddEventBus(configuration);
+            .AddDistributedCache(options =>
+            {
+                options.Configure(cacheSettings.CacheType, cacheSettings.ConnectionString, cacheSettings.InstanceName)
+                    .ConfigureHealthCheck(true, 5, 2)
+                    .DisableCache(cacheSettings.Disabled);
+            })
+            .AddBustr(options =>
+            {
+                options.Configure(busSettings.BusType, busSettings.ConnectionString)
+                    .SetRetryIntervals(TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(10))
+                    .UseDeadLetterQueue(true)
+                    .DisableBus(busSettings.Disabled)
+                    .MapTopic("location/country-event", typeof(CountryEvent), typeof(CountryEventConsumer), "self.country.location.sub")
+                    .MapTopic("location/state-event", typeof(StateEvent), typeof(StateEventConsumer), "self.state.location.sub")
+                    .MapTopic("location/city-event", typeof(CityEvent), typeof(CityEventConsumer), "self.city.location.sub");
+            });
     }
     
     public static void AddHostMiddleware(this WebApplication app, IWebHostEnvironment environment, IConfiguration configuration)

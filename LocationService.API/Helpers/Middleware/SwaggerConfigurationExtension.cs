@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace LocationService.API.Helpers;
+namespace LocationService.API.Helpers.Middleware;
 
 public static class SwaggerConfigurationExtension
 {

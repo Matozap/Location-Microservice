@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Bustr.Bus;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Cities.v1;
@@ -67,13 +68,13 @@ public class OutboxPublisher : IOutboxPublisher
         switch (outboxMessage.Operation)
         {
             case Operation.Create:
-                await _eventBus.Publish(new CountryEvent { Details = countryData, Action = EventAction.Created });
+                await _eventBus.PublishAsync(new CountryEvent { Details = countryData, Action = EventAction.Created });
                 break;
             case Operation.Update:
-                await _eventBus.Publish(new CountryEvent { Details = countryData, Action = EventAction.Updated });
+                await _eventBus.PublishAsync(new CountryEvent { Details = countryData, Action = EventAction.Updated });
                 break;
             case Operation.Delete:
-                await _eventBus.Publish(new CountryEvent { Details = countryData, Action = EventAction.Deleted });
+                await _eventBus.PublishAsync(new CountryEvent { Details = countryData, Action = EventAction.Deleted });
                 break;
             case Operation.None:
             default:
@@ -90,13 +91,13 @@ public class OutboxPublisher : IOutboxPublisher
         switch (outboxMessage.Operation)
         {
             case Operation.Create:
-                await _eventBus.Publish(new StateEvent { Details = stateData, Action = EventAction.Created});
+                await _eventBus.PublishAsync(new StateEvent { Details = stateData, Action = EventAction.Created});
                 break;
             case Operation.Update:
-                await _eventBus.Publish(new StateEvent { Details = stateData, Action = EventAction.Updated});
+                await _eventBus.PublishAsync(new StateEvent { Details = stateData, Action = EventAction.Updated});
                 break;
             case Operation.Delete:
-                await _eventBus.Publish(new StateEvent { Details = stateData, Action = EventAction.Deleted});
+                await _eventBus.PublishAsync(new StateEvent { Details = stateData, Action = EventAction.Deleted});
                 break;
             case Operation.None:
             default:
@@ -113,13 +114,13 @@ public class OutboxPublisher : IOutboxPublisher
         switch (outboxMessage.Operation)
         {
             case Operation.Create:
-                await _eventBus.Publish(new CityEvent { Details = cityData, Action = EventAction.Created});
+                await _eventBus.PublishAsync(new CityEvent { Details = cityData, Action = EventAction.Created});
                 break;
             case Operation.Update:
-                await _eventBus.Publish(new CityEvent { Details = cityData, Action = EventAction.Updated});
+                await _eventBus.PublishAsync(new CityEvent { Details = cityData, Action = EventAction.Updated});
                 break;
             case Operation.Delete:
-                await _eventBus.Publish(new CityEvent { Details = cityData, Action = EventAction.Deleted});
+                await _eventBus.PublishAsync(new CityEvent { Details = cityData, Action = EventAction.Deleted});
                 break;
             case Operation.None:
             default:

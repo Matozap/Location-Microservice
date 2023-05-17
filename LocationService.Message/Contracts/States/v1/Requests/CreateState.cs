@@ -1,11 +1,13 @@
+using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Application.Interfaces;
-using LocationService.Message.Contracts.States.v1;
+using LocationService.Message.Contracts.Common.Interfaces;
 
-namespace LocationService.Application.Handlers.States.v1.Requests;
+namespace LocationService.Message.Contracts.States.v1.Requests;
 
+[DataContract]
 public class CreateState : ICommand<StateData>
 {
+    [DataMember(Order = 1)]
     public StateData Details { get; init; }
 }
 

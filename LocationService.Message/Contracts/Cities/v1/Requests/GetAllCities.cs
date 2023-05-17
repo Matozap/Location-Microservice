@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Application.Interfaces;
-using LocationService.Message.Contracts.Cities.v1;
+using LocationService.Message.Contracts.Common.Interfaces;
 
-namespace LocationService.Application.Handlers.Cities.v1.Requests;
+namespace LocationService.Message.Contracts.Cities.v1.Requests;
 
+[DataContract]
 public class GetAllCities : IQuery<List<CityData>>
 {
+    [DataMember(Order = 1)]
     public string StateId { get; init; }
 }
 

@@ -1,10 +1,13 @@
+using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Application.Interfaces;
+using LocationService.Message.Contracts.Common.Interfaces;
 
-namespace LocationService.Application.Handlers.States.v1.Requests;
+namespace LocationService.Message.Contracts.States.v1.Requests;
 
+[DataContract]
 public class SoftDeleteState : ICommand<string>
 {
+    [DataMember(Order = 1)]
     public string Id { get; init; }
 }
 

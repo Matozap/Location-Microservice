@@ -1,11 +1,13 @@
+using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Application.Interfaces;
-using LocationService.Message.Contracts.Countries.v1;
+using LocationService.Message.Contracts.Common.Interfaces;
 
-namespace LocationService.Application.Handlers.Countries.v1.Requests;
+namespace LocationService.Message.Contracts.Countries.v1.Requests;
 
+[DataContract]
 public class UpdateCountry : ICommand<CountryData>
 {
+    [DataMember(Order = 1)]
     public CountryData Details { get; init; }
 }
 

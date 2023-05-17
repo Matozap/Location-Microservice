@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using LocationService.Application.Handlers.States.v1.Requests;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
+using LocationService.Message.Contracts.States.v1.Requests;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

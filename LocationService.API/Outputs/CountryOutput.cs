@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using LocationService.API.Outputs.Base;
-using LocationService.Application.Handlers.Countries.v1.Requests;
 using LocationService.Message.Contracts.Countries.v1;
+using LocationService.Message.Contracts.Countries.v1.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Http;
