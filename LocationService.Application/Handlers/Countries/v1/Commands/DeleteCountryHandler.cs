@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Handlers.Countries.v1.Requests;
@@ -32,12 +33,26 @@ public class DeleteCountryHandler : IRequestHandler<DeleteCountry, string>
 
     private async Task<Country> DeleteCountryAsync(string id)
     {
-        var entity = await _repository.GetAsSingleAsync<Country, string>(c => c.Id == id || c.Code == id);
-            
-        if(entity != null)
-        {                
-            await _repository.DeleteAsync(entity);
+        var entity = await _repository.GetAsSingleAsync<Country, string>(c => c.Id == id || c.Code == id, includeNavigationalProperties: true);
+
+        if (entity == null) return null;
+
+        if (entity.States?.Count > 0)
+        {
+            foreach (var state in entity.States.ToList())
+            {
+                if (state.Cities?.Count > 0)
+                {
+                    foreach (var city in state.Cities.ToList())
+                    {
+                        await _repository.DeleteAsync(city);
+                    }
+                }
+                await _repository.DeleteAsync(state);
+            }
         }
+
+        await _repository.DeleteAsync(entity);
 
         return entity;
     }

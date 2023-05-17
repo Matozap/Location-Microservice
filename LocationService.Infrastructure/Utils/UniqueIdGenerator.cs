@@ -6,6 +6,6 @@ public static class UniqueIdGenerator
 {
     public static string GenerateSequentialId()
     {
-        return Uuid.NewDatabaseFriendly(UUIDNext.Database.SqlServer).ToString();
+        return Uuid.NewSequential().ToString();
     }
 }

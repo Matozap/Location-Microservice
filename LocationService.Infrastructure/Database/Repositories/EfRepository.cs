@@ -106,7 +106,7 @@ public class EfRepository : IRepository
         
         if (orderDescending != null)
         {
-            result = result.OrderBy(orderDescending);
+            result = result.OrderByDescending(orderDescending);
         }
         
         if (selectExpression != null)

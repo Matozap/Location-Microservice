@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LocationService.Application.Handlers.States.v1.Requests;
@@ -29,8 +30,16 @@ public class DeleteStateHandler : IRequestHandler<DeleteState, string>
 
     private async Task<State> DeleteStateAsync(string stateId)
     {
-        var entity = await _repository.GetAsSingleAsync<State, string>(c => c.Id == stateId || c.Code == stateId);
+        var entity = await _repository.GetAsSingleAsync<State, string>(c => c.Id == stateId || c.Code == stateId, includeNavigationalProperties: true);
         if (entity == null) return null;
+        
+        if (entity.Cities?.Count > 0)
+        {
+            foreach (var city in entity.Cities.ToList())
+            {
+                await _repository.DeleteAsync(city);
+            }
+        }
             
         await _repository.DeleteAsync(entity);
         return entity;
