@@ -2,13 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoFixture;
+using Bustr.Bus;
+using DistributedCache.Core;
 using LocationService.Application.Handlers.Cities.v1.Commands;
 using LocationService.Application.Handlers.Cities.v1.Queries;
-using LocationService.Application.Handlers.Cities.v1.Requests;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Cities.v1;
+using LocationService.Message.Contracts.Cities.v1.Requests;
+using LocationService.Message.Events.Cities.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -41,6 +45,13 @@ public static class CityMockBuilder
     {
         var cache = Substitute.For<ICache>();
         return cache;
+    }
+    
+    private static IEventBus GenerateMockEventBus()
+    {
+        var eventBus = Substitute.For<IEventBus>();
+        eventBus.PublishAsync(Arg.Any<CityEvent>()).Returns(Task.CompletedTask);
+        return eventBus;
     }
 
     private static List<City> GenerateMockDomainCityList(int count)
@@ -80,19 +91,19 @@ public static class CityMockBuilder
         if (typeof(T) == typeof(UpdateCityHandler))
         {
             return new UpdateCityHandler(NullLogger<UpdateCityHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(SoftDeleteCityHandler))
         {
             return new SoftDeleteCityHandler(NullLogger<SoftDeleteCityHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(),GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(DeleteCityHandler))
         {
             return new DeleteCityHandler(NullLogger<DeleteCityHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(),GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(CreateCityHandler))
@@ -101,7 +112,7 @@ public static class CityMockBuilder
             repository.GetAsSingleAsync(Arg.Any<Expression<Func<City, bool>>>(), Arg.Any<Expression<Func<City, string>>>(), 
                 Arg.Any<Expression<Func<City, string>>>(), Arg.Any<Expression<Func<City, City>>>(), Arg.Any<bool>()).Returns((City)null);
             return new CreateCityHandler(NullLogger<CreateCityHandler>.Instance,
-                repository);
+                repository, GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(GetAllCitiesHandler))

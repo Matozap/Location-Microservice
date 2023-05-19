@@ -1,32 +1,52 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using LocationService.Application.Handlers.States.v1.Requests;
+using Bustr.Bus;
+using DistributedCache.Core;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
-using MediatR;
+using LocationService.Message.Contracts.States.v1;
+using LocationService.Message.Contracts.States.v1.Requests;
+using LocationService.Message.Events;
+using LocationService.Message.Events.States.v1;
+using Mapster;
+using MediatrBuilder;
 using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Handlers.States.v1.Commands;
 
-public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, string>
+public class SoftDeleteStateHandler : BuilderRequestHandler<SoftDeleteState, StateData>
 {
     private readonly ILogger<SoftDeleteStateHandler> _logger;
     private readonly IRepository _repository;
+    private readonly ICache _cache;
+    private readonly IEventBus _eventBus;
 
-    public SoftDeleteStateHandler(ILogger<SoftDeleteStateHandler> logger, IRepository repository)
+    public SoftDeleteStateHandler(ILogger<SoftDeleteStateHandler> logger, IRepository repository, ICache cache, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
+        _cache = cache;
+        _eventBus = eventBus;
+    }
+    
+    protected override Task<StateData> PreProcess(SoftDeleteState request, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult<StateData>(null);
     }
 
-    public async Task<string> Handle(SoftDeleteState request, CancellationToken cancellationToken)
+    protected override async Task<StateData> Process(SoftDeleteState request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request.Id);
-        
         var entity = await DisableState(request.Id);
+        
         _logger.LogInformation("State with id {StateId} disabled successfully", entity?.Id);
-        return entity?.Id;
+        
+        return entity.Adapt<State, StateData>();
+    }
+
+    protected override async Task PostProcess(SoftDeleteState request, StateData response, CancellationToken cancellationToken = default)
+    {
+        await ClearCache(response, cancellationToken);
+        await _eventBus.PublishAsync(new StateEvent { Details = response, Action = EventAction.Deleted });
     }
 
     private async Task<State> DisableState(string stateId)
@@ -38,5 +58,13 @@ public class SoftDeleteStateHandler : IRequestHandler<SoftDeleteState, string>
         await _repository.UpdateAsync(entity);
 
         return entity;
+    }
+    
+    private async Task ClearCache(StateData data, CancellationToken cancellationToken)
+    {
+        await _cache.ClearCacheWithPrefixAsync($"{nameof(State)}:list", cancellationToken);
+        await _cache.ClearCacheWithPrefixAsync($"{nameof(State)}:id:{data?.Id}", cancellationToken);
+        await _cache.ClearCacheWithPrefixAsync($"{nameof(State)}:id:{data?.Code}", cancellationToken);
+        await _cache.ClearCacheWithPrefixAsync($"{nameof(Country)}:id:{data?.CountryId}", cancellationToken);
     }
 }

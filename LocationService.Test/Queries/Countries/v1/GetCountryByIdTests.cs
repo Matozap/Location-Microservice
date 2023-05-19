@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LocationService.Application.Handlers.Countries.v1.Queries;
-using LocationService.Application.Handlers.Countries.v1.Requests;
+using LocationService.Message.Contracts.Countries.v1.Requests;
 using LocationService.Test.MockBuilder;
 using Xunit;
 

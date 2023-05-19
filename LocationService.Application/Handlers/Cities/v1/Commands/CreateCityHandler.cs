@@ -1,38 +1,54 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using LocationService.Application.Handlers.Cities.v1.Requests;
+using Bustr.Bus;
+using DistributedCache.Core;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Cities.v1;
+using LocationService.Message.Contracts.Cities.v1.Requests;
+using LocationService.Message.Events;
+using LocationService.Message.Events.Cities.v1;
 using Mapster;
-using MediatR;
+using MediatrBuilder;
 using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Handlers.Cities.v1.Commands;
 
-public class CreateCityHandler : IRequestHandler<CreateCity, CityData>
+public class CreateCityHandler : BuilderRequestHandler<CreateCity, CityData>
 {
     private readonly ILogger<CreateCityHandler> _logger;
     private readonly IRepository _repository;
+    private readonly ICache _cache;
+    private readonly IEventBus _eventBus;
 
-    public CreateCityHandler(ILogger<CreateCityHandler> logger, IRepository repository)
+    public CreateCityHandler(ILogger<CreateCityHandler> logger, IRepository repository, ICache cache, IEventBus eventBus)
     {
         _logger = logger;
         _repository = repository;
+        _cache = cache;
+        _eventBus = eventBus;
+    }
+    
+    protected override Task<CityData> PreProcess(CreateCity request, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult<CityData>(null);
     }
 
-    public async Task<CityData> Handle(CreateCity request, CancellationToken cancellationToken)
+    protected override async Task<CityData> Process(CreateCity request, CancellationToken cancellationToken = default)
     {
-        ArgumentException.ThrowIfNullOrEmpty(request.Details?.Name);
-        
-        var resultEntity = await CreateCity(request.Details);
-        if (resultEntity == null) return null;
-        
-        _logger.LogInformation("City with id {CityID} created successfully", resultEntity.Id);
-        var resultDto = resultEntity.Adapt<City, CityData>();
+        var entity = await CreateCity(request.Details);
+        if (entity == null) return null;
 
-        return resultDto;
+        _logger.LogInformation("City with id {CityID} created successfully", entity.Id);
+        
+        return entity.Adapt<City, CityData>();
+    }
+
+    protected override async Task PostProcess(CreateCity request, CityData response, CancellationToken cancellationToken = default)
+    {
+        await ClearCache(response, cancellationToken);
+        await _eventBus.PublishAsync(new CityEvent { Details = response, Action = EventAction.Created });
     }
 
     private async Task<City> CreateCity(CityData city)
@@ -47,5 +63,12 @@ public class CreateCityHandler : IRequestHandler<CreateCity, CityData>
         entity.LastUpdateDate = DateTime.Now;
         
         return await _repository.AddAsync(entity);
+    }
+    
+    private async Task ClearCache(CityData data, CancellationToken cancellationToken)
+    {
+        await _cache.ClearCacheWithPrefixAsync($"{nameof(City)}:id:{data?.Id}", cancellationToken);
+        await _cache.ClearCacheWithPrefixAsync($"{nameof(City)}:list", cancellationToken);
+        await _cache.ClearCacheWithPrefixAsync($"{nameof(State)}:id:{data?.StateId}", cancellationToken);
     }
 }

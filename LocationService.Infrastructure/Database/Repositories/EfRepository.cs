@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Infrastructure.Database.Context;
-using LocationService.Infrastructure.Extensions;
 using LocationService.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +27,6 @@ public class EfRepository : IRepository
         ArgumentNullException.ThrowIfNull(entity);
         
         entity.Id = UniqueIdGenerator.GenerateSequentialId();
-        await CreateOutboxMessage(entity, nameof(AddAsync));
         await _applicationContext.AddAsync(entity);
         await _applicationContext.SaveChangesAsync();
     
@@ -40,22 +38,16 @@ public class EfRepository : IRepository
         ArgumentNullException.ThrowIfNull(entity);
 
         _applicationContext.Update(entity);
-        await CreateOutboxMessage(entity, nameof(UpdateAsync));
         await _applicationContext.SaveChangesAsync();
     
         return entity;
     }
     
-    public async Task<T> DeleteAsync<T>(T entity, bool skipOutbox = false) where T: EntityBase
+    public async Task<T> DeleteAsync<T>(T entity) where T: EntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
         
         _applicationContext.Remove(entity);
-
-        if (!skipOutbox)
-        {
-            await CreateOutboxMessage(entity, nameof(DeleteAsync));
-        }
 
         await _applicationContext.SaveChangesAsync();
     
@@ -185,28 +177,5 @@ public class EfRepository : IRepository
             default:
                 return source.AsSplitQuery().Include(city => city.State).AsNoTracking().ToList();
         }
-    }
-    
-    private async Task CreateOutboxMessage<T>(T entity, string sourceMethod) where T: EntityBase
-    {
-        if(typeof(T) == typeof(Outbox)) return;
-        
-        var outbox = new Outbox
-        {
-            Id = UniqueIdGenerator.GenerateSequentialId(),
-            JsonObject = entity.Serialize(),
-            LastUpdateDate = entity.LastUpdateDate,
-            LastUpdateUserId = entity.LastUpdateUserId,
-            ObjectType = typeof(T).Name,
-            Operation = sourceMethod switch
-            {
-                nameof(AddAsync) => Operation.Create,
-                nameof(UpdateAsync) => Operation.Update,
-                nameof(DeleteAsync) => Operation.Delete,
-                _ => Operation.None
-            }
-        };
-
-        await _applicationContext.AddAsync(outbox);
     }
 }

@@ -1,16 +1,17 @@
 using System.Threading;
 using System.Threading.Tasks;
-using LocationService.Application.Handlers.Cities.v1.Requests;
+using DistributedCache.Core;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Cities.v1;
+using LocationService.Message.Contracts.Cities.v1.Requests;
 using Mapster;
-using MediatR;
+using MediatrBuilder;
 using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Handlers.Cities.v1.Queries;
 
-public class GetCityByIdHandler : IRequestHandler<GetCityById, CityData>
+public class GetCityByIdHandler : BuilderRequestHandler<GetCityById, CityData>
 {
     private readonly ILogger<GetCityByIdHandler> _logger;
     private readonly IRepository _repository;
@@ -22,37 +23,36 @@ public class GetCityByIdHandler : IRequestHandler<GetCityById, CityData>
         _cache = cache;
         _logger = logger;
     }
-
-    public async Task<CityData> Handle(GetCityById request, CancellationToken cancellationToken)
+    
+    protected override async Task<CityData> PreProcess(GetCityById request, CancellationToken cancellationToken = default)
     {
         var cacheKey = GetCacheKey(request.Id);
 
         var cachedValue = await _cache.GetCacheValueAsync<CityData>(cacheKey, cancellationToken);
-        if (cachedValue != null)
-        {
-            _logger.LogInformation("Cache value found for {Key}", cacheKey);
-            return cachedValue;
-        }
-
-        var dataValue = await GetStateById(request.Id);
-
-        if(dataValue != null)
-        {
-            _ = _cache.SetCacheValueAsync(cacheKey, dataValue, cancellationToken);
-        }
-            
-        return dataValue;
+        if (cachedValue == null) return null;
+        
+        _logger.LogInformation("Cache value found for {Key}", cacheKey);
+        return cachedValue;
     }
 
-    private async Task<CityData> GetStateById(string id)
+    protected override async Task<CityData> Process(GetCityById request, CancellationToken cancellationToken = default)
     {
         var entity = await _repository.GetAsSingleAsync<City, string>(
-            predicate: city => city.Id == id && !city.Disabled,
+            predicate: city => city.Id == request.Id && !city.Disabled,
             orderAscending: city => city.Name,
             includeNavigationalProperties: true);
         var resultDto = entity.Adapt<City, CityData>();
         return resultDto;
     }
 
-    public static string GetCacheKey(string id) => $"City:id:{id}";
+    protected override Task PostProcess(GetCityById request, CityData response, CancellationToken cancellationToken = default)
+    {
+        if(response != null)
+        {
+            _ = _cache.SetCacheValueAsync(GetCacheKey(request.Id), response, cancellationToken);
+        }
+        return Task.CompletedTask;
+    }
+
+    private static string GetCacheKey(string id) => $"{nameof(City)}:id:{id}";
 }

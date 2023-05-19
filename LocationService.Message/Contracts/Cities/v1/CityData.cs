@@ -1,14 +1,14 @@
-﻿using ProtoBuf;
+﻿using System.Runtime.Serialization;
 
 namespace LocationService.Message.Contracts.Cities.v1;
 
-[ProtoContract]
+[DataContract]
 public class CityData
 {
-    [ProtoMember(1, DataFormat = DataFormat.WellKnown)]
+    [DataMember(Order = 1)]
     public string Id { get; set; }
-    [ProtoMember(2, DataFormat = DataFormat.WellKnown)]
+    [DataMember(Order = 2)]
     public string Name { get; set; }
-    [ProtoMember(3, DataFormat = DataFormat.WellKnown)]
+    [DataMember(Order = 3)]
     public string StateId { get; set; }
 }

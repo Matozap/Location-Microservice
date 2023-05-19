@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using LocationService.Application.Handlers.Countries.v1.Requests;
+using DistributedCache.Core;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Countries.v1;
+using LocationService.Message.Contracts.Countries.v1.Requests;
 using Mapster;
-using MediatR;
+using MediatrBuilder;
 using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Handlers.Countries.v1.Queries;
 
-public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, List<CountryData>>
+public class GetAllCountriesHandler : BuilderRequestHandler<GetAllCountries, List<CountryData>>
 {
     private readonly ILogger<GetAllCountriesHandler> _logger;
     private readonly ICache _cache;
@@ -24,41 +25,45 @@ public class GetAllCountriesHandler : IRequestHandler<GetAllCountries, List<Coun
         _repository = repository;
     }
 
-    public async Task<List<CountryData>> Handle(GetAllCountries request, CancellationToken cancellationToken)
+    protected override async Task<List<CountryData>> PreProcess(GetAllCountries request, CancellationToken cancellationToken = default)
     {
         var cacheKey = GetCacheKey();
 
         var cachedValue = await _cache.GetCacheValueAsync<List<CountryData>>(cacheKey, cancellationToken);
-        if (cachedValue != null)
-        {
-            _logger.LogInformation("Cache value found for {CacheKey}", cacheKey);
-            return cachedValue;
-        }
-
-        var dataValue = await GetAllCountries();
-
-        _ = _cache.SetCacheValueAsync(cacheKey, dataValue, cancellationToken);
-
-        return dataValue;
-    }
-
-    private async Task<List<CountryData>> GetAllCountries()
-    {
-        var entities = await _repository.GetAsListAsync<Country, string>(
-             predicate: country => !country.Disabled, 
-             orderAscending: country => country.Name, 
-             selectExpression: country => new Country
-                {
-                    Id = country.Id,
-                    Code = country.Code,
-                    Name = country.Name,
-                    Currency = country.Currency,
-                    CurrencyName = country.CurrencyName,
-                    Region = country.Region,
-                    SubRegion = country.SubRegion
-                });
-        return entities.Adapt<List<CountryData>>();
+        if (cachedValue == null) return null;
+        
+        _logger.LogInformation("Cache value found for {CacheKey}", cacheKey);
+        return cachedValue;
     }
     
-    public static string GetCacheKey() => "Countries:All";
+    protected override async Task<List<CountryData>> Process(GetAllCountries request, CancellationToken cancellationToken = default)
+    {
+        var entities = await _repository.GetAsListAsync<Country, string>(
+            predicate: country => !country.Disabled, 
+            orderAscending: country => country.Name, 
+            selectExpression: country => new Country
+            {
+                Id = country.Id,
+                Code = country.Code,
+                Name = country.Name,
+                Currency = country.Currency,
+                CurrencyName = country.CurrencyName,
+                Region = country.Region,
+                SubRegion = country.SubRegion
+            });
+        return entities.Adapt<List<CountryData>>();
+    }
+
+    protected override Task PostProcess(GetAllCountries request, List<CountryData> response, CancellationToken cancellationToken = default)
+    {
+        if (response != null)
+        {
+            _ = _cache.SetCacheValueAsync(GetCacheKey(), response, cancellationToken);
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    private static string GetCacheKey() => $"{nameof(Country)}:list";
+    
 }

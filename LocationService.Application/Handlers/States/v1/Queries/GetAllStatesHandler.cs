@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using LocationService.Application.Handlers.States.v1.Requests;
+using DistributedCache.Core;
 using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.States.v1;
+using LocationService.Message.Contracts.States.v1.Requests;
 using Mapster;
-using MediatR;
+using MediatrBuilder;
 using Microsoft.Extensions.Logging;
 
 namespace LocationService.Application.Handlers.States.v1.Queries;
 
-public class GetAllStatesHandler : IRequestHandler<GetAllStates, object>
+public class GetAllStatesHandler : BuilderRequestHandler<GetAllStates, List<StateData>>
 {
     private readonly ILogger<GetAllStatesHandler> _logger;
     private readonly ICache _cache;
@@ -24,34 +25,37 @@ public class GetAllStatesHandler : IRequestHandler<GetAllStates, object>
         _repository = repository;
     }
 
-    public async Task<object> Handle(GetAllStates request, CancellationToken cancellationToken)
+    protected override async Task<List<StateData>> PreProcess(GetAllStates request, CancellationToken cancellationToken = default)
     {
         var cacheKey = GetCacheKey(request.CountryId);
 
         var cachedValue = await _cache.GetCacheValueAsync<List<StateData>>(cacheKey, cancellationToken);
-        if (cachedValue != null)
-        {
-            _logger.LogInformation("Cache value found for {CacheKey}", cacheKey);
-            return cachedValue;
-        }
-
-        var dataValue = await GetAllStates(request.CountryId);
-
-        _ = _cache.SetCacheValueAsync(cacheKey, dataValue, cancellationToken);
-
-        return dataValue;
+        if (cachedValue == null) return null;
+        
+        _logger.LogInformation("Cache value found for {CacheKey}", cacheKey);
+        return cachedValue;
     }
 
-    private async Task<List<StateData>> GetAllStates(string countryId)
+    protected override async Task<List<StateData>> Process(GetAllStates request, CancellationToken cancellationToken = default)
     {
-        var parentByCode = await _repository.GetAsSingleAsync<Country, string>(predicate: e => e.Code == countryId) ?? new Country();
+        var parentByCode = await _repository.GetAsSingleAsync<Country, string>(predicate: e => e.Code == request.CountryId) ?? new Country();
         var entities = await _repository.GetAsListAsync<State, string>(
-            predicate: state => (state.CountryId == countryId || state.CountryId == parentByCode.Id) && !state.Disabled,
+            predicate: state => (state.CountryId == request.CountryId || state.CountryId == parentByCode.Id) && !state.Disabled,
             orderAscending: state => state.Name,
             includeNavigationalProperties: true
         );
         return entities.Adapt<List<StateData>>();
     }
-    
-    public static string GetCacheKey(string id) => $"States:All:{id}";
+
+    protected override Task PostProcess(GetAllStates request, List<StateData> response, CancellationToken cancellationToken = default)
+    {
+        if (response != null)
+        {
+            _ = _cache.SetCacheValueAsync(GetCacheKey(request.CountryId), response, cancellationToken);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private static string GetCacheKey(string id) => $"{nameof(State)}:list:{id}";
 }
