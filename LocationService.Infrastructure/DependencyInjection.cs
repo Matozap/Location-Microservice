@@ -4,6 +4,7 @@ using LocationService.Infrastructure.Database.Context;
 using LocationService.Infrastructure.Database.Repositories;
 using LocationService.Infrastructure.Extensions;
 using MapsterMapper;
+using MediatrBuilder;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Cosmos;
@@ -21,8 +22,9 @@ public static class DependencyInjection
         configuration.GetSection("Database").Bind(databaseOptions);
 
         services.AddDataContext(databaseOptions)
-            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), 
-                typeof(DependencyInjection).Assembly, typeof(Application.DependencyInjection).Assembly, typeof(IMapper).Assembly))
+            .AddMediatrBuilder(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), 
+                typeof(DependencyInjection).Assembly, typeof(Application.DependencyInjection).Assembly, typeof(Message.Contracts.Common.StringWrapper).Assembly, typeof(IMapper).Assembly)
+                .AddFluentValidation(true))
             .EnsureDatabaseIsSeeded();
 
         return services;

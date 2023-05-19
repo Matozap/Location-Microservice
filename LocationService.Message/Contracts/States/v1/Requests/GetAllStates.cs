@@ -1,11 +1,12 @@
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Message.Contracts.Common.Interfaces;
+using MediatrBuilder.Interfaces;
 
 namespace LocationService.Message.Contracts.States.v1.Requests;
 
 [DataContract]
-public class GetAllStates : IQuery<object>
+public class GetAllStates : IQuery<List<StateData>>
 {
     [DataMember(Order = 1)]
     public string CountryId { get; init; }

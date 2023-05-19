@@ -7,9 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="Bustr" Version="7.0.1" />
-    <PackageReference Include="DistributedCache" Version="1.3.5" />
+    <PackageReference Include="DistributedCache" Version="7.0.1" />
     <PackageReference Include="Mapster" Version="7.3.0" />
-    <PackageReference Include="MediatR" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
@@ -22,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Events\Subscriptions\" />
     <Folder Include="Handlers\" />
     <Folder Include="Handlers\Countries\v1" />
     <Folder Include="Handlers\States\v1" />

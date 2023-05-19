@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Message.Contracts.Common.Interfaces;
+using MediatrBuilder.Interfaces;
 
 namespace LocationService.Message.Contracts.Countries.v1.Requests;
 

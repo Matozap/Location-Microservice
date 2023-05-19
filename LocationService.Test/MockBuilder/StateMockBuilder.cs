@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoFixture;
+using Bustr.Bus;
 using DistributedCache.Core;
 using LocationService.Application.Handlers.States.v1.Commands;
 using LocationService.Application.Handlers.States.v1.Queries;
@@ -10,6 +12,7 @@ using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.States.v1;
 using LocationService.Message.Contracts.States.v1.Requests;
+using LocationService.Message.Events.States.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -42,6 +45,13 @@ public static class StateMockBuilder
     {
         var cache = Substitute.For<ICache>();
         return cache;
+    }
+    
+    private static IEventBus GenerateMockEventBus()
+    {
+        var eventBus = Substitute.For<IEventBus>();
+        eventBus.PublishAsync(Arg.Any<StateEvent>()).Returns(Task.CompletedTask);
+        return eventBus;
     }
 
     private static List<State> GenerateMockDomainStateList(int count)
@@ -84,19 +94,19 @@ public static class StateMockBuilder
         if (typeof(T) == typeof(UpdateStateHandler))
         {
             return new UpdateStateHandler(NullLogger<UpdateStateHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(SoftDeleteStateHandler))
         {
             return new SoftDeleteStateHandler(NullLogger<SoftDeleteStateHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(DeleteStateHandler))
         {
             return new DeleteStateHandler(NullLogger<DeleteStateHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(CreateStateHandler))
@@ -105,7 +115,7 @@ public static class StateMockBuilder
             repository.GetAsSingleAsync(Arg.Any<Expression<Func<State, bool>>>(), Arg.Any<Expression<Func<State, string>>>(), 
                 Arg.Any<Expression<Func<State, string>>>(), Arg.Any<Expression<Func<State, State>>>(), Arg.Any<bool>()).Returns((State)null);
             return new CreateStateHandler(NullLogger<CreateStateHandler>.Instance,
-                repository);
+                repository, GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(GetAllStatesHandler))

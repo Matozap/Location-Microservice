@@ -1,11 +1,11 @@
 using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Message.Contracts.Common.Interfaces;
+using MediatrBuilder.Interfaces;
 
 namespace LocationService.Message.Contracts.States.v1.Requests;
 
 [DataContract]
-public class GetStateById : IQuery<object>
+public class GetStateById : IQuery<StateData>
 {
     [DataMember(Order = 1)]
     public string Id { get; init; }

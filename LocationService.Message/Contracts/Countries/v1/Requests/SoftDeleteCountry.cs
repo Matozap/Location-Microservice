@@ -1,11 +1,11 @@
 using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Message.Contracts.Common.Interfaces;
+using MediatrBuilder.Interfaces;
 
 namespace LocationService.Message.Contracts.Countries.v1.Requests;
 
 [DataContract]
-public class SoftDeleteCountry : ICommand<string>
+public class SoftDeleteCountry : ICommand<CountryData>
 {
     [DataMember(Order = 1)]
     public string Id { get; init; }

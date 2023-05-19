@@ -1,11 +1,11 @@
 using System.Runtime.Serialization;
 using FluentValidation;
-using LocationService.Message.Contracts.Common.Interfaces;
+using MediatrBuilder.Interfaces;
 
 namespace LocationService.Message.Contracts.Cities.v1.Requests;
 
 [DataContract]
-public class DeleteCity : ICommand<string>
+public class DeleteCity : ICommand<CityData>
 {
     [DataMember(Order = 1)]
     public string Id { get; init; }

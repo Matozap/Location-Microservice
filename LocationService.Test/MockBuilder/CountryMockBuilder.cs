@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoFixture;
+using Bustr.Bus;
 using DistributedCache.Core;
 using LocationService.Application.Handlers.Countries.v1.Commands;
 using LocationService.Application.Handlers.Countries.v1.Queries;
@@ -10,6 +12,7 @@ using LocationService.Application.Interfaces;
 using LocationService.Domain;
 using LocationService.Message.Contracts.Countries.v1;
 using LocationService.Message.Contracts.Countries.v1.Requests;
+using LocationService.Message.Events.Countries.v1;
 using MediatR;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -43,6 +46,13 @@ public static class CountryMockBuilder
         var cache = Substitute.For<ICache>();
         return cache;
     }
+    
+    private static IEventBus GenerateMockEventBus()
+    {
+        var eventBus = Substitute.For<IEventBus>();
+        eventBus.PublishAsync(Arg.Any<CountryEvent>()).Returns(Task.CompletedTask);
+        return eventBus;
+    }
 
     private static List<Country> GenerateMockDomainCountryList(int count)
     {
@@ -70,7 +80,6 @@ public static class CountryMockBuilder
             .Create();
     }
 
-
     public static object CreateHandler<T>()
     {
         var response = GenerateMockCountryDtoList(1).FirstOrDefault();
@@ -82,19 +91,19 @@ public static class CountryMockBuilder
         if (typeof(T) == typeof(UpdateCountryHandler))
         {
             return new UpdateCountryHandler(NullLogger<UpdateCountryHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(SoftDeleteCountryHandler))
         {
             return new SoftDeleteCountryHandler(NullLogger<SoftDeleteCountryHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(),GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(DeleteCountryHandler))
         {
             return new DeleteCountryHandler(NullLogger<DeleteCountryHandler>.Instance,
-                GenerateMockRepository(location));
+                GenerateMockRepository(location), GenerateMockObjectCache(), GenerateMockEventBus());
         }
         
         if (typeof(T) == typeof(CreateCountryHandler))
@@ -103,7 +112,7 @@ public static class CountryMockBuilder
             repository.GetAsSingleAsync(Arg.Any<Expression<Func<Country, bool>>>(), Arg.Any<Expression<Func<Country, string>>>(), 
                 Arg.Any<Expression<Func<Country, string>>>(), Arg.Any<Expression<Func<Country, Country>>>(), Arg.Any<bool>()).Returns((Country)null);
             return new CreateCountryHandler(NullLogger<CreateCountryHandler>.Instance,
-                repository);
+                repository, GenerateMockObjectCache(), GenerateMockEventBus()) ;
         }
         
         if (typeof(T) == typeof(GetAllCountriesHandler))
