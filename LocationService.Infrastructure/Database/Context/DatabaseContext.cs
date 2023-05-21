@@ -25,7 +25,6 @@ public sealed class DatabaseContext : DbContext
     public DbSet<Country> Countries { get; set; }
     public DbSet<State> States { get; set; }
     public DbSet<City> Cities { get; set; }
-    public DbSet<Outbox> EventBusOutboxes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -33,11 +32,10 @@ public sealed class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        _logger.LogInformation("Using {DatabaseType} database ({DatabaseEngine})", _databaseOptions.DatabaseType, Enum.GetName(typeof(EngineType), _databaseOptions.EngineType));
+        _logger.LogInformation("Using {DatabaseType} database ({DatabaseEngine})", _databaseOptions.DatabaseType, Enum.GetName(_databaseOptions.EngineType));
         CreateCountryModel(modelBuilder);
         CreateStateModel(modelBuilder);
         CreateCityModel(modelBuilder);
-        CreateEventBusOutboxModel(modelBuilder);
     }
     
     private static void CreateCountryModel(ModelBuilder modelBuilder)
@@ -91,20 +89,5 @@ public sealed class DatabaseContext : DbContext
         });
     }
     
-    private static void CreateEventBusOutboxModel(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Outbox>().ToContainer("EventBusOutbox");
-        modelBuilder.Entity<Outbox>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).ToJsonProperty("id").IsRequired();
-            entity.Property(e => e.JsonObject).IsRequired();
-            entity.Property(e => e.Operation).IsRequired();
-            entity.HasIndex(e => e.Operation);
-            entity.HasNoDiscriminator();
-            entity.HasPartitionKey(e => e.Id);
-        });
-    }
-
     public void SeedData() => DatabaseSeed.SeedAllCountriesDataAsync(this).Wait();
 }
