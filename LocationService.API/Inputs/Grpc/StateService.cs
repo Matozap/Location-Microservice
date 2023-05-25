@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using LocationService.API.Outputs;
 using LocationService.API.Outputs.Base;
-using LocationService.Message.Contracts.Common;
-using LocationService.Message.Contracts.States.v1;
+using LocationService.Message.Common;
+using LocationService.Message.States;
 using MediatR;
 
 namespace LocationService.API.Inputs.Grpc;
