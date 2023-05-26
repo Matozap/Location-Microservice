@@ -38,7 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts" />
+    <Folder Include="Cities\Responses\" />
+    <Folder Include="Countries\Responses\" />
+    <Folder Include="States\Responses\" />
   </ItemGroup>
 
 </Project>

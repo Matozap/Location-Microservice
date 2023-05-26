@@ -3,6 +3,7 @@ using LocationService.Application.Interfaces;
 using LocationService.Infrastructure.Database.Context;
 using LocationService.Infrastructure.Database.Repositories;
 using LocationService.Infrastructure.Extensions;
+using LocationService.Message.Common;
 using MapsterMapper;
 using MediatrBuilder;
 using Microsoft.AspNetCore.Builder;
@@ -23,7 +24,7 @@ public static class DependencyInjection
 
         services.AddDataContext(databaseOptions)
             .AddMediatrBuilder(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly(), 
-                typeof(DependencyInjection).Assembly, typeof(Application.DependencyInjection).Assembly, typeof(Message.Contracts.Common.StringWrapper).Assembly, typeof(IMapper).Assembly)
+                typeof(DependencyInjection).Assembly, typeof(Application.DependencyInjection).Assembly, typeof(StringWrapper).Assembly, typeof(IMapper).Assembly)
                 .AddFluentValidation(true))
             .EnsureDatabaseIsSeeded();
 

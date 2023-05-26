@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using LocationService.Message.Events.Countries.v1;
+using LocationService.Message.Countries.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
