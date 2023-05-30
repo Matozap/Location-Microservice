@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using LocationService.Application.Interfaces;
+using LocationService.Application.Common.Interfaces;
 using LocationService.Domain;
 using LocationService.Infrastructure.Database.Context;
 using LocationService.Infrastructure.Utils;

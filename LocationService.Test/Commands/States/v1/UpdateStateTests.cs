@@ -3,9 +3,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LocationService.Application.Handlers.States.Commands;
-using LocationService.Message.States;
-using LocationService.Message.States.Requests;
+using LocationService.Application.States;
+using LocationService.Application.States.Commands;
+using LocationService.Application.States.Requests;
+using LocationService.Application.States.Responses;
 using LocationService.Test.MockBuilder;
 using Xunit;
 

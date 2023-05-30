@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using LocationService.Application.Cities;
+using LocationService.Application.Cities.Responses;
+using LocationService.Application.Countries;
+using LocationService.Application.Countries.Responses;
+using LocationService.Application.States;
+using LocationService.Application.States.Responses;
 using LocationService.Domain;
-using LocationService.Message.Cities;
-using LocationService.Message.Countries;
-using LocationService.Message.States;
 using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
