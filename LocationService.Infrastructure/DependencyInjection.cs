@@ -1,9 +1,9 @@
 using System.Reflection;
-using LocationService.Application.Interfaces;
+using LocationService.Application.Common;
+using LocationService.Application.Common.Interfaces;
 using LocationService.Infrastructure.Database.Context;
 using LocationService.Infrastructure.Database.Repositories;
 using LocationService.Infrastructure.Extensions;
-using LocationService.Message.Common;
 using MapsterMapper;
 using MediatrBuilder;
 using Microsoft.AspNetCore.Builder;
