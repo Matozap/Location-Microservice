@@ -4,7 +4,7 @@ using LocationService.Application.States.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace LocationService.API.Inputs.Consumers.Self;
+namespace LocationService.API.Endpoints.Consumers.Self;
 
 public class StateEventConsumer : IConsumer<StateEvent>
 {

@@ -1,12 +1,11 @@
 using System.Threading.Tasks;
 using LocationService.API.Outputs;
 using LocationService.API.Outputs.Base;
-using LocationService.Application.Countries;
 using LocationService.Application.Countries.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LocationService.API.Inputs.Controllers;
+namespace LocationService.API.Endpoints.Controllers;
 
 [Produces("application/json")]
 [Route("api/v1/")]

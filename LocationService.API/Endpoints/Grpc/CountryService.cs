@@ -7,7 +7,7 @@ using LocationService.Application.Countries;
 using LocationService.Application.Countries.Responses;
 using MediatR;
 
-namespace LocationService.API.Inputs.Grpc;
+namespace LocationService.API.Endpoints.Grpc;
 
 public class CountryService : ICountryService
 {

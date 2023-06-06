@@ -7,7 +7,7 @@ using LocationService.Application.Cities.Responses;
 using LocationService.Application.Common;
 using MediatR;
 
-namespace LocationService.API.Inputs.Grpc;
+namespace LocationService.API.Endpoints.Grpc;
 
 public class CityService : ICityService
 {

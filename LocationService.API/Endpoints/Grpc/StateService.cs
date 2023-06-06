@@ -7,7 +7,7 @@ using LocationService.Application.States;
 using LocationService.Application.States.Responses;
 using MediatR;
 
-namespace LocationService.API.Inputs.Grpc;
+namespace LocationService.API.Endpoints.Grpc;
 
 public class StateService : IStateService
 {

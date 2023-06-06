@@ -1,13 +1,12 @@
 ﻿using System.Threading.Tasks;
 using LocationService.API.Outputs;
 using LocationService.API.Outputs.Base;
-using LocationService.Application.Countries;
 using LocationService.Application.Countries.Responses;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
-namespace LocationService.API.Inputs.Functions;
+namespace LocationService.API.Endpoints.Functions;
 
 public class CountryFunction
 {
